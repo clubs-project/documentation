@@ -419,9 +419,9 @@ On the other hand, several thesauri are used to tag content in the PubPsych data
 
 \section{Corpora for Evaluation}
 \label{s:evaluation}
-To intrinsically evaluate the machine translation with scores like BLEU ~\cite{papineni_bleu:_2002}, a corpus of 800 documents aligned in the four languages English, Spanish, German and French is provided. For that, 800 (metadata) documents with only one English abstract were extracted. They will be translated into the respective other three languages in the near future. 
+To intrinsically evaluate the machine translation with scores like BLEU ~\cite{papineni_bleu:_2002}, a corpus of 800 (metadata)records from Pubpsych aligned in the four languages English, Spanish, German and French is provided. For that, 800 records with only one English abstract were extracted from the full coprus. They will be translated into the respective other three languages in the near future. 
 
-The corpus for evaluation was extracted from the full data file provided on Nov. 19, 2016, with a total of 958.726 records. From these, we extracted the ones with only one English abstract and no parallel translations resulting in a corpus of 448.764 records. From these records, we sampled 800 documents randomly based on the weighting of the data source. Table \ref{tab:eval800} lists the properties per data source and the percentage and corresponding number of records for the evaluation corpus. 
+The corpus for evaluation was extracted from the full data file provided on Nov. 19, 2016, with a total of 958.726 records. From these, we extracted the ones with only one English abstract and no parallel translations resulting in a corpus of 448.764 records. From these records, we sampled 800 records randomly based on the weighting of the data source. Table \ref{tab:eval800} lists the properties per data source and the percentage and corresponding number of records for the evaluation corpus. 
 
 \begin{small}
 \begin{table}
@@ -442,7 +442,7 @@ NORART      & 11443         & 0  & 0 (0\%)             \\
 TOTAL  &  958726        & 448732   & 800 (100\%)\\
 \bottomrule
 \end{tabular}
-\caption{Number of extracted documents for the evaluation corpus based on source weighting}
+\caption{Number of extracted documents for the evaluation corpus based on source weighting.}
 \label{tab:eval800}
 \end{table}
 \end{small}
@@ -468,7 +468,7 @@ por           & 1            & 0            & 0         & 1         & 0         
 spa          & 4            & 0            & 0         & 4         & 4         & 0         &  \\
 \bottomrule
 \end{tabular}
-\caption{Publication language of original documents in the evaluation corpus}
+\caption{Publication language of original documents in the evaluation corpus.}
 \label{tab:publang}
 \end{table}
 \end{small}
