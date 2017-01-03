@@ -1,0 +1,511 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, array, pdflscape}
+\usepackage{geometry}
+\usepackage{graphics,subfigure,graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{enumerate}
+
+\setlength{\textheight}{24cm}  
+\setlength{\textwidth}{15cm}
+\setlength\oddsidemargin{0cm}
+\setlength\evensidemargin{0cm}
+\setlength\voffset{-1cm}
+
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}	
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+\newcommand{\Ni}{({\em i\,})~}
+\newcommand{\Nii}{({\em ii\,})~}
+\newcommand{\Niii}{({\em iii\,})~}
+
+%opening
+\title{
+\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+\Huge Corpora for the \\ Machine Translation Engines \\ 
+}
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^1$ \& Juliane Stiller$^2$  \medskip \\ \Large $^1$Universit\"at des Saarlandes, $^2$Humboldt-Universit\"at zu Berlin}
+\date{\vspace*{2cm} -- v2.0 --\\January 2017}
+
+
+\begin{document}
+
+\clearpage\maketitle
+\thispagestyle{empty}
+
+\vspace*{5cm}
+\begin{abstract}
+This document describes the corpora used for training and evaluating the baseline MT engines used within the CLUBS project.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\clearpage
+
+% guarrada, no va el \cleardoublepage
+% \clearpage\mbox{}\clearpage
+
+%\newpage
+\section{Introduction}
+\label{s:intro}
+
+The CLuBS project uses crosslingual information retrieval (CLIR) techniques to search documents in a psychology database, PubPsych\footnote{\url{https://www.pubpsych.eu}}. These crosslingual techniques need machine translation (MT) engines in order to translate the documents. Along the project, we will develop several data-based machine translation systems and study their performance as translation engines but also its effect within the retrieval system. This document describes the first selection of corpora used for training and evaluating the systems.
+
+Since data-based MT relies on the existence of large amount of parallel corpora, we have gathered parallel and monolingual corpora not only on psychology but also on several other domains, some of them are close in topic such as 
+medicine but some of them such as politics are farther. Out-of-domain corpora are easier and cheaper to get and help to improve the quality of the translators, especially when data is scarce. In our case, translation between De--En--Es--Fr in the domain of psychology, we can find huge amounts of data both in-domain and out-of-domain for some of the language pairs (e.g. En--De). For some others, only out-of domain data is available (e.g. En--Fr). 
+% Finally, some language pairs do not have parallel data at all (De--Es).
+
+In the following sections, we describe the extraction of the monolingual and parallel corpus from the PubPsych database (Section~\ref{s:pub}), and the monolingual and parallel out-of-domain corpus gathered from several sources (Section~\ref{s:gen}). Section~\ref{s:lex} presents a multilingual in-domain lexicon extracted automatically from Wikipedia and the standard thesauri used for psychology. Section~\ref{s:evaluation} presents the extraction of the evaluation corpus for the intrinsic evaluation of the machine translation. Finally, we sketch the next steps with regards to the corpus acquisition in Section~\ref{s:conclusions}.
+
+
+
+
+\section{PubPsych Corpora}
+\label{s:pub}
+
+At the time of writing this report\footnote{1st December, 2016.}, the PubPsych database consists of 958.726 records. This data has been exported from the database in xml format. From all the metadata available, we use titles and abstracts for developing the translation engines. Not all the records have a title and/or an abstract and, in case they do, they are not available for all the languages in parallel. Tables~\ref{tab:recordsMono} and \ref{tab:recordsMulti} show the global figures of the database. English is the most populated language followed by German. Spanish and French have a similar amount of documents which is an order of magnitude smaller than English. However, although almost all the documents in French have the title also in English or Spanish, the abstract is seldom parallel. In the case of Spanish, half of the articles have the abstract both in Spanish and English. That makes French a language with almost no resources to train an in-domain MT system. For English--German and English--Spanish we can build in-domain parallel corpora, for English--French and pairs not involving English, there is not enough data.
+
+
+\subsection{Parallel Corpora Extraction}
+\label{ss:pubPar}
+
+We select the records with titles or abstracts in more than one language to extract two parallel corpus for each language pair with a significant representation: one containing titles and one with sentences of the abstracts. In both cases, some processing of the data is needed. The code used for this processing is available in the project's Github\footnote{\url{https://github.com/cristinae/CLUBS}}.
+
+\paragraph{Extraction of titles and subtitles.}
+Records sometimes have not only a title but also a subtitle as a separate field. For building the parallel corpus, one has to align these fields between the languages L1 and L2 because the information encoded in only a title in one language may be split in title and subtitle in the other language. In general, one can consider four different cases:
+\begin{enumerate}[(i)]
+\itemsep0em 
+ \item Only the title is available for L1 and L2
+ \item L1 has title and subtitle, L2 has only title
+ \item L1 has only title, L2 has title and subtitle
+ \item Both L1 and L2 have title and subtitle
+\end{enumerate}
+
+In order to extract the appropriate pairs, we implement a heuristic based on the expected ratio of the length of sentences (length factor) between the two languages. We assume that the length factor follows a normal distribution and estimate its mean and standard deviation in out-of-domain parallel corpora\footnote{See corpora in Section~\ref{ss:genWeb}.}. Then, for a given parallel record, we generate all the possible combinations between the available titles and subtitles and extract the pair with the closest length factor to the expected mean of the language pair.
+
+We notice that all the cases where the title is split with a subtitle are in German, and the division can be either in the title in the English side or in the German one. Besides, there are no records where both L1 and L2 have title and subtitle. 
+
+
+\begin{table}[t]
+ \centering
+ \footnotesize
+    \begin{tabular}{lllll}
+    \toprule
+    & \mc{1}{c}{De} & \mc{1}{c}{En} & \mc{1}{c}{Es} & \mc{1}{c}{Fr} \\
+    \midrule
+    Titles    & 324.005 & 895.982 & 53.065 & 47.707 \\
+    Abstracts & 250.263 & 513.000 & 34.815 & 33.206 \\
+    \bottomrule
+    \end{tabular}
+ \caption{Number of records with title or abstract for the four main languages in the PubPsych database.}
+ \label{tab:recordsMono}
+\end{table}
+
+\begin{table}[t]
+ \centering
+ \footnotesize
+  \begin{tabular}{lrrrrrrrr}
+    \toprule
+  & \mc{1}{c}{En--De} & \mc{1}{c}{En--Es} & \mc{1}{c}{En--Fr} & \mc{1}{c}{De--Es} & \mc{1}{c}{De--Fr} & \mc{1}{c}{Es--Fr}
+  & \mc{1}{c}{En--Es--Fr} & \mc{1}{c}{De--En--Fr}\\
+    \midrule
+  Titles    & 307.37 & 25.680 & 45.324 & 7 & 50 &   2  &   2 & 6\\
+  Abstracts & 47.218 & 16.934 &    189 & 0 &  0 & 105  & 105 & 0 \\
+    \bottomrule
+  \end{tabular}
+ \caption{Multilinguality in the PubPsych database. Number of records with parallel titles or abstracts. There is no record with either the title or the abstract in the four languages.}
+ \label{tab:recordsMulti}
+\end{table}
+
+
+
+\paragraph{Extraction of parallel sentences in abstracts.}
+
+Parallel abstracts have to be aligned at sentence level in order to build the MT corpus. To do this, sentences are first split with an in-house sentence splitter and then passed to an aligner based on lengths and positions within the document. We use an available python implementation of the Gale-Church algorithm%
+\footnote{\url{https://github.com/alvations/NTU-MC/blob/master/ntumc/toolkit/gale_church.py}} \cite{galeChurch:1993} for this. After the alignment, only sentences with more than 5 words are used for the parallel corpus of abstracts; the restriction does not apply to titles. In both cases, sentences completely uppercased are converted into lowercase strings.
+
+
+
+\subsection{Monolingual Corpora Extraction}
+\label{ss:pubMono}
+
+For building the monolingual corpora, we consider all the records in the database with either a title and/or an abstract and extract the text in English, French, German and Spanish. For abstracts, text snippets are split into sentences. For titles, both the title and the subtitle fields are extracted. We do not need to deal with alignment issues in this case and all the sentences can be gathered.
+
+
+
+\subsection{Training, Development and Test Sets}
+\label{ss:pubSets}
+
+% The full corpus is divided into three parts: training, development and test. 
+
+From the full corpus, we have first put aside 800 records that will be translated manually to build a high-quality test set. These records are selected from the subset of documents with only an English abstract (without any translation) and then sampled randomly according to the weight of its data source (e.g. PSYNDEX, ISOC, etc.). The remaining MT corpus consists of 957.926 documents.
+
+We do a partition with 1500 documents on the MT corpus to build the development and test sets. For this partition, we give preference to
+% we gather 1500 documents per language (English, French, German and Spanish) preferring 
+records with multilingual abstracts and, again, we sample randomly the MT corpus according to the weight of its data source. The division between development and test is done differently for every language pair with the purpose of having a similar amount of parallel sentences. We use 1500 parallel sentences from the abstracts for development and the rest for testing. All the titles are used to build a test set and no development set is considered as a first approximation. In the case of French, we can only build one set due to the small amount of parallel data. The remaining 951.926 documents with title and/or abstract are used for training.
+
+Table~\ref{tab:setsParPubPshyc} shows the sizes for the in-domain parallel corpora obtained for each language pair after the division in training, development and test. Table~\ref{tab:setsMonoPubPshyc} shows the sizes of the in-domain monolingual corpora for the four languages involved; in this case, all the data are used for training.
+
+
+\begin{table}[t]
+\footnotesize
+\flushleft{\bf Abstracts\\ \smallskip}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+   & \mc{3}{c}{En--De} & \mc{3}{c}{En--Es} & \mc{3}{c}{En--Fr}\\
+   \cmidrule(lr){2-4}   \cmidrule(lr){5-7}   \cmidrule(lr){8-10}
+   & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{DeTok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{EsTok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{FrTok.}\\
+\midrule
+Train & 241.749 & 6.584.364 & 6.135.612 & 88.848 & 2.640.441 & 2.909.559 & 0 & 0 & 0\\
+Dev.  &   1.500 &   39.968 & 37.557 & 1.500 & 45.611 & 50.831 & 0 & 0 & 0\\
+Test  &   2.162 &   60.219 & 55.610 & 2.486 & 74.382 & 81.575 & 823 & 25.884 & 29.226 \\
+\bottomrule
+\end{tabular}
+
+\flushleft{\bf Titles\\ \smallskip}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+   & \mc{3}{c}{En--De} & \mc{3}{c}{En--Es} & \mc{3}{c}{En--Fr}\\
+   \cmidrule(lr){2-4}   \cmidrule(lr){5-7}   \cmidrule(lr){8-10}
+   & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{DeTok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{EsTok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{FrTok.}\\
+\midrule
+Train & 306.640 & 3.480.727 & 3.059.048 & 25.105 & 293.164 & 340.203 & 45.137 & 463.610 & 567.618\\
+Dev.  &      0 &       0 &       0 &     0 &      0 &      0 &     0 &      0 & 0\\
+Test  &    737 &    9.691 &    8.202 &   575 &   6.935 &   8.002 &   187 &   2.589 & 3.012 \\
+\bottomrule
+\end{tabular}
+
+ \caption{Size of the parallel corpora obtained from the PubPsych database and used for training, development and testing the MT systems.}
+ \label{tab:setsParPubPshyc}
+\end{table}
+
+
+
+\begin{table}[t]
+\footnotesize
+\centering
+\bigskip
+\flushleft{\bf Abstracts \& Titles\\ \smallskip}
+\begin{tabular}{l rrrrrrrr}
+\toprule
+ & \mc{2}{c}{De} & \mc{2}{c}{En} & \mc{2}{c}{Es} & \mc{2}{c}{Fr}\\
+   \cmidrule(lr){2-3}   \cmidrule(lr){4-5}  \cmidrule(lr){6-7}   \cmidrule(lr){8-9}
+ & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.}\\
+\midrule
+Abst.    & 1.618.845 & 36.093.889 & 3.533.855 & 92.211.688 & 168.423 & 5.393.989 & 150.537 & 4.571.979\\
+Titles    &  396.152 & 3.343.386 & 896.876 & 10.741.170 & 52.399 & 631.757 & 47.529 & 595.249 \\
+\bottomrule
+\end{tabular}
+ \caption{Size of the monolingual corpora obtained from the PubPsych database and used for training the MT systems.}
+ \label{tab:setsMonoPubPshyc}
+\end{table}
+
+
+\subsection{Pre-Processing}
+\label{ss:pubPreprp}
+
+In order to use the previous corpora in natural language applications, text must be pre-processed. We follow here a three-step pre-processing standard in MT:
+
+\begin{enumerate}
+\itemsep0em 
+ \item Text normalisation
+ \item Text tokenisation
+ \item Truecasing
+\end{enumerate}
+
+For text normalisation and text tokenisation we use Moses' scripts \cite{moses:2007}. The normaliser, however, has been adapted to deal with some peculiarities of the PubPsych corpus. For truecasing, we have trained statistical models using Wikipedia and Europarl V7 monolingual corpora (Section~\ref{s:gen}).
+
+
+
+
+\section{Out-of-Domain Corpora}
+\label{s:gen}
+
+The data described in the previous section is not enough to train high-quality translators but it is important to enrich larger corpora with the language of psychology itself. In the following, we describe several open parallel corpus that will used within the project to train general and specialised translators.
+% The size of these corpus can be seen in Tables XXX.
+
+\subsection{Medicine, Biological and Health domains}
+
+First, we describe two corpora that can be considered to be close in domain to psychology: the EMEA~\cite{tiedemann:2009} and the Scielo corpus.
+
+\paragraph{EMEA Corpus.}
+This is a parallel corpus made out of PDF documents from the European MEdicines Agency\footnote{\url{http://www.emea.europa.eu}}. Files were automatically converted from PDF to plain text, sentence-aligned and made publicly available within the Opus Corpus~\cite{tiedemann:2009}. The corpus is available in 22 languages including English, French, German and Spanish. At this moment, we only consider the language pairs involving English to be compatible with the other corpora, but this corpus could be used later in the project for all the language pairs.
+
+\paragraph{Scielo Corpus.}
+This is a parallel corpus made out of documents retrieved from the SCIentific Electronic Library Online\footnote{\url{http://www.scielo.org}}. The documents belong to the biological and health domains and can be composed of either a title, an abstract or both of them. The corpus was prepared by the organisers of the Biomedical Translation Task in the First Conference on Machine Translation\footnote{\url{http://www.statmt.org/wmt16/biomedical-translation-task.html}} (WMT16), who aligned the documents at sentence level with the GMA tool\footnote{\url{http://nlp.cs.nyu.edu/GMA}}. In this case, the corpus is available for the English--Spanish and English--French language pairs.
+
+
+
+\begin{landscape}
+\begin{table}[t]
+% \small
+\begin{tabular}{l rrr rrr rrr}
+\toprule
+    & \mc{3}{c}{En--De} & \mc{3}{c}{En--Es} & \mc{3}{c}{En--Fr}\\
+    \cmidrule(lr){2-4}   \cmidrule(lr){5-7}   \cmidrule(lr){8-10} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{DeTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{EsTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{FrTok.}\\
+\midrule
+UN           &   162.981 &   6.098.083 &  5.617.876 & 11.196.913 & 320.064.682 & 366.072.923 & 12.886.831 & 361.877.676 & 421.687.471\\
+EP           & 1.920.209 &  53.091.548 & 50.548.739 &  1.965.734 &  54.505.707 &  57.047.216 &  2.007.723 &  55.730.752 &  61.888.789\\
+ComCrawl     & 2.399.123 &  58.864.439 & 54.570.779 &  1.845.286 &  46.855.705 &  49.557.537 &  3.244.152 &  81.084.856 &  91.281.890\\
+\it{subTOTAL}       & \it{4.482.313} &  \it{118.054.070} & \it{110.737.394} &\it{15.007.933} &  \it{421.426.094} & \it{472.677.676} &  \it{18.138.706} & \it{498.693.284}  & \it{574.858.150} \\
+\midrule
+EMEA         & 1.108.752 &  14.477.119 & 13.197.725 &  1.098.333 &  14.334.648 &  15.975.506 &  1.092.568 &  14.317.365 & 17.046.979\\
+ScieloBio    & -- & -- & -- &  117.862 & 3.252.183 & 3.382.511 & -- & -- & --\\
+ScieloHealth & -- & -- & -- &  558.714 & 14.382.853 & 15.031.533 & 9.129 & 244.486 & 308.055\\
+\it{subTOTAL}  & \it{1.108.752} &  \it{14.477.119} & \it{13.197.725} & \it{1.774.909} & \it{31.969.684} & \it{34.389.550} & \it{1.101.697}  & \it{14.561.851}  & \it{17.355.034}  \\
+\midrule
+PubPsych     &  241.749 & 6.584.364 & 6.135.612 & 88.848 & 2.640.441 & 2.909.559 & -- & -- & --\\
+\midrule
+\it{TOTAL}  & \it{5.832.814} & \it{139.115.553} & \it{130.070.731} & \it{16.871.690}  & \it{456.036.219}  & \it{509.976.785} & \it{19.240.403} & \it{513.255.135} & \it{592.213.184}  \\
+\bottomrule
+\end{tabular}
+ \caption{Size of the parallel corpora obtained from the different sources described in Section~\ref{ss:pubPar}: United Nations (UN), Europarl V7 (EP), Common Crawl (ComCrawl), EMEA and Scielo. Figures of the PubPsych corpus are shown for comparison.}
+ \label{tab:setsParGen}
+\end{table}
+
+
+\begin{table}[t]
+% \footnotesize
+\centering
+\begin{tabular}{l rrrrrrrr}
+    \toprule
+    & \mc{2}{c}{De} & \mc{2}{c}{En} & \mc{2}{c}{Es} & \mc{2}{c}{Fr}\\
+      \cmidrule(lr){2-3}   \cmidrule(lr){4-5}  \cmidrule(lr){6-7}   \cmidrule(lr){8-9}
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.} & \mc{1}{c}{Sent.} & \mc{1}{c}{Tok.}\\
+    \midrule
+    Wikipedia   &39.036.439 &675.868.710 & 92.284.575 & 1.920.645.814 &20.085.435&465.828.442 & 26.603.296  & 553.201.962\\
+    General     & 4.482.313 &110.737.394 & 18.138.706 &   498.693.284 &15.007.933&472.677.676 & 19.240.403 & 592.213.184 \\
+    Medicine    & 1.108.752 & 13.197.725 & 1.774.909  &    31.969.684 & 1.774.909& 34.389.550 &  1.101.697 &  17.355.034 \\
+    PubPsych    & 1.618.845 & 36.093.889 & 3.533.855  &    92.211.688 &  168.423 &  5.393.989 &    150.537 &   4.571.979\\
+    \bottomrule
+\end{tabular}
+\caption{Size of the monolingual corpora obtained from the different sources described in Section~\ref{ss:pubPar}. \emph{General} includes the UN, EP and ComCrawl corpora and \emph{Medicine} includes the EMEA and Scielo ones.}
+\label{tab:setsMonoGen}
+\end{table}
+
+
+\end{landscape}
+
+
+\subsection{General Corpora: Web and Politics}
+\label{ss:genWeb}
+
+Second, we use corpora from very distant domains to gather general phrases. These corpora include texts on politics (Europarl Corpus~\cite{europarl:2005} and United Nations Corpus~\cite{multiun:2012}) and crawls from the web (Common Crawl corpus and Wikipedia articles). Similarly to EMEA, we only consider the language pairs involving English in the Europarl (EP) and United Nations (UN) corpora, but they could be used later in the project for all the language pairs. The Common Crawl parallel corpus is made publicly available by the annual Shared Task on Machine Translation (WMT), currently Conference on Machine Translation. The Wikipedia corpus is a monolingual in-house corpus with dumps downloaded from Wikipedia\footnote{\url{https://dumps.wikimedia.org}} in January 2015 and pre-processed with JWPL\footnote{\url{https://code.google.com/p/jwpl}}~\cite{zeschEtal:2008}.
+
+\begin{table}[t]
+\footnotesize
+\centering
+\begin{tabular}{l rrr rrr rrr}
+\toprule
+    & \mc{3}{c}{En--De} & \mc{3}{c}{En--Es} & \mc{3}{c}{En--Fr}\\
+    \cmidrule(lr){2-4}   \cmidrule(lr){5-7}   \cmidrule(lr){8-10} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{DeTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{EsTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{FrTok.}\\
+\midrule
+news-test2012  & 3.003 & 72.988 & 72.603 & 3.003 & 72.988 & 78.887 & 3.003 & 72.988 & 81.797 \\
+news-test2013  & 3.000 & 64.809 & 63.411 & 3.000 & 64.809 & 70.540 & 3.000 & 64.809 & 73.658 \\
+EMEAdev        & 2.000 & 38.658 & 37.945 & 2.000 & 36.676 & 39.959 & 2.000 & 34.554 & 41.026 \\
+EMEAtest       & 2.000 & 36.864 & 35.773 & 2.000 & 34.359 & 38.615 & 2.000 & 33.316 & 39.674 \\
+PubPsychDev    & 1.500 & 39.968 & 37.557 & 1.500 & 45.611 & 50.831 & -- & -- & --\\
+PubPsychTest   & 2.162 & 60.219 & 55.610 & 2.486 & 74.382 & 81.575 & 823 & 25.884 & 29.226 \\
+\bottomrule
+\end{tabular}
+ \caption{Size of the out-of-domain test sets to be used in the project. Figures of the automatic PubPsych test sets are shown for comparison.}
+ \label{tab:testsParGen}
+\end{table}
+
+
+
+Tables~\ref{tab:setsParGen} and \ref{tab:setsMonoGen} show a summary of the amount of data available for every language pair. English--French is the pair with more parallel data, more than 19 million parallel sentences, but all of them belong to out-of-domain data. EMEA and Scielo are the closest sources in this case to obtain in-domain vocabulary together with the addition of the thesauri used in psychology (Section~\ref{s:lex}). On the other side lies the English--German language pair. Here, we have less than 6 million parallel sentences but almost 250 thousand belong to PubPsych. Finally, there are almost 17 million parallel sentences for the English--Spanish pair, with less than 100 thousand belonging to psychology.
+
+%      117862     3252183 en-es/scielo.en-es.bio.tc.en
+%      117862     3382511 en-es/scielo.en-es.bio.tc.es
+%      558714    14382853 en-es/scielo.en-es.health.tc.en
+%      558714    15031533 en-es/scielo.en-es.health.tc.es
+%        9129      244486 en-fr/scielo.en-fr.health.tc.en
+%        9129      308055 en-fr/scielo.en-fr.health.tc.fr
+
+%     1108752    13197725 en-de/EMEA.de-en.tc.de
+%     1108752    14477119 en-de/EMEA.de-en.tc.en
+%     1098333    14334648 en-es/EMEA.en-es.tc.en
+%     1098333    15975506 en-es/EMEA.en-es.tc.es
+%     1092568    14317365 en-fr/EMEA.en-fr.tc.en
+%     1092568    17046979 en-fr/EMEA.en-fr.tc.fr
+
+%     2399123    54570779 en-de/commoncrawl.de-en.tc.de
+%     2399123    58864439 en-de/commoncrawl.de-en.tc.en
+%     1845286    46855705 en-es/commoncrawl.es-en.tc.en
+%     1845286    49557537 en-es/commoncrawl.es-en.tc.es
+%     3244152    81084856 en-fr/commoncrawl.fr-en.tc.en
+%     3244152    91281890 en-fr/commoncrawl.fr-en.tc.fr
+
+
+%     1920209    50548739 en-de/europarl-v7.de-en.tc.de
+%     1920209    53091548 en-de/europarl-v7.de-en.tc.en
+%     1965734    54505707 en-es/europarl-v7.es-en.tc.en
+%     1965734    57047216 en-es/europarl-v7.es-en.tc.es
+%     2007723    55730752 en-fr/europarl-v7.fr-en.tc.en
+%     2007723    61888789 en-fr/europarl-v7.fr-en.tc.fr
+
+%      162981     5617876 en-de/MultiUN.de-en.tc.de
+%      162981     6098083 en-de/MultiUN.de-en.tc.en
+%    11196913   320064682 en-es/undoc.2000.es-en.tc.en
+%    11196913   366072923 en-es/undoc.2000.es-en.tc.es
+%    12886831   361877676 en-fr/undoc.2000.fr-en.tc.en
+%    12886831   421687471 en-fr/undoc.2000.fr-en.tc.fr
+%    
+%    18968763   483197115 en-fr/generalBio.fr-en.tc.clean.en
+%    18968763   556646759 en-fr/generalBio.fr-en.tc.clean.fr
+%    19240403   513255135 en-fr/generalBio.fr-en.tc.en
+%    19240403   592213184 en-fr/generalBio.fr-en.tc.fr
+
+
+\subsection{Development and Test Sets}
+\label{ss:genTests}
+
+For development and testing we consider four sets, two corresponding to what we have called general domain and two more to the medical domain. For the general domain we use \emph{news-test2012} and \emph{news-test2013}. These test sets are distributed by the organisation of the WMT workshops. The years selected for our experiments are the last ones to include English, French, German and Spanish simultaneously, so that the sets are aligned among the four languages. For the medical domain we use a subset of the EMEA corpus. In this case, the sets are only aligned inside a language pair.
+
+Table~\ref{tab:testsParGen} shows the figures for these dev/test sets and the comparison with the test sets gathered automatically from the PubPsych data. 
+The upcoming human translated test set will allow the evaluation of all the language pairs, also for in-domain translations.
+
+% The upcoming test set manually generated with human translations of 800 PubPsych records will allow the evaluation of all the language pairs, also those not involving English.
+
+
+\subsection{Pre-Processing}
+\label{ss:genPreprp}
+
+All the corpora introduced in this section has been pre-processed with the same pipeline and tools outlined in Section~\ref{ss:pubPreprp}.
+
+
+\section{Multilingual Lexicons and Thesauri}
+\label{s:lex}
+
+We have extracted multilingual in-domain phrases from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}} \cite{barronEtAl:2015}. Lexicons have been built from parallel titles of articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
+
+Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81.369 entries. The lexicon contains both single words and phrases:
+
+\bigskip
+ \begin{small}
+% \begin{tabular}[h]{rl rl rl rl}
+%   ID En    & Title En       & ID Es   & Title Es        &  ID Fr    & Title Fr            &  ID De   & Title De \\
+%   1053998  & Perception     &176025   & Percepci\'on    & 360640    &Perception           & 387646   & Wahrnehmung \\
+%   10269587 & Echoic\_memory & 4636204 & Memoria\_ecoica & 3858294   & M\'emoire\_auditive & 4334978  & Echoisches\_Ged\"achtnis \\
+% \end{tabular}
+  \begin{tabular}[h]{llll}
+    \toprule
+    En     &Es          & Fr             & De \\
+    \midrule
+    Perception     & Percepci\'on      &Perception            & Wahrnehmung \\
+    Echoic\_memory & Memoria\_ecoica   & M\'emoire\_auditive  & Echoisches\_Ged\"achtnis \\
+    ... & ... & ... & ... \\
+    \bottomrule
+ \end{tabular}
+\end{small}
+\bigskip
+\bigskip
+ 
+On the other hand, several thesauri are used to tag content in the PubPsych database. The especific thesaurus (Psyndex, APA Thesaurus of Psychological Index Terms, MeSH Medical Subject Headings, TermSciences, etc.) depends on the original source of the document. At least the APA and the MeSH thesauri are multilingual and can be used, within the translation task, to enrich the in-domain vocabulary.
+
+\section{Corpora for Evaluation}
+\label{s:evaluation}
+To intrinsically evaluate the machine translation with scores like BLEU ~\cite{papineni_bleu:_2002}, a corpus of 800 documents aligned in the four languages English, Spanish, German and French is provided. For that, 800 (metadata) documents with only one English abstract were extracted. They will be translated into the respective other three languages in the near future. 
+
+The corpus for evaluation was extracted from the full data file provided on Nov. 19, 2016, with a total of 958.726 records. From these, we extracted the ones with only one English abstract and no parallel translations resulting in a corpus of 448.764 records. From these records, we sampled 800 documents randomly based on the weighting of the data source. Table \ref{tab:eval800} lists the properties per data source and the percentage and corresponding number of records for the evaluation corpus. 
+
+\begin{small}
+\begin{table}
+\centering
+\begin{tabular}{llll}
+\toprule
+Data source & \# of records & \# of recs with 1 EN abstract & \# for sample \\
+\midrule
+ERIC 		& 107532 		& 104648  & 187 (23\%) \\
+PSYINDEX    & 331469        & 56202 & 100 (13\% )   \\
+PASCAL      & 206670        & 132439 & 236 (30\%)           \\
+NARCIS      & 29847         & 13734  & 24 (3\% )          \\
+ISOC        & 50275         & 705  & 1 (0\%)         \\
+PSYCHOPEN   & 1059          & 976    & 2  (0\%)           \\
+PSYCHDATA   & 53            & 1  & 0  (0\%)           \\
+NORART      & 11443         & 0  & 0 (0\%)             \\
+\midrule
+TOTAL  &  958726        & 448732   & 800 (100\%)\\
+\bottomrule
+\end{tabular}
+\caption{Number of extracted documents for the evaluation corpus based on source weighting}
+\label{tab:eval800}
+\end{table}
+\end{small}
+
+Table \ref{tab:publang} shows stats on the extracted corpus grouped by the publication language. 
+
+\begin{small}
+\begin{table}[]
+\centering
+\begin{tabular}{lllllllll}
+\toprule
+pub\_lang  & records  & subtitle\_en & title\_de & title\_en & title\_es & title\_fr &  \\
+\midrule
+chi                  & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+dut                   & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+en                   & 24           & 0            & 0         & 24        & 0         & 0         &  \\
+eng               & 711          & 3            & 87        & 711       & 1         & 0         &  \\
+fre                  & 7            & 0            & 0         & 6         & 0         & 7         &  \\
+ger                  & 11           & 0            & 11        & 11        & 0         & 0         &  \\
+ita                  & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+jpn                & 2            & 0            & 0         & 2         & 0         & 0         &  \\
+por           & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+spa          & 4            & 0            & 0         & 4         & 4         & 0         &  \\
+\bottomrule
+\end{tabular}
+\caption{Publication language of original documents in the evaluation corpus}
+\label{tab:publang}
+\end{table}
+\end{small}
+
+
+
+
+
+
+
+
+\section{Conclusions}
+\label{s:conclusions}
+
+We have gathered a first collection of corpora to build the baseline MT systems of the project. The performance of the baseline systems will help us to detect new necessities on corpora in order to improve the systems. Possible weak points of the current selection include:
+
+\begin{enumerate}[(i)]
+\itemsep0em 
+ \item SMT engines built using pivot methodologies do not perform well enough. In this case, we should consider German--French, German--Spanish, French--Spanish corpora when they are available
+ \item MT engines show a very low quality when translating titles. In this case, we should train specific systems for titles and therefore prepare additional development/test sets
+ \item We observe some untranslated words due to truecasing. In this case, a lowercased version of the corpora would be used.
+\end{enumerate}
+
+And already detected necessities:
+\begin{enumerate}[(i)]
+\itemsep0em 
+ \item PubPsych human translated test sets fully aligned to test in-domain translation in all the language pairs
+ \item Multilingual thesauri terms to add to current parallel corpora
+\end{enumerate}
+
+
+%
+% ---- Bibliography ----
+%
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{plain}
+\bibliography{genericMT}
+
+
+\end{document}
