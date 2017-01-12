@@ -1,0 +1,175 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, array, pdflscape}
+\usepackage{geometry}
+\usepackage{graphics,subfigure,graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{enumerate}
+
+\setlength{\textheight}{24cm}  
+\setlength{\textwidth}{15cm}
+\setlength\oddsidemargin{0cm}
+\setlength\evensidemargin{0cm}
+\setlength\voffset{-1cm}
+
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}	
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+\newcommand{\Ni}{({\em i\,})~}
+\newcommand{\Nii}{({\em ii\,})~}
+\newcommand{\Niii}{({\em iii\,})~}
+
+%opening
+\title{
+\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+\Huge Baseline Systems for the \\ Machine Translation Engines \\ 
+}
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
+\date{\vspace*{2cm} -- v1.0 --\\January 2017}
+
+
+\begin{document}
+
+\clearpage\maketitle
+\thispagestyle{empty}
+
+\vspace*{5cm}
+\begin{abstract}
+This document describes the statistical and neural machine translation systems used as baselines within the CLUBS project. Those systems are trained with
+large out-of-domain or small in-domain corpora, but without any domain adaptation technique. 
+\end{abstract}
+
+\newpage
+\tableofcontents
+\clearpage
+
+% guarrada, no va el \cleardoublepage
+% \clearpage\mbox{}\clearpage
+
+%\newpage
+\section{Introduction}
+\label{s:intro}
+
+In the last years, statistical machine translation systems (SMT) have shown to offer a competitive translation quality when \emph{enough data} is available. When compared to rule-based translation systems (RBMT), SMT systems are cheaper and easier to build and they only rely on the existence of parallel corpus --preferably on the specific domain to translate-- in order to be trained. These advantages are common to all data-based systems. Recently, a new paradigm has been applied within data-based machine translation: neural machine translation (NMT). NMT systems have shown to outperform SMT systems for language pairs where huge amounts of parallel corpora are available (REF WMT).
+
+As always, there are pros and cons for using one family of systems or the other. SMT systems need less data to get a similar performance and can be trained in a desktop computer. On the other hand, the most modest NMT systems need at least one week of GPU time to get competitive results.
+
+In the CLUBS project we face two XXX issues. First, we want to translate among all four languages De--En--Es--Fr. Second, we want translations on a very especific domain: phsycology. For translating between languages with few data, SMT engines offer the possibility of pivot translation. Translation models for translating L1-to-L2 and L2-to-L3 can be joined to build a translator L1-to-L3. Usually the pivot language L2 is a rich language such as English. Then, only a small amount of parallel data in the pair L1-L3 is needed for tuning the system. On the other hand, NMT systems offer the possibility of a join training and zero-shot translation (REF GOOGexs). Training a single model for L1-to-L2 and L3-to-L4 allows a zero-shot translation L1-to-L4. This is probably due to the fact that context vectors (or attention vectors) for different languages seem to share a space when trained together.
+
+This document presents the first results with three different systems: an SMT engine, and bilingual and a multilingual NMT system. Systems are trained with the generic corpora described in document XXX and evaluated on both in-domain and out-of-domain data. Section~\ref{s:eval} introduces the automatic metrics we use to evaluate the MT engines. Next, Sections~\ref{s:smt} and \ref{s:nmt} describe the SMT and NMT engines respectively, and shows their results. Finally, we depict the next steps in Section~\ref{s:conclusions}.
+
+
+\section{Automatic Evaluation Metrics}
+\label{s:eval}
+
+Manual evaluation is the most reliable way to quantify the quality of a translation but it is also a very costly way (both in time and money). For a fast and objective evaluation during the system development one needs to make use of automatic metrics. Automatic metrics are costless, objective and reusable but they cannot capture all the aspects that a human evaluator takes into account. In order to somehow overcome this limitation, we do not use a single metric such as the standard BLEU but an heterogeneous set.
+
+The {\tt Asiya} evaluation package~\cite{PBML_Asiya:2010, Gonzalez:2012} includes more than 500 metrics and their variants at lexical, syntactic and semantic levels. Syntactic and semantic metrics need linguistic processors to annotate the translations and are not available to all the languages, but a large set of lexical metrics can always be used. In the following, we select a subset of lexical metrics to be applied to English, French, German and Spanish:
+
+\paragraph{Lexical metrics} 
+\begin{itemize}
+ \item PER~\cite{PER}, TER~\cite{TER}, WER~\cite{WER}: Based on edit distances
+ \item BLEU~\cite{papineni2002}, NIST~\cite{NISTmetric}, ROUGE~\cite{ROUGE}: Based on $n$-gram matching (lexical precision: BLEU, NIST; and lexical recall: ROUGE)
+ \item GTM~\cite{GTM}, METEOR~\cite{METEOR}: Based on the F-measure
+ \item ULC~\cite{ULC}: $U$niform $L$inear $C$ombination. When applied to lexical metrics it includes WER, PER, TER, BLEU, NIST, 
+ ROUGE-S*, GTM-2, METEOR-p. 
+\end{itemize}
+
+
+\section{Statistical Machine Translation Systems}
+\label{s:smt}
+
+In our experiments, we build a state-of-the-art phrase-based SMT system based on {\tt Moses}~\cite{moses:2007} trained both on a large general domain corpus and on a smaller in-domain one. Translators are trained for the Es--En, De--En and Fr--En language pairs and pivot translation is not used at this point. 
+
+The development of the system has been done using standard freely available software. 
+Word alignment is done with {\tt GIZA++}~\cite{giza} and both phrase extraction and decoding are done with the {\tt Moses} package. The optimisation of the weights of the model is trained with  Minimum Error Rate Training (MERT) \cite{och2003} against the BLEU evaluation metric.  Our model considers the standard features: language model, direct and inverse phrase probabilities, direct and inverse lexical probabilities, phrase and word penalties, and lexicalised reordering.
+
+A 5-gram language model is estimated using interpolated Kneser-Ney discounting with {\tt SRILM}~\cite{srilm}. Since we have monolingual corpora of four main topics (Wikipedia, Politics, Medicine and Psychology), we build the corresponding language models and compile a general one by interpolation of the previous four and tuning the weights on the PubPsych development set.
+
+\subsection{}
+\label{ss:}
+
+
+\section{Neural Machine Translation Systems}
+\label{s:nmt}
+
+
+
+
+\begin{table}[t]
+\footnotesize
+
+\flushleft{\bf Generic\\ \smallskip}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+         & WER   &  PER  & TER   &  BLEU & NIST & GTM-2 & METEOR-pa & ROUGE-S* & ULC \\
+\midrule
+SMTout	 & 61.58 & 39.99 & 56.55 & 24.67 & 7.14 & 27.28 & 30.82 & 33.65 & 68.30 \\  
+SMTin	 & 70.99 & 48.78 & 66.66 & 15.25 & 5.52 & 21.98 & 24.07 & 22.80 & 45.69 \\  
+% newstest2013.tc.de.PPtraddevPP.en	 & 70.99 & 48.78 & 66.66 & 15.25 & 5.52 & 21.98 & 24.07 & 22.8 & 45.69 \\  
+NMT	 & 67.56 & 47.12 & 63.71 & 21.17 & 6.16 & 25.23 & 27.62 & 28.91 & 56.6 \\  
+NMTunk  \\
+NMTdfki \\
+NMTmulti \\
+\bottomrule
+\end{tabular}
+
+\flushleft{\bf Abstracts\\ \smallskip}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+         & WER   &  PER  & TER   &  BLEU & NIST & GTM-2 & METEOR-pa & ROUGE-S* & ULC \\
+\midrule
+
+SMTout	 & 85.87 & 59.36 & 82.24 & 12.82 & 4.33 & 17.65 & 18.55 & 17.11 & 57.45 \\  
+SMTdevin & 87.48 & 58.36 & 83.78 & 13.16 & 4.30 & 17.54 & 18.90 & 17.34 & 57.71 \\  
+SMTin	 & 84.93 & 55.56 & 80.98 & 15.71 & 4.80 & 19.12 & 20.54 & 20.61 & 66.34 \\  
+NMT	 & 93.05 & 62.85 & 90.40 & 10.19 & 3.51 & 15.56 & 15.58 & 13.59 & 45.14 \\  
+NMTunk  \\
+NMTdfki \\
+NMTmulti \\
+\bottomrule
+\end{tabular}
+
+
+\flushleft{\bf Titles\\ \smallskip}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+         & WER   &  PER  & TER   &  BLEU & NIST & GTM-2 & METEOR-pa & ROUGE-S* & ULC \\
+\midrule
+SMTout   & 62.31 & 47.26 & 58.90 & 23.79 & 5.97 & 33.49 & 26.29 & 33.99 & 78.14 \\  
+SMTdevin & 60.88 & 45.94 & 57.75 & 24.96 & 6.04 & 33.99 & 26.96 & 34.80 & 79.56 \\  
+SMTin	 & 54.87 & 38.23 & 51.23 & 33.18 & 7.13 & 39.50 & 32.24 & 44.86 & 92.25 \\  
+NMT      & 238.8 & 219.68 & 237.07 & 5.44 & 1.48 & 13.43 & 13.03 & 20.02 & 19.54 \\  
+NMTunk  \\
+NMTdfki \\
+NMTmulti \\
+\bottomrule
+\end{tabular}
+
+ \caption{De2En.}
+ \label{tab:DeEn}
+\end{table}
+
+
+
+
+\section{Conclusions}
+\label{s:conclusions}
+
+
+%
+% ---- Bibliography ----
+%
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{plain}
+\bibliography{genericMT}
+
+
+\end{document}
