@@ -32,7 +32,7 @@
 \Huge Corpora for the \\ Machine Translation Engines \\ 
 }
 \author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^1$ \& Juliane Stiller$^2$  \medskip \\ \Large $^1$Universit\"at des Saarlandes, $^2$Humboldt-Universit\"at zu Berlin}
-\date{\vspace*{2cm} -- v2.0 --\\January 2017}
+\date{\vspace*{2cm} -- v2.1 --\\January 2017}
 
 %\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
 %\date{\vspace*{2cm} -- v1.0 --\\December 2016}
@@ -59,38 +59,37 @@ This document describes the corpora used for training and evaluating the baselin
 \section{Introduction}
 \label{s:intro}
 
-The CLuBS project uses crosslingual information retrieval (CLIR) techniques to search documents in a psychology database, PubPsych\footnote{\url{https://www.pubpsych.eu}}. These crosslingual techniques need machine translation (MT) engines in order to translate the documents. Along the project, we will develop several data-based machine translation systems and study their performance as translation engines but also its effect within the retrieval system. This document describes the first selection of corpora used for training and evaluating the systems.
+The CLuBS project uses crosslingual information retrieval (CLIR) techniques to search documents in a psychology database, PubPsych\footnote{\url{https://www.pubpsych.eu}}. These crosslingual techniques need machine translation (MT) engines in order to translate the documents. In the project, we will develop several data-based machine translation systems and study their performance as translation engines, but also their effect within the retrieval system. This document describes the first selection of corpora used for training and evaluating the systems.
 
-Since data-based MT relies on the existence of large amount of parallel corpora, we have gathered parallel and monolingual corpora not only on psychology but also on several other domains, some of them are close in topic such as 
-medicine but some of them such as politics are farther. Out-of-domain corpora are easier and cheaper to get and help to improve the quality of the translators, especially when data is scarce. In our case, translation between De--En--Es--Fr in the domain of psychology, we can find huge amounts of data both in-domain and out-of-domain for some of the language pairs (e.g. En--De). For some others, only out-of domain data is available (e.g. En--Fr). 
+Since data-based MT relies on the existence of large amount of parallel corpora, we have gathered parallel and monolingual corpora not only on psychology, but also on several other domains, some rather close in topic, such as medicine, others, such as politics, farther away. Out-of-domain corpora are easier and cheaper to get and help to improve the quality of the translators, especially when data is scarce. In our case, which is translation between De--En--Es--Fr in the domain of psychology, we can find huge amounts of data both in-domain and out-of-domain for some of the language pairs (e.g. En--De). For some other pairs only out-of domain data is available (e.g. En--Fr). 
 % Finally, some language pairs do not have parallel data at all (De--Es).
 
-In the following sections, we describe the extraction of the monolingual and parallel corpus from the PubPsych database (Section~\ref{s:pub}), and the monolingual and parallel out-of-domain corpus gathered from several sources (Section~\ref{s:gen}). Section~\ref{s:lex} presents a multilingual in-domain lexicon extracted automatically from Wikipedia and the standard thesauri used for psychology. Section~\ref{s:evaluation} presents the extraction of the evaluation corpus for the intrinsic evaluation of the machine translation. Finally, we sketch the next steps with regards to the corpus acquisition in Section~\ref{s:conclusions}.
+In the following sections, we describe the extraction of the monolingual and parallel corpus from the PubPsych database (Section~\ref{s:pub}), and the monolingual and parallel out-of-domain corpus gathered from several sources (Section~\ref{s:gen}). Section~\ref{s:lex} presents a multilingual in-domain lexicon extracted automatically from Wikipedia and some standard thesauri used for psychology. Section~\ref{s:evaluation} presents the extraction of the evaluation corpus for the intrinsic evaluation of the machine translation. Finally, we sketch the next steps with regards to the corpus acquisition in Section~\ref{s:conclusions}.
 
 \section{PubPsych Corpora}
 \label{s:pub}
 
-At the time of writing this report\footnote{1st December, 2016.}, the PubPsych database consists of 958.726 records. This data has been exported from the database in xml format. From all the metadata available, we use titles and abstracts for developing the translation engines. Not all the records have a title and/or an abstract and, in case they do, they are not available for all the languages in parallel. Tables~\ref{tab:recordsMono} and \ref{tab:recordsMulti} show the global figures of the database. English is the most populated language followed by German. Spanish and French have a similar amount of documents which is an order of magnitude smaller than English. However, although almost all the documents in French have the title also in English or Spanish, the abstract is seldom parallel. In the case of Spanish, half of the articles have the abstract both in Spanish and English. That makes French a language with almost no resources to train an in-domain MT system. For English--German and English--Spanish we can build in-domain parallel corpora, for English--French and pairs not involving English, there is not enough data.
+At the time of writing this report\footnote{1st December, 2016.}, the PubPsych database consists of 958.726 records. This data has been exported from the database in XML format. From all the metadata available, we use titles and abstracts for developing the translation engines. Not all the records have a title and/or an abstract and, in case they do, they are not available for all the languages in parallel. Tables~\ref{tab:recordsMono} and \ref{tab:recordsMulti} show the global figures of the database. English is the most populated language followed by German. Spanish and French have a similar amount of documents which is an order of magnitude smaller than English. However, although almost all the documents in French have the title also in English or Spanish, the abstract is seldom parallel. In the case of Spanish, half of the articles have the abstract both in Spanish and English. That makes French a language with almost no resources to train an in-domain MT system. For English--German and English--Spanish we can build in-domain parallel corpora, for English--French and pairs not involving English, there is not enough data.
 
 
 \subsection{Parallel Corpora Extraction}
 \label{ss:pubPar}
 
-We select the records with titles or abstracts in more than one language to extract two parallel corpus for each language pair with a significant representation: one containing titles and one with sentences of the abstracts. In both cases, some processing of the data is needed. The code used for this processing is available in the project's Github\footnote{\url{https://github.com/cristinae/CLUBS}}.
+We select the records with titles or abstracts in more than one language to extract two parallel corpus for each language pair with a significant representation: one containing titles and one with sentences of the abstracts. In both cases, some processing of the data is needed. The code used for this processing is available in the project's GitHub repository\footnote{\url{https://github.com/clubs-project/corpora-extraction-scripts}}.
 
 \paragraph{Extraction of titles and subtitles.}
-Records sometimes have not only a title but also a subtitle as a separate field. For building the parallel corpus, one has to align these fields between the languages L1 and L2 because the information encoded in only a title in one language may be split in title and subtitle in the other language. In general, one can consider four different cases:
+Records sometimes not only have a title but also a subtitle in a separate field. For building the parallel corpus one has to align these fields between the languages L1 and L2, because the title information in one language may be split in separate title and subtitle in another language. In general, one can consider four different cases:
 \begin{enumerate}[(i)]
 \itemsep0em 
  \item Only the title is available for L1 and L2
- \item L1 has title and subtitle, L2 has only title
- \item L1 has only title, L2 has title and subtitle
+ \item L1 has title and subtitle, L2 only has title
+ \item L1 only has title, L2 has title and subtitle
  \item Both L1 and L2 have title and subtitle
 \end{enumerate}
 
-In order to extract the appropriate pairs, we implement a heuristic based on the expected ratio of the length of sentences (length factor) between the two languages. We assume that the length factor follows a normal distribution and estimate its mean and standard deviation in out-of-domain parallel corpora\footnote{See corpora in Section~\ref{ss:genWeb}.}. Then, for a given parallel record, we generate all the possible combinations between the available titles and subtitles and extract the pair with the closest length factor to the expected mean of the language pair.
+In order to extract the appropriate pairs, we implement a heuristic based on the expected ratio of the length of sentences (length factor) between the two languages. We assume that the length factor follows a normal distribution and estimate its mean and standard deviation in out-of-domain parallel corpora\footnote{See corpora in Section~\ref{ss:genWeb}.}. Then, for a given parallel record, we generate all possible combinations between the available titles and subtitles and extract the pair with the closest length factor to the expected mean of the language pair.
 
-We notice that all the cases where the title is split with a subtitle are in German, and the division can be either in the title in the English side or in the German one. Besides, there are no records where both L1 and L2 have title and subtitle. 
+We notice that all the cases where the title information is split into title and subtitle in PubPsych are from the Psyndex source database. The division can either be in the title of the English side or in the German one. Besides, there are no records where both L1 and L2 have title and subtitle.
 
 
 \begin{table}[t]
@@ -120,7 +119,7 @@ We notice that all the cases where the title is split with a subtitle are in Ger
   Abstracts & 47.218 & 16.934 &    189 & 0 &  0 & 105  & 105 & 0 \\
     \bottomrule
   \end{tabular}
- \caption{Multilinguality in the PubPsych database. Number of records with parallel titles or abstracts. There is no record with either the title or the abstract in the four languages.}
+ \caption{Multilinguality in the PubPsych database. Number of records with parallel titles or abstracts. There is no record with either the title or the abstract in all four languages.}
  \label{tab:recordsMulti}
 \end{table}
 
@@ -128,7 +127,7 @@ We notice that all the cases where the title is split with a subtitle are in Ger
 
 \paragraph{Extraction of parallel sentences in abstracts.}
 
-Parallel abstracts have to be aligned at sentence level in order to build the MT corpus. To do this, sentences are first split with an in-house sentence splitter and then passed to an aligner based on lengths and positions within the document. We use an available python implementation of the Gale-Church algorithm%
+Parallel abstracts have to be aligned at sentence level in order to build the MT corpus. To do this, sentences are first split with an in-house sentence splitter and then passed to an aligner based on lengths and positions within the document. We use an available Python implementation of the Gale-Church algorithm%
 \footnote{\url{https://github.com/alvations/NTU-MC/blob/master/ntumc/toolkit/gale_church.py}} \cite{galeChurch:1993} for this. After the alignment, only sentences with more than 5 words are used for the parallel corpus of abstracts; the restriction does not apply to titles. In both cases, sentences completely uppercased are converted into lowercase strings.
 
 
@@ -145,13 +144,13 @@ For building the monolingual corpora, we consider all the records in the databas
 
 % The full corpus is divided into three parts: training, development and test. 
 
-From the full corpus, we have first put aside 800 records that will be translated manually to build a high-quality test set. These records are selected from the subset of documents with only an English abstract (without any translation) and then sampled randomly according to the weight of its data source (e.g. PSYNDEX, ISOC, etc.). The remaining MT corpus consists of 957.926 documents.
+From the full corpus, we first put aside 800 records that will be translated manually to build a high-quality test set. These records are selected from the subset of documents with an English abstract only (i.e. without any translation) and then sampled randomly according to the weight of its data source (e.g. PSYNDEX, ISOC-Psicología, etc.). The remaining MT corpus consists of 957.926 documents.
 
-We do a partition with 1500 documents on the MT corpus to build the development and test sets. For this partition, we give preference to
+We create a partition with 1500 documents on the MT corpus to build the development and test sets. For this partition, we give preference to
 % we gather 1500 documents per language (English, French, German and Spanish) preferring 
-records with multilingual abstracts and, again, we sample randomly the MT corpus according to the weight of its data source. The division between development and test is done differently for every language pair with the purpose of having a similar amount of parallel sentences. We use 1500 parallel sentences from the abstracts for development and the rest for testing. All the titles are used to build a test set and no development set is considered as a first approximation. In the case of French, we can only build one set due to the small amount of parallel data. The remaining 951.926 documents with title and/or abstract are used for training.
+records with multilingual abstracts and again sample the MT corpus randomly according to the weight of its data source. The division between development and test is done differently for every language pair with the purpose of having a similar amount of parallel sentences. We use 1500 parallel sentences from the abstracts for development and the rest for testing. All the titles are used to build a test set and no development set is considered as a first approximation. In the case of French, we can only build one set due to the small amount of parallel data. The remaining 951.926 documents with title and/or abstract are used for training.
 
-Table~\ref{tab:setsParPubPshyc} shows the sizes for the in-domain parallel corpora obtained for each language pair after the division in training, development and test. Table~\ref{tab:setsMonoPubPshyc} shows the sizes of the in-domain monolingual corpora for the four languages involved; in this case, all the data are used for training.
+Table~\ref{tab:setsParPubPshyc} shows the sizes for the in-domain parallel corpora obtained for each language pair after the division in training, development and test. Table~\ref{tab:setsMonoPubPshyc} shows the sizes of the in-domain monolingual corpora for the four languages involved; in this case, all data is used for training.
 
 
 \begin{table}[t]
@@ -211,7 +210,7 @@ Titles    &  396.152 & 3.343.386 & 896.876 & 10.741.170 & 52.399 & 631.757 & 47.
 \subsection{Pre-Processing}
 \label{ss:pubPreprp}
 
-In order to use the previous corpora in natural language applications, text must be pre-processed. We follow here a three-step pre-processing standard in MT:
+In order to use the previous corpora in natural language applications, text must be pre-processed. We follow a three-step pre-processing standard in MT here:
 
 \begin{enumerate}
 \itemsep0em 
@@ -220,7 +219,7 @@ In order to use the previous corpora in natural language applications, text must
  \item Truecasing
 \end{enumerate}
 
-For text normalisation and text tokenisation we use Moses' scripts \cite{moses:2007}. The normaliser, however, has been adapted to deal with some peculiarities of the PubPsych corpus. For truecasing, we have trained statistical models using Wikipedia and Europarl V7 monolingual corpora (Section~\ref{s:gen}).
+For text normalisation and text tokenisation we use scripts from the Moses toolkit~\cite{moses:2007}. The normaliser, however, has been adapted to deal with some peculiarities of the PubPsych corpus. For truecasing, we have trained statistical models using Wikipedia and Europarl~V7 monolingual corpora (Section~\ref{s:gen}).
 
 
 
@@ -228,15 +227,15 @@ For text normalisation and text tokenisation we use Moses' scripts \cite{moses:2
 \section{Out-of-Domain Corpora}
 \label{s:gen}
 
-The data described in the previous section is not enough to train high-quality translators but it is important to enrich larger corpora with the language of psychology itself. In the following, we describe several open parallel corpus that will used within the project to train general and specialised translators.
+The data described in the previous section is not enough to train high-quality translators, but it is important to enrich larger corpora with the language of psychology itself. In the following, we describe several open parallel corpus that will be used within the project to train general and specialised translators.
 % The size of these corpus can be seen in Tables XXX.
 
 \subsection{Medicine, Biological and Health domains}
 
-First, we describe two corpora that can be considered to be close in domain to psychology: the EMEA~\cite{tiedemann:2009} and the Scielo corpus.
+First, we describe two corpora that can be considered to be rather close in domain to psychology: the EMEA~\cite{tiedemann:2009} and the Scielo corpus.
 
 \paragraph{EMEA Corpus.}
-This is a parallel corpus made out of PDF documents from the European MEdicines Agency\footnote{\url{http://www.emea.europa.eu}}. Files were automatically converted from PDF to plain text, sentence-aligned and made publicly available within the Opus Corpus~\cite{tiedemann:2009}. The corpus is available in 22 languages including English, French, German and Spanish. At this moment, we only consider the language pairs involving English to be compatible with the other corpora, but this corpus could be used later in the project for all the language pairs.
+This is a parallel corpus made out of PDF documents from the European MEdicines Agency\footnote{\url{http://www.emea.europa.eu}}. Files were automatically converted from PDF to plain text, sentence-aligned and made publicly available within the Opus Corpus~\cite{tiedemann:2009}. The corpus is available in 22 languages including English, French, German and Spanish. At the moment, we only consider the language pairs involving English to be compatible with the other corpora, but this corpus could be used later in the project for all the language pairs.
 
 \paragraph{Scielo Corpus.}
 This is a parallel corpus made out of documents retrieved from the SCIentific Electronic Library Online\footnote{\url{http://www.scielo.org}}. The documents belong to the biological and health domains and can be composed of either a title, an abstract or both of them. The corpus was prepared by the organisers of the Biomedical Translation Task in the First Conference on Machine Translation\footnote{\url{http://www.statmt.org/wmt16/biomedical-translation-task.html}} (WMT16), who aligned the documents at sentence level with the GMA tool\footnote{\url{http://nlp.cs.nyu.edu/GMA}}. In this case, the corpus is available for the English--Spanish and English--French language pairs.
@@ -327,7 +326,7 @@ PubPsychTest   & 2.162 & 60.219 & 55.610 & 2.486 & 74.382 & 81.575 & 823 & 25.88
 
 
 
-Tables~\ref{tab:setsParGen} and \ref{tab:setsMonoGen} show a summary of the amount of data available for every language pair. English--French is the pair with more parallel data, more than 19 million parallel sentences, but all of them belong to out-of-domain data. EMEA and Scielo are the closest sources in this case to obtain in-domain vocabulary together with the addition of the thesauri used in psychology (Section~\ref{s:lex}). On the other side lies the English--German language pair. Here, we have less than 6 million parallel sentences but almost 250 thousand belong to PubPsych. Finally, there are almost 17 million parallel sentences for the English--Spanish pair, with less than 100 thousand belonging to psychology.
+Tables~\ref{tab:setsParGen} and \ref{tab:setsMonoGen} show a summary of the amount of data available for every language pair. English--French is the pair with most parallel data, more than 19 million parallel sentences, but all of them belong to out-of-domain data. EMEA and Scielo are the closest sources in this case to obtain in-domain vocabulary together with the addition of the thesauri used in psychology (Section~\ref{s:lex}). On the other side lies the English--German language pair. Here we have less than 6 million parallel sentences but almost 250 thousand belonging to PubPsych. Finally, there are almost 17 million parallel sentences for the English--Spanish pair, with less than 100 thousand belonging to psychology.
 
 %      117862     3252183 en-es/scielo.en-es.bio.tc.en
 %      117862     3382511 en-es/scielo.en-es.bio.tc.es
@@ -374,7 +373,7 @@ Tables~\ref{tab:setsParGen} and \ref{tab:setsMonoGen} show a summary of the amou
 \subsection{Development and Test Sets}
 \label{ss:genTests}
 
-For development and testing we consider four sets, two corresponding to what we have called general domain and two more to the medical domain. For the general domain we use \emph{news-test2012} and \emph{news-test2013}. These test sets are distributed by the organisation of the WMT workshops. The years selected for our experiments are the last ones to include English, French, German and Spanish simultaneously, so that the sets are aligned among the four languages. For the medical domain we use a subset of the EMEA corpus. In this case, the sets are only aligned inside a language pair.
+For development and testing we consider four sets, two corresponding to what we have called general domain and two more from the medical domain. For the general domain we use \emph{news-test2012} and \emph{news-test2013}. These test sets are distributed by the organisation of the WMT workshops. The years selected for our experiments are the last ones to include English, French, German and Spanish simultaneously, so that the sets are aligned among the four languages. For the medical domain we use a subset of the EMEA corpus. In this case, the sets are only aligned inside a language pair.
 
 Table~\ref{tab:testsParGen} shows the figures for these dev/test sets and the comparison with the test sets gathered automatically from the PubPsych data. 
 The upcoming human translated test set will allow the evaluation of all the language pairs, also for in-domain translations.
@@ -415,13 +414,13 @@ Using the intersection of in-domain articles in the four languages we obtain a h
 \bigskip
 \bigskip
  
-On the other hand, several thesauri are used to tag content in the PubPsych database. The especific thesaurus (Psyndex, APA Thesaurus of Psychological Index Terms, MeSH Medical Subject Headings, TermSciences, etc.) depends on the original source of the document. At least the APA and the MeSH thesauri are multilingual and can be used, within the translation task, to enrich the in-domain vocabulary.
+On the other hand, several thesauri are used to tag content in the PubPsych database. The specific thesaurus (APA Thesaurus of Psychological Index Terms (possibly in translation), MeSH Medical Subject Headings, TermSciences, etc.) depends on the original source database of the document. At least the APA and MeSH thesauri are multilingual and can be used, within the translation task, to enrich the in-domain vocabulary.
 
 \section{Corpora for Evaluation}
 \label{s:evaluation}
-To intrinsically evaluate the machine translation with scores like BLEU ~\cite{papineni_bleu:_2002}, a corpus of 800 (metadata)records from Pubpsych aligned in the four languages English, Spanish, German and French is provided. For that, 800 records with only one English abstract were extracted from the full coprus. They will be translated into the respective other three languages in the near future. 
+To intrinsically evaluate the machine translation with scores like BLEU ~\cite{papineni_bleu:_2002}, a corpus of 800 (metadata)records from PubPsych aligned in the four languages English, Spanish, German and French is provided. For that, 800 records with only one English abstract were extracted from the full corpus. They will be translated into the respective other three languages in the near future.
 
-The corpus for evaluation was extracted from the full data file provided on Nov. 19, 2016, with a total of 958.726 records. From these, we extracted the ones with only one English abstract and no parallel translations resulting in a corpus of 448.764 records. From these records, we sampled 800 records randomly based on the weighting of the data source. Table \ref{tab:eval800} lists the properties per data source and the percentage and corresponding number of records for the evaluation corpus. 
+The corpus for evaluation was extracted from the full data file provided on Nov. 19, 2016, with a total of 958.726 records. From these, we extracted the ones with only one English abstract and no parallel translations resulting in a corpus of 448.764 records. From these records, we sampled 800 records randomly based on the weighting of the data source. Table \ref{tab:eval800} lists the properties per source database and the percentage and corresponding number of records in the evaluation corpus.
 
 \begin{small}
 \begin{table}
@@ -431,7 +430,7 @@ The corpus for evaluation was extracted from the full data file provided on Nov.
 Data source & \# of records & \# of recs with 1 EN abstract & \# for sample \\
 \midrule
 ERIC 		& 107.532 		& 104.648  & 187 (23\%) \\
-PSYINDEX    & 331.469        & 56.202 & 100 (13\% )   \\
+PSYNDEX    & 331.469        & 56.202 & 100 (13\% )   \\
 PASCAL      & 206.670        & 132.439 & 236 (30\%)           \\
 NARCIS      & 29.847         & 13.734  & 24 (3\% )          \\
 ISOC        & 50.275         & 705  & 1 (0\%)         \\
@@ -479,7 +478,7 @@ spa          & 4            & 0            & 0         & 4         & 4         &
 \section{Conclusions}
 \label{s:conclusions}
 
-We have gathered a first collection of corpora to build the baseline MT systems of the project. The performance of the baseline systems will help us to detect new necessities on corpora in order to improve the systems. Possible weak points of the current selection include:
+We have gathered a first collection of corpora to build the baseline MT systems for the project. The performance of the baseline systems will help us to detect new necessities on corpora in order to improve the systems. Possible weak points of the current selection include:
 
 \begin{enumerate}[(i)]
 \itemsep0em 
