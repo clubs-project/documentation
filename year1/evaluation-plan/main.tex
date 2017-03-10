@@ -35,7 +35,7 @@
 \Huge Evaluation plan for CLUBS project \\ 
 }
 \author{\vspace*{1cm}\\ \LARGE Juliane Stiller \& Vivien Petras \medskip \\ \Large Humboldt-Universit\"at zu Berlin}
-\date{\vspace*{2cm} -- v1.0 --\\January 2017}
+\date{\vspace*{2cm} -- v1.1 --\\March 2017}
 
 
 \begin{document}
@@ -63,7 +63,7 @@ The goal of the project is to determine which of the following approaches is bes
 \begin{itemize}
 \item Record translation
 \item Query translation
-\item Mapping of controlled vocabularies
+\item Mapping of controlled vocabularies in different languages
 \item English as a pivot language (for record and query translation)
 \item Merged approaches from the ones above
 \end{itemize}
@@ -71,7 +71,7 @@ The goal of the project is to determine which of the following approaches is bes
 \subsection{Intrinsic and Extrinsic Evaluation}
 We distinguish between intrinsic and extrinsic evaluation and follow the concepts of Dorr et al. \cite{dorr_machine_2011}. For the intrinsic evaluation, we test the quality of the automatic translation or mapping approaches themselves. In the extrinsic evaluation, we determine the impact of the approach on retrieval or other tasks related to the access of documents.
 
-Merging the results of these two types of evaluation will provide an answer to the question, which CLIR approach is the best for metadata portals. Figure \ref{fig1} shows the different approaches for cross-lingual retrieval for metadata records, which will be evaluated. 
+Merging the results of these two types of evaluation will provide an answer to the question, which CLIR approach is the best for metadata portals. Figure \ref{fig1} shows the different approaches for cross-lingual retrieval of metadata records, which will be evaluated. 
 \begin{figure}[h]
 	\centering
   \includegraphics[width=0.8\textwidth]{./img/overview_evaluation.png}
@@ -234,7 +234,7 @@ In a second step, we compare the merged results lists of each of the four aligne
 
 \underline{Example:}
 \newline
-Table \ref{tab:exquery} shows an example query “youth unemployment” aligned in the relevant languages. The result sets retrieved with no record translation can be compared to the result sets for each query when the records are translated (comparing the values in each column = 4 comparisons). Additonally, each result set retrieved with record translation can be compared to the merged list retrieved with no record trasnaltion (4 comparisons).
+Table \ref{tab:exquery} shows an example query “youth unemployment” aligned in the relevant languages. The result sets retrieved with no record translation can be compared to the result sets for each query when the records are translated (comparing the values in each column = 4 comparisons). Additonally, each result set retrieved with record translation can be compared to the merged list retrieved with no record translation (4 comparisons).
 \begin{table}[h]
 \resizebox{\textwidth}{!}{%
  \centering\textbf{}
@@ -259,7 +259,7 @@ This evaluation is more focused on the user’s perception of relevance of the r
 \section{Query Translation}
 \subsection{Intrinsic Evaluation with Automatic Measurement}
 
-Here, we use automatic measures, such as BLEU, to determine the quality of translation. Humboldt provides an aligned corpus for this with \textbf{250} queries translated in  English, French, German and Spanish. 
+Here, we use automatic measures, such as BLEU, to determine the quality of translation. Humboldt and ZPID provides an aligned corpus for this with \textbf{250} queries translated in  English, French, German and Spanish. 
 
 \subsection{Intrinsic Evaluation with Human Judgement}
 This could be a binary judgement: correct or incorrect.
