@@ -1,0 +1,153 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[top=90pt,bottom=60pt,left=80pt,right=58pt]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+
+%opening
+\title{PubPshyc Documents \\ --Translation Guidelines--}
+\author{}
+
+% Example boxes
+\newcommand{\exTit}[1]{\begin{tcolorbox}[enhanced,attach boxed title to top center={yshift=-3mm,yshifttext=-1mm},title=Examples,coltitle=black,colbacktitle=white]{#1}\end{tcolorbox}}
+\newcommand{\ex}[1]{\begin{tcolorbox}[]{#1}\end{tcolorbox}}
+
+% FAQs
+\setlist[description]{font=\normalfont\itshape}
+\newenvironment{faq}{\begin{description}[style=nextline]}{\end{description}}
+
+% Comments
+\newcommand{\cris}[1]{{\color{red}{#1}}}
+
+\begin{document}
+
+\maketitle
+
+% \begin{abstract}
+% 
+% \end{abstract}
+
+\section{Query Translation}
+\label{s:queries}
+A query in PubPshyc is a string of words with optional search directives (AND, OR, NOT) and specific fields (TI, LA...). 
+The queries include (1) well-formed sentences, (2) ungrammatical sequences of words, and (3) a combination of any of them with other fields:
+
+
+\medskip
+\exTit{(E1) Equity, excellence, and school reform: Why is finding common ground so hard? \\
+(E2) cognitive behavioral therapy physical trauma children \\
+(E3) process-dissociation models DB="PSYNDEX" LA="English" \\
+(E4) Handling pain OR stress AND (LA=French OR LA=German) AND PY$>=2003$}
+
+% \bigskip
+% In any of the cases try to preserve the original meaning when translating and to introduce the mimimun number of editing operations (word insertion, deletion and swap) possible while keeping fluency in the target language in case (1). 
+
+
+\subsection{Specific Guidelines}
+\label{ss:q_guidelines}
+
+
+
+\begin{enumerate}
+
+ \item Translate all free text (that without a field label) and the text after the AB (abstract), CM (method type), IT (additional descriptor), KP (key phrase), SW (all keywords) and TI (title) fields. Ignore the other fields.
+ \ex{{\bf process-dissociation models} DB="PSYNDEX" LA="English" \\
+     \cris{add trad: process-dissociation models} DB="PSYNDEX" LA="English"}
+
+ \item Translate text before and after search directives and keep the search directives as they are.
+ \ex{{\bf Handling pain} OR {\bf stress} AND (LA=French OR LA=German) AND PY$>=2003$ \\
+  \cris{add trad: Handling pain} OR \cris{add trad: stress} AND  (LA=French OR LA=German) AND PY$>=2003$}
+  
+ \item Translate terminology (E2) using the available resources with the following priority: 1) built-in thesauri, 2) your previous translation memory, 3) your new own translation. Do not introduce new words unless the same concept needs a different number of word in the two lnguages.
+
+ \item When translating grammatical sentences (E1) try to preserve the original meaning and to introduce the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
+
+\end{enumerate}
+
+
+
+\paragraph{FAQ}
+
+\begin{faq}
+
+  \item[What should I do if there is a typo in the source query?]
+    Translate it as if the typo does not exist \cris{and write a comment in the comment box}.
+
+  \item[What should I do if the search directive is incorrect?]
+    Translate the surrounding text and leave the connective as it is.
+    
+  \item[Which fields should I ignore?]
+  DT (document type), MT (media type), AGE (age group), EV (evidence level), PLOC (origin of population), AU (person(s))
+  ISBN, PU (publisher), ISSN, PY (publication year), COU (country of origin), SEG (database segment), CS (author affiliation), JT (journal title), SH (subject classification), CT (controlled term), DB (data source), LA (publication language)
+  
+  \item[What should I do if there is text following a field I don't recognise?]
+    \cris{Ignore that text?}
+    
+  \item[Should I translate named entities (names of persons, organizations, locations, expressions of times, quantities, monetary values)?]
+    \cris{No idea...}
+    
+\end{faq}
+
+
+
+\section{Abstract Translation}
+\label{s:abstracts}
+
+
+The abstract is the summary of an article available in the PubPshyc database and it is composed by its title and the synopsis of the paper. 
+
+\medskip
+\exTit{
+(E1) {\bf Testing Theories of Recognition Memory by Predicting Performance Across Paradigms} \par
+\medskip
+Signal-detection theory (SDT) accounts of recognition judgments depend on the assumption that recognition decisions result from a single familiarity-based process. However, fits of a hybrid SDT model, called dual-process theory (DPT), have provided evidence for the existence of a second, recollection-based process. In 2 experiments, the authors tested predictions of DPT and SDT by comparing the invariance of parameter estimates between yes/no (Y/N) and 2-altemative forced-choice (2AFC) testing paradigms. Both experiments showed DPT recollection estimates in Y/N to be poorly correlated with recollection estimates in 2AFC. In Experiment 2, SDT predictions explained more variance than DPT predictions. The authors evaluate and discuss the extent to which each model possesses theoretical validity versus computational flexibility in curve fitting.
+
+\bigskip
+(E2) {\bf What Determines the Speed of Lexical Access: Homophone or Specific-Word Frequency? A Reply to Jescheniak et al. (2003)} \par
+\medskip
+A. Caramazza, A. Costa, M. Miozzo, and Y. Bi (2001) reported a series of experiments showing that naming latencies for homophones are determined by specific-word frequency (e.g., frequency of nun) and not homophone frequency (frequency of nun + none). J. D. Jescheniak, A. S. Meyer, and W. J. M. Levelt (2003) have challenged these studies on a variety of grounds. Here we argue that these criticisms are not well founded and try to clarify the theoretical issues that can be meaningfully addressed by considering the effects of frequency on homophone production. We conclude that the evidence from homophone production cannot be considered to provide support to 2-layer theories of the lexical system.
+}
+
+
+\subsection{Specific Guidelines}
+\label{ss:a_guidelines}
+
+\begin{enumerate}
+
+ \item In general, try to preserve the original meaning and to introduce the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
+ 
+ \item Whenever it is possible, use the available resources with the following priority: 1) built-in thesauri, 2) your previous translation memory, 3) your new own translation. 
+
+ \item Translate titles with the following capitalisation rules: capitalize all nouns, pronouns, verbs, adjectives, and adverbs; lowercase articles, prepositions and coordinating conjunctions.
+  \ex{{\bf Testing Theories of Recognition Memory by Predicting Performance Across Paradigms}  \\
+     \cris{add trad: {\bf Testing Theories of Recognition Memory by Predicting Performance across Paradigms} }}
+
+ 
+ \item Do not split titles in several sentences.
+ 
+ \item Translate abstracts sentence by sentence without any further splitting/join.
+  
+\end{enumerate}
+
+
+
+\paragraph{FAQ}
+
+\begin{faq}
+    
+  \item[Should I translate bibliographic references?]
+    No
+ 
+  \item[Should I translate acronyms?]
+    \cris{No idea...}
+
+  \item[Should I translate named entities (names of persons, organizations, locations, expressions of times, quantities, monetary values)?]
+    \cris{No idea...}
+    
+\end{faq}
+
+
+
+
+\end{document}
