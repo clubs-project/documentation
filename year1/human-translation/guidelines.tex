@@ -52,14 +52,20 @@ The queries include (1) well-formed sentences, (2) ungrammatical sequences of wo
 \begin{enumerate}
 
  \item Translate all free text (that without a field label) and the text after the AB (abstract), CM (method type), IT (additional descriptor), KP (key phrase), SW (all keywords) and TI (title) fields. Ignore the other fields.
- \ex{{\bf Original query: process-dissociation models} DB="PSYNDEX" LA="English" \\
-     German translation: Prozessdissoziation Modelle DB="PSYNDEX" LA="English"}
+ \ex{Original query: {\bf process-dissociation models} DB="PSYNDEX" LA="English" \\
+     German translation: {\bf Prozessdissoziation Modelle} DB="PSYNDEX" LA="English"}
 
  \item Translate text before and after search directives and keep the search directives as they are.
- \ex{{\bf Original query: Handling pain} OR {\bf stress} AND (LA=French OR LA=German) AND PY$>=2003$ \\
-  German translation: Umgang Schmerz OR  Stress AND  (LA=French OR LA=German) AND PY$>=2003$}
+ \ex{ Original query: {\bf Handling pain} OR {\bf stress} AND (LA=French OR LA=German) AND PY$>=2003$ \\
+  German translation: {\bf Umgang Schmerz} OR  {\bf Stress} AND  (LA=French OR LA=German) AND PY$>=2003$}
   
- \item Translate terminology (E2) using the available resources with the following priority: 1) built-in thesauri, 2) your previous translation memory, 3) your new own translation. Do not introduce new words unless the same concept needs a different number of word in the two lnguages.
+ \item Translate terminology (E2) using the available resources with the following priority: 
+ \begin{enumerate}
+ \item built-in thesauri, 
+ \item your previous translation memory,
+ \item your new own translation. 
+ \end{enumerate}
+ Do not introduce new words unless the same concept needs a different number of word in the two lnguages.
 
  \item When translating grammatical sentences (E1) try to preserve the original meaning and to introduce the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
 
@@ -72,12 +78,12 @@ The queries include (1) well-formed sentences, (2) ungrammatical sequences of wo
 \begin{faq}
 
   \item[What should I do if there is a typo in the source query?]
-    Translate it as if the typo does not exist and write a comment in the comment box.
+    Translate it as if the typo does not exist, fix the typo in the source document and write a comment in the comment box.
 
   \item[What should I do if the search directive is incorrect?]
     Translate the surrounding text and leave the connective as it is.
     
-  \item[Which fields should I ignore?]
+  \item[Which fields and their values should I ignore and not translate?]
   DT (document type), MT (media type), AGE (age group), EV (evidence level), PLOC (origin of population), AU (person(s))
   ISBN, PU (publisher), ISSN, PY (publication year), COU (country of origin), SEG (database segment), CS (author affiliation), JT (journal title), SH (subject classification), CT (controlled term), DB (data source), LA (publication language)
   
@@ -85,7 +91,7 @@ The queries include (1) well-formed sentences, (2) ungrammatical sequences of wo
     \cris{Ignore that text?}
     
   \item[Should I translate named entities (names of persons, organizations, locations, expressions of times, quantities, monetary values)?]
-    Yes, translate them if possible. For example, the French \textit{Londres} should become \textit{London} in English, Spanish or French. Mots of the named entities are not going to be translated. Be careful with organization, non-English Institution might have an English translation, such as \textit{Leibniz-Zentrum f\"ur Psychologische Information und Dokumentation} in German would be \textit{Leibniz Institute for Psychology Information} in English. \cris{not sure which language to choose for a French or Spanish text}
+    Yes, translate them if applicable. For example, the French \textit{Londres} should become \textit{London} in English, Spanish or French. Mots of the named entities are not going to be translated. Be careful with organizations, non-English institutions might have an English translation, such as \textit{Leibniz-Zentrum f\"ur Psychologische Information und Dokumentation} in German would be \textit{Leibniz Institute for Psychology Information} in English. \cris{not sure which language to choose for a French or Spanish text}
     
 \end{faq}
 
@@ -117,11 +123,15 @@ A. Caramazza, A. Costa, M. Miozzo, and Y. Bi (2001) reported a series of experim
 
  \item In general, try to preserve the original meaning and to introduce the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
  
- \item Whenever it is possible, use the available resources with the following priority: 1) built-in thesauri, 2) your previous translation memory, 3) your new own translation. 
-
+ \item Whenever possible, use the available resources with the following priority: 
+  \begin{enumerate}
+ \item[1.] built-in thesauri, 
+ \item[2.] your previous translation memory,
+ \item[3.] your new own translation. 
+ \end{enumerate}
  \item Translate titles with the following capitalisation rules: capitalize all nouns, pronouns, verbs, adjectives, and adverbs; lowercase articles, prepositions and coordinating conjunctions.
-  \ex{{\bf Testing Theories of Recognition Memory by Predicting Performance Across Paradigms}  \\
-     \cris{add trad: {\bf Testing Theories of Recognition Memory by Predicting Performance across Paradigms} }}
+  \ex{original query: {\bf Behavioral Assessment and Interventions in Youth Sports}  \\
+     German query: {\bf Verhaltensbewertung und Interventionen im Jugendsport} }
 
  
  \item Do not split titles in several sentences.
@@ -135,17 +145,27 @@ A. Caramazza, A. Costa, M. Miozzo, and Y. Bi (2001) reported a series of experim
 \paragraph{FAQ}
 
 \begin{faq}
+
+\item[Title and abstract are written in Uppercase. Should the translation be uppercase, too?]
+No, please correct this and translate in normal case. \cris{we might not need this if we correct this beforehand.}
     
   \item[Should I translate bibliographic references?]
     No
  
   \item[Should I translate acronyms?]
-    \cris{No idea...}
+    Yes acronyms should be translated if applicable. For example, ADHD in English becomes ADHS in German. Another examples is the acronym for human immunodeficiency virus: in English and German, it is HIV, whereas in French and Spanish it is VIH. \cris{right?}
+    Abbreviations introduced by the authors of the abstract should not be translated, e.g. essential amino acids (EAAs) in English will be essentielle Aminos\"a?uren (EAAs) in English. 
 
   \item[Should I translate named entities (names of persons, organizations, locations, expressions of times, quantities, monetary values)?]
-    \cris{No idea...}
+    Yes, translate them if applicable. For example, the French \textit{Londres} should become \textit{London} in English, Spanish or French. Mots of the named entities are not going to be translated. Be careful with organizations, non-English institutions might have an English translation, such as \textit{Leibniz-Zentrum f\"ur Psychologische Information und Dokumentation} in German would be \textit{Leibniz Institute for Psychology Information} in English. \cris{not sure which language to choose for a French or Spanish text}
+  
+\item[How should numbers be handled?]
+ Please keep numbers as they are in the source. Numerals, like 4 or VII, should not be translated. If the numbers are spelled out, like four, they should be translated accordingly.
     
+\item[How should English compounds be handled?]
+Translate them as natural as possible without forcing a compound in the target language, e.g. \textit{brain-intact animal} in English will be \textit{Tier mit unversehrtem Gehirn} in German
 \end{faq}
+
 
 
 
