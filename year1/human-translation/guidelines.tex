@@ -30,7 +30,7 @@
 
 \section{Query Translation}
 \label{s:queries}
-A query in PubPsych is a string of words with optional boolean directives (AND, OR, NOT and round brackets) and specific fields (TI, LA...). 
+A query in PubPsych is a string of words with optional Boolean directives (AND, OR, NOT and round brackets) and specific fields (TI, LA...). 
 The queries include (1) well-formed sentences, (2) ungrammatical sequences of words, and (3) a combination of any of them with other fields:
 
 
@@ -51,23 +51,23 @@ The queries include (1) well-formed sentences, (2) ungrammatical sequences of wo
 
 \begin{enumerate}
 
- \item Translate all free text (thats text without a field label) and the text after the AB (abstract), CM (method type), IT (additional descriptor), KP (key phrase), SW (all keywords) and TI (title) fields. Ignore all other fields.
+ \item Translate all free text (that is text without a field label) and the text after the AB (abstract), CM (method type), IT (additional descriptor), KP (key phrase), SW (all keywords) and TI (title) fields. Ignore all other fields.
  \ex{Original query: {\bf process-dissociation models} DB="PSYNDEX" LA="English" \\
      German translation: {\bf Prozessdissoziation Modelle} DB="PSYNDEX" LA="English"}
 
- \item Translate text before and after boolean directives and keep the boolean directives as they are.
+ \item Translate text before and after Boolean directives and keep the Boolean directives as they are.
  \ex{ Original query: {\bf Handling pain} OR {\bf stress} AND (LA=French OR LA=German) AND PY$>=2003$ \\
   German translation: {\bf Umgang Schmerz} OR  {\bf Stress} AND  (LA=French OR LA=German) AND PY$>=2003$}
   
- \item Translate terminology (E2) using the available resources with the following priority: 
+ \item Translate technical and domain-specific terminology (cf. E2) using the available resources with the following priority: 
  \begin{enumerate}
- \item[1.]  built-in thesauri, 
+ \item[1.]  built-in thesaurus of the Virtaal software, 
  \item[2.]  your previous translation memory,
  \item[3.]  your new own translation. 
  \end{enumerate}
  Do not introduce additional words in your translation unless the same concept needs a different number of word in the two languages.
 
- \item When translating grammatical sentences (E1) try to preserve the original meaning and try to work with the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
+ \item When translating grammatical sentences (cf. E1) try to preserve the original meaning and try to work with the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
 
 \end{enumerate}
 
@@ -84,7 +84,7 @@ The queries include (1) well-formed sentences, (2) ungrammatical sequences of wo
     Translate it as if the typo does not exist and note the ID of the query on the appropriate paper form.
 
   \item[What should I do if there are truncations in the source query? How do I deal with wildcards?]
-    Translate the query normaly but keep the truncated word untranslated. Note the ID of the query on the appropriate paper form.
+    Translate the query normally but keep the truncated word untranslated. Note the ID of the query on the appropriate paper form.
 
 
 %   \item[What should I do if the search directive is incorrect?]
@@ -108,7 +108,7 @@ Please keep numbers as they are in the source. Numerals, like 4 or VII, should n
 
 
 
-\section{Abstract Translation}
+\section{Title and Abstract Translation}
 \label{s:abstracts}
 
 
