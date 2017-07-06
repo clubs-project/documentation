@@ -8,6 +8,7 @@
 \usepackage{url}
 \usepackage{enumerate}
 \usepackage[table]{xcolor}
+\usepackage{multirow}
 
 \pagestyle{headings}
 
@@ -35,7 +36,7 @@
 \Huge Evaluation plan for CLUBS project \\ 
 }
 \author{\vspace*{1cm}\\ \LARGE Juliane Stiller \& Vivien Petras \medskip \\ \Large Humboldt-Universit\"at zu Berlin}
-\date{\vspace*{2cm} -- v1.1 --\\March 2017}
+\date{\vspace*{2cm} -- v2.0 --\\July 2017}
 
 
 \begin{document}
@@ -71,15 +72,15 @@ The goal of the project is to determine which of the following approaches is bes
 \subsection{Intrinsic and Extrinsic Evaluation}
 We distinguish between intrinsic and extrinsic evaluation and follow the concepts of Dorr et al. \cite{dorr_machine_2011}. For the intrinsic evaluation, we test the quality of the automatic translation or mapping approaches themselves. In the extrinsic evaluation, we determine the impact of the approach on retrieval or other tasks related to the access of documents.
 
-Merging the results of these two types of evaluation will provide an answer to the question, which CLIR approach is the best for metadata portals. Figure \ref{fig1} shows evaluations for the different approaches which enable cross-lingual retrieval of metadata records.  
+Merging the results of these two types of evaluation will provide an answer to the question, which CLIR solution is the best for metadata portals. Figure \ref{fig1} shows evaluations for the different solutions which enable cross-lingual retrieval of metadata records.  
 \begin{figure}[h]
 	\centering
   \includegraphics[width=0.8\textwidth]{./img/overview_evaluation.png}
-	\caption{Evaluation plan for the different approaches tested in the project.}
+	\caption{Evaluation plan for the different solutions tested in the project.}
 	\label{fig1}
 \end{figure}
 
-First, the intrinsic value of each approach will be tested. For example, does the automatic record translation produce appropriate (i.e. correct) translations? This can be assessed automatically or be judged by a human. Once satisfactory results are obtained, we can move to the next step, the extrinsic evaluation. The extrinsic evaluation consists of different methods, which are either system- or user-focused.
+First, the intrinsic value of each approach (there might be several approaches to a solution, e.g. different technical options for record translation) will be tested. For example, does the automatic record translation with STM produce appropriate (i.e. correct) translations? This can be assessed automatically or be judged by a human. The next step is the extrinsic evaluation. The extrinsic evaluation consists of different methods, which are either system- or user-focused.
 
 In the system-focused extrinsic evaluation, we will look at the impact of the different translation approaches on retrieval performance, e.g. differences in result numbers and in the document sets retrieved. The system-focused evaluation will be performed using the set-up in Figure \ref{fig2}. Either the queries or the documents in the information retrieval system (here Solr) will change for the different translation approaches as described in the succeeding sections. Result lists from these evaluations will be compared to a baseline of result lists retrieved with untranslated queries and / or documents.
 
@@ -90,13 +91,56 @@ In the system-focused extrinsic evaluation, we will look at the impact of the di
 	\label{fig2}
 \end{figure}
 
-The user-focused approach tries to incorporate the perspective of the users. This usually requires a judgment regarding the relevance of the retrieved documents. Additional user-focused evaluation could also take GUI changes with regard to multilingual features into account, shifting the evaluation approaches into user experience evaluations. 
+The user-focused approach will only be applied to the best technical approach for each solution.It tries to incorporate the perspective of the users. This usually requires a judgment regarding the relevance of the retrieved documents. Additional user-focused evaluation could also take GUI changes with regard to multilingual features into account, shifting the evaluation approaches into user experience evaluations. 
 
 The intrinsic evaluations will be done by DFKI/SU. Test corpora will be provided by Humboldt and ZPID. 
 
+\subsection{The Process of Evaluation}
+
+For each of the technical approaches to translate different components of the metadata, we will perform the following evaluations:
+\begin{itemize}
+\item Intrinsic evaluations determining measures such as BLEU and other automatic measures.
+\item Additionally, extrinsic evaluation of the approaches will be performed (the different runs are detailed in the later sections).
+\item Analyzing results from the intrinsic and extrinsic evaluation, we will determine winning approach for each solutions (numbers 1-5).
+\item  These approaches (one per solution) will then be compared against each other to determine the best solutions for bibliographic cross-lingual search.
+\item For the comparison, we will determine the relevance of retrieved results for each solution.
+
+Table \ref{tab:approaches} list the different approaches for each of the five solutions and details the process of evaluation.
+\end{itemize}
+
+\begin{table}[h]
+\resizebox{\textwidth}{!}{%
+ \centering\textbf{}
+\begin{tabular}[h]{lllccc}
+    \toprule
+Solution &   Nr. & Method / Approach & Intrinsic & extrinsic system-focused & extrinsic user-focused\\
+    \midrule
+\multirow{2}{*}{Query translation}  & 1a     & CV mapping   & X  & X & \multirow{2}{*}{Winner method}\\
+  & 1b    & CV mapping + MT aligned chunks    & X  & X \\
+    \midrule
+Abstract translation  & 2a     & SMT / NMT   & X  & X & X\\
+    \midrule
+\multirow{2}{*}{Knowledge-based solution}  & 3a     & CV mapping   & X  & X & \multirow{2}{*}{Winner method}\\
+  & 3b    & CV mapping + MT aligned chunks   & X  & X \\
+    \midrule
+\multirow{6}{*}{English as Pivot}  & 4a     & 1a + 2   & X  & X & \multirow{6}{*}{Winner method}\\
+  & 4b    & 1a + 3a   & X  & X \\
+    & 4c    & 1a + 3b  & X  & X \\
+      & 4d    & 1b + 2   & X  & X \\
+        & 4e    & 1b + 3a   & X  & X \\
+              & 4g   & 1b + 3b   & X  & X \\
+    \midrule
+\multirow{2}{*}{Merging}  & 5a     & 2 + 3a   & X  & X & \multirow{2}{*}{Winner method}\\
+  & 5b    & 2 + 3b   & X  & X \\
+  \bottomrule
+ \end{tabular}}
+  \caption{Approaches for each solution and the evaluations.}
+ \label{tab:approaches}
+\end{table}
+
 \subsection{Producing the Baselines for Extrinsic System-focused Evaluations}
 \label{ss:baseline}
-The basic set-up is shown in figure \ref{fig2}. In its essence, it will be used to produce the different baseline for the extrinsic system-focused evaluations. Since we want to exclude dynamic factors of collection or system updates (i.e. new relevant documents or new search features), which are independent from the translation, we will perform the evaluations on a stable (frozen) Solr instance with a stable collection of documents. A set of 50 queries manually translated into the four languages will be sent to the frozen Solr instance of PubPsych (see figure \ref{fig3}). The retrieved result lists will serve as a baseline for monolingual retrieval results. 
+The basic set-up is shown in figure \ref{fig2}. In its essence, it will be used to produce the different baseline for the extrinsic system-focused evaluations. Since we want to exclude dynamic factors of collection or system updates (i.e. new relevant documents or new search features), which are independent from the translation, we will perform the evaluations on stable (frozen) Solr instances with a stable collection of documents. A set of 50 queries manually translated into the four languages will be sent to the frozen Solr instance of PubPsych (see figure \ref{fig3}). The retrieved result lists will serve as a baseline for monolingual retrieval results. 
 
 \begin{figure}[h]
 	\centering
@@ -112,32 +156,28 @@ For each of the 200 queries, which are send to the frozen Solr version, the foll
 \item the ranked list of documents from the first result page
 \end{itemize}
 
-From the four different result lists of the aligned (i.e. parallel) queries in  English, French, German and Spanish, merged result lists can be created that contain all results of the four result lists. After removing the duplicates among the merged list, it can serve again as a baseline for multilingual retrieval.
-
-\subsection{Summary of Experiments and used Corpora}
+From the four different result lists of the aligned (i.e. parallel) queries in  English, French, German and Spanish, merged result lists can be created that contain all results of the four result lists. After removing the duplicates among the merged list, it can serve again as a baseline for assessing relevance in multilingual retrieval.
 
 \begin{table}[h]
 \resizebox{\textwidth}{!}{%
  \centering\textbf{}
 \begin{tabular}[h]{p{2cm}p{3cm}p{3cm}p{3cm}p{3cm}}
     \toprule
-    Approach & \multicolumn{2}{c}{Intrinsic Evaluation} & \multicolumn{2}{c}{Extrinsic Evaluation} \\ \hline 
+    Solution & \multicolumn{2}{c}{Intrinsic Evaluation} & \multicolumn{2}{c}{Extrinsic Evaluation} \\ \hline 
     & Automatic & Human Judgement & System-focused & User-focused\\
     \midrule
-	Record translation & 800 records in 4 languages & N/A &  50 queries in 4 languages & N/A \\
-   
 	Query translation & 250 queries in 4 languages & N/A & 50 queries in 4 languages& N/A \\
-	Vocabulary Mapping & tbd & tbd & tbd & tbd\\
-
+    Abstract translation & 800 records in 4 languages & N/A &  50 queries in 4 languages & N/A \\
+	Knowledge-based & tbd & tbd & tbd & tbd\\
 English as Pivot & same as for record and query translation& N/A & 250 queries in English &N/A\\
-    Merged Approaches &  &\\
+    Merging &  &\\
     \bottomrule
  \end{tabular}}
   \caption{Corpora used for the different experiments.}
  \label{tab:fields}
 \end{table}
 
-\section{Record Translation}
+\section{Abstract Translation}
 
 A record in PubPsych can have the fields aggregated in table \ref{tab:fields} with the respective candidates for MT. The fields \textit{key phrase} and \textit{additional descriptor} might contain relevant text for translation but are only provided by certain data sources or for a small fraction of records. Therefore, we decided to not include them in the machine translation.
 \begin{table}[h]
@@ -179,7 +219,7 @@ A record in PubPsych can have the fields aggregated in table \ref{tab:fields} wi
 \end{table}
 
 \subsection{Intrinsic Evaluation with Automatic Measurements}
-Here, we use automatic measures, such as BLEU \cite{papineni_bleu:_2002}, to determine the quality of translation. Humboldt and ZPID provide an aligned corpus for this with \textbf{800} records that were manually translated from English into French, German, Spanish. 
+Here, we use automatic measures, such as BLEU \cite{papineni_bleu:_2002}, to determine the quality of translation. Humboldt and ZPID provide an aligned corpus for this with \textbf{800} records that is manually translated from English into French, German, Spanish. 
 
 \subsection{Intrinsic Evaluation with Human Judgment}
 \underline{Note:} As the record translations are the means to improve cross-lingual retrieval, we will not evaluate translation with human judgements. If an intrinsic evaluation is required, it could look like this:
@@ -198,7 +238,7 @@ For the record translation evaluation, queries are fixed over the course of the 
 \begin{itemize}
 \item Each query (out of 50) is sent against the (untranslated) record collection and result sets are retrieved. These four result sets from the four languages are saved and used as the baseline resulting in 200 result lists.
 
-\item After the record translation, the experiment is repeated with the same queries sent against the translated corpus (see Fig. \ref{fig4}). The evaluation compares the new result sets to the baseline result set. Each query should ideally retrieve more and different (better) documents than the baseline. 
+\item After the translation, the experiment is repeated with the same queries sent against the corpora translated with different methods. (see Fig. \ref{fig4}). The evaluation compares the new result sets to the baseline result set. Each query should ideally retrieve more and different (better) documents than the baseline. 
 \end{itemize}
 
 \begin{figure}[h]
@@ -217,9 +257,9 @@ For the record translation evaluation, queries are fixed over the course of the 
 
 \underline{Evaluation Steps:}
 \newline
-We first compare result sets of same language queries usig the non-translated records vs the translated records. For example, the result set of a query in English (without record translation) is compared to the result set of a query in English (with record translation). 
+We first compare result sets of same language queries using the non-translated records vs the translated records. For example, the result set of a query in English (without record translation) is compared to the result set of a query in English (with record translation). 
 \begin{itemize}
-\item Compare results sets retrieved with the same languae query, we look at the size of the new result set (with record translation) compared to the baseline result set (without record translation).
+\item Compare results sets retrieved with the same language query, we look at the size of the new result set (with record translation) compared to the baseline result set (without record translation).
 \item Compare retrieved results to baseline, e.g. differences in found data sources.
 \item Compare ranking of the first x results.
 \end{itemize}
@@ -234,7 +274,7 @@ In a second step, we compare the merged results lists of each of the four aligne
 
 \underline{Example:}
 \newline
-Table \ref{tab:exquery} shows an example query “youth unemployment” aligned in the relevant languages. The result sets retrieved with no record translation can be compared to the result sets for each query when the records are translated (comparing the values in each column = 4 comparisons). Additonally, each result set retrieved with record translation can be compared to the merged list retrieved with no record translation (4 comparisons).
+Table \ref{tab:exquery} shows an example query “youth unemployment” aligned in the relevant languages. The result sets retrieved with no record translation can be compared to the result sets for each query when the records are translated (comparing the values in each column = 4 comparisons). Additionally, each result set retrieved with record translation can be compared to the merged list retrieved with no record translation (4 comparisons).
 \begin{table}[h]
 \resizebox{\textwidth}{!}{%
  \centering\textbf{}
@@ -252,9 +292,9 @@ Table \ref{tab:exquery} shows an example query “youth unemployment” aligned 
 
 \subsection{User-focused Extrinsic Evaluation}
 \label{ss:user_eval}
-This evaluation is more focused on the user’s perception of relevance of the results. This could be done using A/B testing with result sets from the baseline shown and compared to the result lists of the adapted system. Ideally, the tests are designed to understand the impact of the record translation on user tasks such as determining the relevance of a document in relation to a query.
+The user-focused extrinsic evaluation will be used to determine which of the translation solution (as shown in table \ref{tab:approaches} is the best for bibliographic metadata. This evaluation will assess the impact of the translation on retrieval effectiveness determining the best approach. 
 
-\underline{Note:} For all user-focused evaluations, we should leverage synergies. These evaluations are very costly and through thoughtful planning, we should minimize the effort here. One option is to decide for one user test which covers several scenarios.
+\underline{Note:} For all user-focused evaluations, we will leverage synergies by merging results list of the runs and removing duplicates. These evaluations are very costly and through thoughtful planning, we should minimize the effort here. One option is to decide for one user test which covers several scenarios. A more detailed workflow can be found under section \ref{secCom}.
 
 \section{Query Translation}
 \subsection{Intrinsic Evaluation with Automatic Measurement}
@@ -268,10 +308,10 @@ This could be also independent of an evaluation corpus, just sample some random 
 \subsection{System-focused Extrinsic Evaluation}
 Figure \ref{fig:queriesMT} shows how the process could be done: the (frozen) Solr with the untranslated records is used and only the queries are translated. Each query is translated via MT into the respective other three languages (see table \ref{tab:queries}, the cells marked in green) resulting in 12 queries used for retrieval.
 
-Three different evaluation steps are possible: 
+Three different evaluations will be performed: 
 \begin{itemize}
-\item The results set retrieved in a monolingual search are compared to the one with query translations. For example, the result set of an English query ("youth unemployment") is compared to the one which were retrieved with the English query and the translation equivalents in German, French and Spanish ("youth unemployment" OR "Jugendarbeitslosigkeit" OR "chômage des jeunes" OR "desempleo juvenil"). This evaluation will assess the improvements of monolingual vs. multilingual  retrieval.
-\item In table \ref{tab:queries}, each row contains 3 translations for queries (translation from the aligned corpus). The translated queries can be compared to the the manually translated queries. If queries are not identical, they are both sent to the Solr instance and results sets are compared. If the queries are the same translated by machine or by human, the results sets will be identical, too. This evaluation will indirectly assess the performance of the query translation MT. 
+\item \textbf{Improvements of multilingual  retrieval vs monolingual retrieval.} The results set retrieved in a monolingual search are compared to the one with query translations. For example, the result set of an English query ("youth unemployment") is compared to the one which were retrieved with the English query and the translation equivalents in German, French and Spanish ("youth unemployment" OR "Jugendarbeitslosigkeit" OR "chômage des jeunes" OR "desempleo juvenil"). Next to the baseline runs, 4 runs with the multilingual queries are needed.
+\item \textbf{Indirect assessment of performance of query translation.} In table \ref{tab:queries}, each row contains 3 translations for queries (translation from the aligned corpus). The translated queries can be compared to the manually translated queries. If queries are not identical, they are both sent to the Solr instance and results sets are compared. If the queries are the same translated by machine or by human, the results sets will be identical, too. Next to the baseline runs, 12 runs with each translated query are needed.
 \item The last step would be to compare the merged list of each quadruple of queries which were manually translated to the one which was translated with MT.
 \end{itemize}
  
@@ -302,7 +342,7 @@ Three different evaluation steps are possible:
 \end{table}
 
 \subsection{User-focused Extrinsic Evaluation}
-See Note under \ref{ss:user_eval}
+See Note under \ref{ss:user_eval} and section \ref{secCom}.
 
 
 \section{Vocabulary Mapping}
@@ -327,12 +367,12 @@ The methodology is very similar to the one we use for record translation, except
 
 
 \subsection{User-focused Extrinsic Evaluation}
-Testing the ranking for this might be very interesting. Overlap between queries and CV is crucial here. Also, see Note under \ref{ss:user_eval}.
+Testing the ranking for this might be very interesting. Overlap between queries and CV is crucial here. Also, see Note under \ref{ss:user_eval} and section \ref{secCom}.
 
 \section{English as a Pivot Language}
 \subsection{Intrinsic Evaluation with Automatic Measurement}
 We can probably reuse the test we did for the record and query translations just using the English test sets. 
-\subsection{Intrinsic Evaluation with Human Judgement}
+\subsection{Intrinsic Evaluation with Human Judgment}
 We can probably reuse the test we did for the record and query translations just using the English test sets. 
 \subsection{System-focused Extrinsic Evaluation}
 We can probably reuse the test we did for the record and query translations just using the English test sets, see figure \ref{figpivot}. 
@@ -347,18 +387,27 @@ We can probably reuse the test we did for the record and query translations just
 
 \subsection{User-focused Extrinsic Evaluation}
 
-See note under \ref{ss:user_eval}.
+See note under \ref{ss:user_eval} and section \ref{secCom}.
 
 \section{Merged Translation Approaches}
-Here, we need to decide on the merged approaches to test. This could be, for example, the translation of all the records in the target languages + the mapping of controlled vocabularies. 
+As determined in the document on the different scenarios for translation approaches \footnote{https://github.com/clubs-project/documentation/wiki/Scenarios}, we identified one merged approach. The translation of the abstract (abstract and title field) can be combined with the knowledge based approach where multilingual keywords from controlled vocabularies are mapped or translated. 
 
-The evaluation set-up is then a combination of the set-up for the individual evaluation approaches above. For the user-focused extrinsic evaluation, we would look at different results sets. These could be merged to create synergies between the different evaluation steps.
+The evaluation set-up for this approach is similar to the evaluation of its components - intrinsic evaluation with automatic judgment. For the user-focused extrinsic evaluation, we would look at different results sets. These could be merged to create synergies between the different evaluation steps.
 
-\section{Comparing the Different Approaches}
+\section{Comparing the Different Approaches}\label{secCom}
 So far, the different approaches were assessed comparing their performance to a system without any translation. We now need to define ways in which we compare the approaches against each other.
-One approach is to juxtapose the different evaluation results and rank the approaches according to their performance. 
+One approach is to juxtapose the different evaluation results and rank the approaches according to their performance. Another option is to assess indirectly each solution with the retrieval performance. 
 
-\subsection{User-Focused Extrinsic Evaluation}
+
+\subsection{Proposal for Comparing Solutions}
+For each winning approach (5 in total) a relevance assessment will be executed, so the approaches can be compared against each other and against the Baseline (or default ranking). For each query (50 per language, 200 in total) the top10 results will be stored as well as the position of the documents. The result list from 6 set-ups will be saved and converted to one list (with a removal of duplicates) for each query quadruple. The resulting list will be assessed for relevance per language for each respective query. Measures will show if translation solutions improve the precision of results (top10) across languages. We will measure P@10. Relevance will be assessed on a three-point-scale. 
+ 
+What we need for this:
+\begin{itemize}
+\item Relevance assessors able to assess in our four languages.
+\item Topic descriptions for the 50 queries used in the evaluation need to be done (also translated into each language) + descriptions of different relevant degrees. 
+\end{itemize}
+
 
 %
 % ---- Bibliography ----
