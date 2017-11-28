@@ -1,0 +1,184 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[top=90pt,bottom=60pt,left=80pt,right=58pt]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+
+%opening
+\title{PubPsych Metadata \& Queries \\ -- Translation Guidelines --}
+\author{}
+
+% Example boxes
+\newcommand{\exTit}[1]{\begin{tcolorbox}[enhanced,attach boxed title to top center={yshift=-3mm,yshifttext=-1mm},title=Examples,coltitle=black,colbacktitle=white]{#1}\end{tcolorbox}}
+\newcommand{\ex}[1]{\begin{tcolorbox}[]{#1}\end{tcolorbox}}
+
+% FAQs
+\setlist[description]{font=\normalfont\itshape}
+\newenvironment{faq}{\begin{description}[style=nextline]}{\end{description}}
+
+% Comments
+\newcommand{\cris}[1]{{\color{red}{#1}}}
+
+\begin{document}
+
+\maketitle
+
+ \begin{abstract}
+ 	This doument should help you with the translation task for the CLUBS project. It tries to cover all the cases and some peculiarities you might find in the source material. If at any point in your work you are unsure of how to handle a specific translation situation, please \emph{ask Roland prior to deciding for a variant}, because we probably want to include your case in these guidelines. 
+ \end{abstract}
+
+\section{Query Translation}
+\label{s:queries}
+A query in PubPsych is a string of words with optional Boolean directives (AND, OR, NOT and round brackets) and specific fields (TI, LA...). 
+The queries include (1) well-formed sentences, (2) ungrammatical sequences of words, and (3) a combination of any of them with other fields:
+
+
+\medskip
+\exTit{(E1) Equity, excellence, and school reform: Why is finding common ground so hard? \\
+(E2) cognitive behavioral therapy physical trauma children \\
+(E3) process-dissociation models DB="PSYNDEX" LA="English" \\
+(E4) Handling pain OR stress AND (LA=French OR LA=German) AND PY$>=2003$}
+
+% \bigskip
+% In any of the cases try to preserve the original meaning when translating and to introduce the mimimun number of editing operations (word insertion, deletion and swap) possible while keeping fluency in the target language in case (1). 
+
+
+\subsection{Specific Guidelines}
+\label{ss:q_guidelines}
+
+
+
+\begin{enumerate}
+
+ \item Translate all free text (that is text without a field label) and the text after the AB (abstract), CM (method type), IT (additional descriptor), KP (key phrase), SW (all keywords) and TI (title) fields. Ignore all other fields.
+ \ex{Original query: {\bf process-dissociation models} DB="PSYNDEX" LA="English" \\
+     German translation: {\bf Prozessdissoziation Modelle} DB="PSYNDEX" LA="English"}
+
+ \item Translate text before and after Boolean directives and keep the Boolean directives as they are.
+ \ex{ Original query: {\bf Handling pain} OR {\bf stress} AND (LA=French OR LA=German) AND PY$>=2003$ \\
+  German translation: {\bf Umgang Schmerz} OR  {\bf Stress} AND  (LA=French OR LA=German) AND PY$>=2003$}
+  
+ \item Translate technical and domain-specific terminology (cf. E2) using the available resources with the following priority: 
+ \begin{enumerate}
+ \item[1.]  built-in thesaurus of the Virtaal software, 
+ \item[2.]  your previous translation memory,
+ \item[3.]  your new own translation. 
+ \end{enumerate}
+ Do not introduce additional words in your translation unless the same concept needs a different number of word in the two languages.
+
+ \item When translating grammatical sentences (cf. E1) try to preserve the original meaning and try to work with the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
+
+\end{enumerate}
+
+
+
+\paragraph{FAQ}
+
+\begin{faq}
+
+  \item[Can I use a dictionary?]
+ Yes, you can use any resources you find suitable.
+  
+  \item[What should I do if there is a typo in the source query?]
+    Translate it as if the typo does not exist and note the ID of the query on the appropriate paper form.
+
+  \item[What should I do if there are truncations in the source query? How do I deal with wildcards?]
+    Translate the query normally but keep the truncated word untranslated. Note the ID of the query on the appropriate paper form.
+
+
+%   \item[What should I do if the search directive is incorrect?]
+%     Translate the surrounding text and leave the connective as it is. \cris{RR: what would be an example for that case?}
+    
+  \item[Which fields and their values should I ignore and not translate?]
+  DT (document type), MT (media type), AGE (age group), EV (evidence level), PLOC (origin of population), AU (person(s))
+  ISBN, PU (publisher), ISSN, PY (publication year), COU (country of origin), SEG (database segment), CS (author affiliation), JT (journal title), SH (subject classification), CT (controlled term), DB (data source), LA (publication language)
+  
+  \item[What should I do if there is text following a field I don't recognise?]
+    Please contact Roland if you find a field not mentioned here.
+    
+  \item[Should I translate named entities (names of persons, organizations, locations)?]
+Yes, translate them if applicable. For example, the French and Spanish \textit{Londres} should become \textit{London} in English or German. Most of the named entities are not going to be translated. Be careful with organizations, non-English institutions might have an English translation, such as \textit{Leibniz-Zentrum f\"ur Psychologische Information und Dokumentation} in German would be \textit{Leibniz Institute for Psychology Information} in English. 
+%\cris{not sure which language to choose for a French or Spanish text}
+
+\item[How should numbers, money amounts and dates be handled?]
+Please keep numbers as they are in the source. Numerals, like 4 or VII, should not be translated. If the numbers are spelled out, like \emph{four}, they should be translated accordingly. Expressions containing numbers with a language dependent format, like money amounts or dates, should be formatted to the conventions of the target language.
+    
+\end{faq}
+
+
+
+\section{Title and Abstract Translation}
+\label{s:abstracts}
+
+
+The abstract is the summary of an article available in the PubPsych database and it is composed by its title and the synopsis of the paper. 
+
+\medskip
+\exTit{
+(E1) {\bf Testing Theories of Recognition Memory by Predicting Performance Across Paradigms} \par
+\medskip
+Signal-detection theory (SDT) accounts of recognition judgments depend on the assumption that recognition decisions result from a single familiarity-based process. However, fits of a hybrid SDT model, called dual-process theory (DPT), have provided evidence for the existence of a second, recollection-based process. In 2 experiments, the authors tested predictions of DPT and SDT by comparing the invariance of parameter estimates between yes/no (Y/N) and 2-altemative forced-choice (2AFC) testing paradigms. Both experiments showed DPT recollection estimates in Y/N to be poorly correlated with recollection estimates in 2AFC. In Experiment 2, SDT predictions explained more variance than DPT predictions. The authors evaluate and discuss the extent to which each model possesses theoretical validity versus computational flexibility in curve fitting.
+
+\bigskip
+(E2) {\bf What Determines the Speed of Lexical Access: Homophone or Specific-Word Frequency? A Reply to Jescheniak et al. (2003)} \par
+\medskip
+A. Caramazza, A. Costa, M. Miozzo, and Y. Bi (2001) reported a series of experiments showing that naming latencies for homophones are determined by specific-word frequency (e.g., frequency of nun) and not homophone frequency (frequency of nun + none). J. D. Jescheniak, A. S. Meyer, and W. J. M. Levelt (2003) have challenged these studies on a variety of grounds. Here we argue that these criticisms are not well founded and try to clarify the theoretical issues that can be meaningfully addressed by considering the effects of frequency on homophone production. We conclude that the evidence from homophone production cannot be considered to provide support to 2-layer theories of the lexical system.
+}
+
+
+\subsection{Specific Guidelines}
+\label{ss:a_guidelines}
+
+\begin{enumerate}
+
+ \item In general, try to preserve the original meaning and to introduce the least possible number of editing operations (word insertions, deletions and swaps) while keeping fluency in the target language. 
+ 
+ \item Whenever possible, use the available resources with the following priority: 
+  \begin{enumerate}
+ \item[1.] built-in thesauri, 
+ \item[2.] your previous translation memory,
+ \item[3.] your new own translation. 
+ \end{enumerate}
+ \item Translate titles with the following capitalisation rules: capitalize all nouns, pronouns, verbs, adjectives, and adverbs; lowercase articles, prepositions and coordinating conjunctions.
+  \ex{original query: {\bf Behavioral Assessment and Interventions in Youth Sports}  \\
+     German query: {\bf Verhaltensbewertung und Interventionen im Jugendsport} }
+
+ 
+ \item Translate titles and abstracts sentence by sentence without any further splitting/join.
+  
+\end{enumerate}
+
+
+
+\paragraph{FAQ}
+
+\begin{faq}
+
+  \item[Can I use a dictionary?]
+Yes, you can use any resources you find suitable.
+
+  \item[What to do if there are typographic errors in the title or abstract?]
+    There should be no errors. Please report any typographic error to Roland.
+
+    
+  \item[Should I translate bibliographic references?]
+    No.
+ 
+  \item[Should I translate acronyms?]
+    Yes, acronyms should be translated if possible. For example, ADHD in English becomes ADHS in German. Another example is the acronym for human immunodeficiency virus: in English and German, it is HIV, whereas in French and Spanish it is VIH.
+    Uncommon acronyms introduced by the authors of the abstract should not be translated, e.g. \emph{essential amino acids (EAAs)} in English will be \emph{essentielle Aminos\"auren (EAAs)} in German. 
+
+  \item[Should I translate named entities (names of persons, organizations, locations)?]
+    Yes, translate them if applicable. For example, the French and Spanish \textit{Londres} should become \textit{London} in English and German. Most of the named entities are not going to be translated. Be careful with organizations, non-English institutions might have an English translation, such as \textit{Leibniz-Zentrum f\"ur Psychologische Information und Dokumentation} in German would be \textit{Leibniz Institute for Psychology Information} in English. 
+    %\cris{not sure which language to choose for a French or Spanish text}
+  
+\item[How should numbers, money amounts and dates be handled?]
+ Please keep numbers as they are in the source. Numerals, like 4 or VII, should not be translated. If the numbers are spelled out, like \emph{four}, they should be translated accordingly. Expressions containing numbers with a language dependent format, like money amounts or dates, should be formatted to the conventions of the target language.
+    
+\item[How should English compounds be handled?]
+Translate them as natural as possible without forcing a compound in the target language, e.g. \textit{brain-intact animal} in English will be \textit{Tier mit unversehrtem Gehirn} in German.
+\end{faq}
+
+
+\end{document}
