@@ -1,0 +1,175 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, array, pdflscape}
+\usepackage{geometry}
+\usepackage{graphics,subfigure,graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{enumerate}
+
+\setlength{\textheight}{24cm}  
+\setlength{\textwidth}{15cm}
+\setlength\oddsidemargin{0cm}
+\setlength\evensidemargin{0cm}
+\setlength\voffset{-1cm}
+
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}	
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+\newcommand{\Ni}{({\em i\,})~}
+\newcommand{\Nii}{({\em ii\,})~}
+\newcommand{\Niii}{({\em iii\,})~}
+
+%opening
+\title{
+\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+\Huge Query Translation and \\ Integration Approaches \\ 
+}
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
+\date{\vspace*{2cm} -- v1.0 --\\January 2018}
+
+
+\begin{document}
+
+\clearpage\maketitle
+\thispagestyle{empty}
+
+\vspace*{5cm}
+\begin{abstract}
+This document describes 
+\end{abstract}
+
+\newpage
+\tableofcontents
+\clearpage
+
+% guarrada, no va el \cleardoublepage
+% \clearpage\mbox{}\clearpage
+
+%\newpage
+% \section{Introduction}
+% \label{s:intro}
+
+\section{Controlled Terms}
+\label{s:ct}
+% \section{MeSH Multilingual Lexicon}
+% \label{s:mesh}
+
+We extract all the controlled terms in the frozen Solr instance "pubpsych-core"%
+\footnote{Database as in 4th August 2017.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL} \red{is this correct?}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} in Spanish but we did not retrieve any result for {\tt CTSH} or {\tt CTS} either.
+
+Some of the entries have two parts, the descriptor and a class specification in parentheses:
+{\small 
+\begin{verbatim}
+   Action Potentials
+   Action Potentials (drug effects)
+   Action Potentials (genetics)
+\end{verbatim}
+}
+
+This allows to further split the controlled terms and diminish the number of unique terms to translate as seen in rows \emph{uniq no()} and \emph{uniq only()} of Table~\ref{tab:ct}.
+
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrrrr}
+  \toprule
+         & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
+  \midrule
+    CT$lan$L           & 3,659,210 & 4,639,171 & 2,371,110 & 0\\
+    CT$lan$L uniq      &    56,754 &    60,939 &    51,759 & 0\\
+    CT$lan$L uniq no() &    23,556 &    27,734 &    18,623 & 0\\
+    CT$lan$L uniq only() &     393 &       392 &       187 & 0\\
+  \midrule
+     MeSH               & 70,694 & 175,004 & 96,333 & 66,828\\
+     WP (health+phsy.)  & 81,369 & 80,762  & 80,285 & 81,059\\
+  \bottomrule
+ \end{tabular}
+\caption{Number of controlled terms per language in the PubPsych Database (top rows). Number of aligned controlled terms per language in our multilingual resources (bottom rows).}
+\label{tab:ct}
+\end{table} 
+
+\subsection{Coverage by MeSH (and in-domain WP titles)}
+\label{ss:mesh}
+
+In order to see the coverage of the controlled terms by our resources we first extract a list per language of the terms that represent a concept in the multilingual MeSH. For all these terms we have the 4-language-translation. See the number of elements in the MeSH row in Table~\ref{tab:ct}.
+
+We lowercase all the entries and look for the unique elements in our CTs that cannot be translated by the MeSH thesauri (MeSH $unk$ row in Table~\ref{tab:coverage}). We do the same with a list of aligned in-domain Wikipedia titles (WP $unk$) and with the combination of both resources (MeSH+WP $unk$). The translatable elements cover almost all the French CTs (98\%) but only a 78\% and  73\% for German and English ones respectively. The class that appears in parentheses must be also translated independently \red{(TODO grab statistics)}
+
+\begin{table}[t]
+\centering
+\begin{tabular}{lrrrr}
+  \toprule
+         & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
+  \midrule
+   \midrule
+    CT$lan$L uniq no()    & 23,556 & 27,734 & 18,623 & 0\\
+    ~~-MeSH $unk$         &  4,704 &  7,387 &    221 & 0 \\
+    ~~-WP $unk$           & 15,564 & 18,421 & 11,096 & 0\\
+    ~~-MeSH+WP $unk$      &  4,271 &  6,724 &    197 & 0 \\
+   \midrule
+    CT$lan$L no()         & 3,659,210 &  4,639,171 & 2,371,110  & 0\\
+    ~~-MeSH+WP $covered$  & 2,861,446 &  3,366,307 & 2,322,733  & 0 \\
+                          &    (78\%) &     (73\%) &     (98\%) & 0 \\
+
+    
+  \bottomrule
+ \end{tabular}
+\caption{Untranslatable terms of \emph{CT$lan$L no()} by MeSH and WP thesauri after lowercasing the entries.}
+\label{tab:coverage}
+\end{table} 
+
+
+
+\section{Quadrilingual Lexicon}
+\label{s:lexicon}
+
+\subsection{Multilingual MeSH}
+\label{ss:meshLex}
+
+We extract the quadrilingual lexicon from {\tt MeSH\_2017\_de+en+fr+es.xml} in an appropriate format for query translation. We extract one list per language L1, where for each term (preferred, non-preferred, and permutations) describing a concept in L1 only the preferred term in the other languages L2, L3 and L4 is added as translation. The identifier of the concept is also added.
+
+Example for the English terms for concept ID:M0000003: 
+{\small 
+\begin{verbatim}
+   Slaughter Houses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+   House, Slaughter|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+   Houses, Slaughter|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+   Slaughter House|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+   Slaughterhouses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+\end{verbatim}
+}
+
+Within a language, the elements are unique but there might be degeneracy when we concatenate the 4 languages.
+
+\subsection{Multilingual Wikipedia Titles}
+\label{ss:wpLex}
+
+\red{TODO: text in year 1 pdf.}
+
+\red{TODO: conver union file to MeSH format}
+
+\section{}
+\label{s:}
+
+
+
+% \section{Conclusions}
+% \label{s:conclusions}
+
+
+%
+% ---- Bibliography ----
+%
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{plain}
+\bibliography{genericMT}
+
+
+\end{document}
