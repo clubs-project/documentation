@@ -2,12 +2,13 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs, array, pdflscape}
-\usepackage{geometry}
+\usepackage{geometry, rotating}
 \usepackage{graphics,subfigure,graphicx}
 \usepackage{color}
 \usepackage{url}
 \usepackage{enumerate}
 \usepackage{enumitem}
+\usepackage{multirow}
 
 \setlength{\textheight}{24cm}  
 \setlength{\textwidth}{15cm}
@@ -317,49 +318,70 @@ We apply the previous methodoly to translate the CTs using two different lexicon
 
 
 
+\begin{table}[t]
+\centering
+\flushleft{English}
 
-
-\begin{center}
-\begin{tabular}{lrrrrrrr}
-× & \mc{3}{r}{Parts} & \mc{4}{c}{Tokens}\\
-× & total & \mc{1}{r}{trad (\%)} & \mc{1}{r}{untrad (\%)} & \mc{1}{c}{total} & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq untrad (\%)}\\
-× &  & &  & &  &  & \\
-× &  & &  & &  &  & 
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+         \cmidrule(lr){3-4}   \cmidrule(lr){5-7}
+&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
+\midrule
+\multirow{5}{*}{\begin{sideways}MeSH\end{sideways}} 
+&ACCNO  &    344,453 (30.4\%)  &   787,342 (69.6\%)  & 1,325,648 (70.9\%)  & 545,113 (29.1\%) & 1834 \\
+&DFK    &    544,275 (33.3\%)  & 1,092,037 (66.7\%)  & 2,043,618 (77.2\%)  & 603,889 (22.8\%) & 2051 \\
+&NORART &      5,630 (24.6\%)  &    17,223 (75.4\%)  &    34,048 (86.9\%)  &   5,128 (13.1\%) &  86 \\
+&PDID   &        197 (43.9\%)  &       252 (56.1\%)  &       623 (80.5\%)  &     151 (19.5\%) &  87 \\
+&PMID   &  2,987,945 (86.9\%)  &   448,879 (13.1\%)  & 5,007,120 (97.1\%)  &  151,482 (2.9\%) & 242 \\
+\midrule
+\multirow{5}{*}{\begin{sideways}QuadLex\end{sideways}} 
+&ACCNO  &    586,440 (51.8\%)  & 545,355 (48.2\%)  & 1,861,278 (99.5\%)  & 9,483 (0.5\%) & 33 \\
+&DFK    &    900,396 (55.0\%)  & 735,916 (45.0\%)  & 2,640,589 (99.7\%)  & 6,918 (0.3\%) & 57 \\
+&NORART &      5,779 (25.3\%)  &  17,074 (74.7\%)  &    38,941 (99.4\%)  &   235 (0.6\%) &  9 \\
+&PDID   &        287 (63.9\%)  &     162 (36.1\%)  &       771 (99.6\%)  &     3 (0.4\%) &  1 \\
+&PMID   &  3,094,379 (90.0\%)  & 342,445 (10.0\%)  & 5,155,774 (99.9\%)  & 2,828 (0.1\%) & 30 \\
+\bottomrule
 \end{tabular}
-\end{center}
+
+\flushleft{\normalsize German}
+\begin{tabular}{llrrrrr}
+\toprule
+&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+         \cmidrule(lr){3-4}   \cmidrule(lr){5-7}
+&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
+\midrule
+\multirow{3}{*}{\begin{sideways}MeSH\end{sideways}} 
+&DFK    &   480,050 (29.1\%)  & 1,172,023 (70.9\%)  & 1,328,236 (61.7\%)  & 823,705 (38.3\%) & 3528 \\
+&PDID   &       182 (38.0\%)  &       297 (62.0\%)  &       425 (64.4\%)  &     235 (35.6\%) &  132 \\
+&PMID   & 2,915,784 (84.5\%)  &   535,085 (15.5\%)  & 4,321,857 (94.7\%)  & 240,222 (5.3\%)  &  160 \\
+\midrule
+\multirow{1}{*}{\begin{sideways}~QuadLex\end{sideways}} 
+&DFK     & 1,002,373 (60.7\%)  & 649,700 (39.3\%)  & 2,150,866 (100.0\%)  & 1,075 (0.0\%)  & 30 \\
+&PDID~~~~&       319 (66.6\%)  &     160 (33.4\%)  &       660 (100.0\%)  &     0 (0.0\%) &  0 \\
+&PMID    & 3,067,454 (88.9\%)  & 383,415 (11.1\%)  & 4,561,948 (100.0\%)  &   131 (0.0\%)  & 13 \\
+\bottomrule
+\end{tabular}
 
 
-% all
-% ENGLISH 
-% 2,828 untranslated words 4,631,444 translated words
-% 342,445 untranslated main terms, 3,094,379 translated main terms
-% 
-% GERMAN
-% 131 untranslated words 4,002,006 translated words
-% 383,415 untranslated main terms, 3,067,454 translated main terms
-% 
-% FRENCH
-% 190,497 untranslated words 4,265,997 translated words
-% 696,462 untranslated main terms, 2,648,537 translated main terms
-%      50-8=42 untradDeU.txt
-%     132-12=120 untradEnU.txt
-%     338-4=334 untradFrU.txt
-
-%MESH
-% FRENCH
-% 419,105 untranslated words 4,136,256 translated words
-% 824,711 untranslated main terms, 2,520,288 translated main terms
-% % 
-% % GERMAN
-% 240,222 untranslated words 3,850,336 translated words
-% 535,085 untranslated main terms, 2,915,784 translated main terms
-% % ENGLISH 
-% 151,482 untranslated words 4,509,417 translated words
-% 448,879 untranslated main terms, 2,987,945 translated main terms
-%  3670-8 =3662 3718 55302 untradMeshDeU.txt
-%  3377-12=3364  3449 34312 untradMeshEnU.txt
-%   963-4=959   987 10380 untradMeshFrU.txt
-% 
+\flushleft{\normalsize French}
+\begin{tabular}{llrrrrr}
+\toprule
+&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+         \cmidrule(lr){3-4}   \cmidrule(lr){5-7}
+&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
+\midrule
+\multirow{1}{*}{\begin{sideways}M\end{sideways}} 
+&PMID~~~~&  2,520,288 (75.3\%)  & ~824,711 (24.7\%)  & ~~5,508,721 (92.9\%)  & ~419,105 (7.1\%)  & ~961 \\
+\midrule
+\multirow{-1}{*}{\begin{sideways}Q\end{sideways}} 
+&PMID     & 2,648,537 (79.2\%)  & 696,462 (20.8\%)  & 5,737,329 (96.8\%)  & 190,497 (3.2\%)  & 334 \\
+\bottomrule
+\end{tabular}
+\caption{Number of CT\emph{lan}L translated with the multilingual MeSH and the full QuadLexicon for English, German and French. There are no entries for Spanish. A CT term is splitted into two parts (the descriptor and the class specification), and in case of no-matching it is further splitted into tokens.}
+\label{tab:tradsCT}
+\end{table}
 
 \subsection{Software}
 
