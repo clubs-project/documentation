@@ -9,6 +9,7 @@
 \usepackage{enumerate}
 \usepackage{enumitem}
 \usepackage{multirow}
+\usepackage{amssymb}
 
 \setlength{\textheight}{24cm}  
 \setlength{\textwidth}{15cm}
@@ -31,9 +32,10 @@
 %opening
 \title{
 \includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
-\Huge Controlled Terms  and \\ Query Translations \\ 
+\Huge Controlled Terms Translation \\ 
 }
-\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^{1}$, Roland Ramthun$^{2}$ \medskip \\ 
+                        \Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
 \date{\vspace*{2cm} -- v0.1 --\\February 2018}
 
 
@@ -44,7 +46,7 @@
 
 \vspace*{5cm}
 \begin{abstract}
-This document describes 
+This document describes the data, resources, methodology and software developed to translate the controlled terms and related text available as metadata in the PubPshyc database.
 \end{abstract}
 
 \newpage
@@ -63,7 +65,7 @@ This document describes
 % \section{MeSH Multilingual Lexicon}
 % \label{s:mesh}
 
-We extract all the controlled terms (CTs) in the frozen Solr instance "pubpsych-core"%
+For a first analysis, we extract all the controlled terms (CTs) in the frozen Solr instance "pubpsych-core"%
 \footnote{Database as in 4th August 2017.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} in Spanish but we did not retrieve any result for {\tt CTSH} or {\tt CTS} either, the other fields with information related to controlled terms.
 
 Some of the entries have two parts, the descriptor and a class specification in parentheses:
@@ -75,7 +77,7 @@ Some of the entries have two parts, the descriptor and a class specification in 
 \end{verbatim}
 }
 
-This allows to further split the controlled terms and diminish the number of unique terms to translate as seen in rows \emph{uniq no()} and \emph{uniq only()} of Table~\ref{tab:ct}, where we show the figures for unique terms without the class specification and with it respectively.
+This allows to further split the controlled terms and diminish the number of unique terms to translate as seen in rows \emph{uniq no()} and \emph{uniq only()} of Table~\ref{tab:ct}, where we show the figures for unique terms without the class specification and with it.
 
 
 \begin{table}[h]
@@ -94,6 +96,15 @@ This allows to further split the controlled terms and diminish the number of uni
 \label{tab:ct}
 \end{table} 
 
+After this preliminary analysis to study the size of the database, we select the relevant fields to be translated:
+\begin{description}
+ \item[CT$lan$H:] "Controlled term high". As the name says, these are terms from controlled vocabulary (MeSH, PSYNDEX terms, etc.), not freely assigned terms.
+ \item[CT$lan$L:] "Controlled terms low". As CT$lan$H, but the person who created the record, gave these entries a lower importance for describing the content than the ones in CT$lan$H.
+ \item[IT$lan$H:] "Additional descriptor high". As the name says, additional describing terms, which may have been freely chosen by the person who created the record, so they do not need to come from a controlled terminology.
+ \item[IT$lan$L:] "Additional descriptor low". As IT$lan$H, but with lower descriptive relevance.
+\end{description}
+
+In order to translate these 16 fields (4 fields per language) we create a quadrilingual lexicon as explained in the next section.
 % 
 % \subsection{Coverage by MeSH (and in-domain WP titles)}
 % \label{ss:mesh}
@@ -131,7 +142,7 @@ This allows to further split the controlled terms and diminish the number of uni
 \subsection{Multilingual MeSH}
 \label{ss:meshLex}
 
-We extract the quadrilingual lexicon from {\tt MeSH\_2017\_de+en+fr+es.xml} in an appropriate format for CT and  query translation. We extract one list per language L1, where for each term (preferred, non-preferred, and permutations) describing a concept in L1 only the preferred term in the other languages L2, L3 and L4 is added as translation. The identifier of the concept is also added. With this prodecure we obtain 175,004 concepts for English, 96,333 for French, 70,694 for German and 66,828 for Spanish.
+We extract the main part of our quadrilingual lexicon from {\tt MeSH\_2017\_de+en+fr+es.xml} in an appropriate format for CT translation. We extract one list per language L1, where for each term (preferred, non-preferred, and permutations) describing a concept in L1 only the preferred term in the other languages L2, L3 and L4 is added as translation. The identifier of the concept is also added. With this procedure we obtain 175,004 concepts for English, 96,333 for French, 70,694 for German and 66,828 for Spanish. Notice that it is asymmetrical because the different languages have different number of \emph{synonyms} (permutations and strings).
 
 \bigskip
 \noindent Example for the English terms for concept ID:M0000020: 
@@ -248,12 +259,12 @@ wp.frkey.txt:
 \subsection{Apertium Dictionaries}
 \label{ss:apertium}
 
-Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation engine that uses bilingual dictionaries for lexical transfer. We have used three of their dictionaries\footnote{\url{http://wiki.apertium.org/wiki/List_of_dictionaries}} ($en$-$de$, $en$-$es$ and $es$-$fr$) to extract a quadlingual dictionary with the overlapping entries. Table~\ref{tab:4lex} shows the number of entries of this miltilingual dictionary in comparison with the other sources.
+Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation engine that uses bilingual dictionaries for lexical transfer. We have used three of their dictionaries\footnote{\url{http://wiki.apertium.org/wiki/List_of_dictionaries}} ($en$-$de$, $en$-$es$ and $es$-$fr$) to extract a quadlingual dictionary with the overlapping entries. Table~\ref{tab:4lex} shows the number of entries of this multilingual dictionary in comparison with the other sources.
 
 \subsection{Post-edited Automatic Translations}
 \label{ss:manual}
 
-Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translate them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  maily to improve mistranslations due to ambiguos options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
+Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translate them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
 
 
 \begin{table}[t]
@@ -300,9 +311,9 @@ We follow the strategy below:
 
  \item Word Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
       \begin{enumerate}[label*=\arabic*.]
-	\item The part is splitted into words and words are translated independently.  
+	\item The part is split into words and words are translated independently.  
 	\item  All possible capitalisations of the word are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
-	\item If the entry is not available, some basic rules regarding the formation of plural nouns are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
+	\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
 	\item If the entry is not available, we copy the source token as translation for the three other languages.
 	\item The original capitalisation is restored.
       \end{enumerate}
@@ -312,7 +323,7 @@ We follow the strategy below:
 \end{enumerate}
 
 \bigskip
-We apply the previous methodoly to translate the CTs using two different lexicons: the multilingual MeSH, and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons. We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalenty, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise the retrieval quality and not translation quality. 
+We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH, and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons. We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise retrieval quality and not translation quality. 
 
 
 
@@ -385,10 +396,88 @@ We apply the previous methodoly to translate the CTs using two different lexicon
 
 \subsection{Software}
 
-A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package
+A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
+\footnote{\url{}https://github.com/clubs-project/DBtranslator}
+together with all the software developed to translate the different components of the PubPshyc database.
+
 
 % \section{Conclusions}
 % \label{s:conclusions}
+
+
+
+%
+% ---- Appendeces ----
+%
+\appendix
+\section{Basic Rules for Plural Formation Used}
+\label{ap:plural}
+
+In order to obtain the a possible singular form of unseen tokens we apply the following basic rules:
+
+\renewcommand{\labelitemi}{$\star$}
+\paragraph{English}
+\begin{itemize}
+\itemsep-0.2em 
+ \item NOUN-y $\Leftarrow$ NOUN-ies
+ \item NOUN $\Leftarrow$ NOUN-es
+ \item NOUN $\Leftarrow$ NOUN-s
+\end{itemize}
+
+\paragraph{French}
+\begin{itemize}
+\itemsep-0.2em 
+ \item NOUN $\Leftarrow$ NOUN-s
+\end{itemize}
+
+\paragraph{German}
+\begin{itemize}
+\itemsep-0.2em 
+ \item NOUN (\"-) $\Leftarrow$ NOUN-er
+ \item NOUN $\Leftarrow$ NOUN-n
+ \item NOUN $\Leftarrow$ NOUN-e
+ \item NOUN $\Leftarrow$ NOUN-s
+\end{itemize}
+
+\paragraph{Spanish}
+\begin{itemize}
+\itemsep-0.2em 
+ \item NOUN $\Leftarrow$ NOUN-es
+ \item NOUN $\Leftarrow$ NOUN-s
+\end{itemize}
+
+
+% CODE
+%    # for Spanish
+%     if len(singular)>1 and language=="es":
+%        if singular[:-2] == 'es': 
+%           singular = singular[:-2]
+%        elif singular[-1] == 's': 
+%           singular = singular[:-1]
+%     # for French
+%     if len(singular)>1 and language=="fr":
+%        if singular[-1] == 's': 
+%           singular = singular[:-1]
+%     # for English
+%     if len(singular)>3 and language=="en":
+%        if singular[:-3] == 'ies': 
+%           return singular[:-3]+"y"
+%     if len(singular)>2 and language=="en":
+%        if singular[:-2] == 'es': 
+%           return singular[:-2]
+%     if len(singular)>1 and language=="en":
+%        if singular[-1] == 's': 
+%           singular = singular[:-1]
+%     # for German
+%     if len(singular)>2 and language=="de":
+%        if singular[:-2] == 'er': 
+%           return remove_diacritic(singular[:-2]).decode() #we need to remove the umlaut too
+%        if singular[-1] == 'n': 
+%           singular = singular[:-1]
+%     if len(singular)>1 and language=="de":
+%        if singular[-1] == 'e' or  singular[-1] == 's': 
+%           singular = singular[:-1]
+
 
 
 %
