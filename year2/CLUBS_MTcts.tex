@@ -36,7 +36,7 @@
 }
 \author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^{1}$, Roland Ramthun$^{2}$ \medskip \\ 
                         \Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
-\date{\vspace*{2cm} -- v0.1 --\\February 2018}
+\date{\vspace*{2cm} -- v0.2 --\\February 2018}
 
 
 \begin{document}
@@ -138,6 +138,10 @@ In order to translate these 16 fields (4 fields per language) we create a quadri
 
 \section{Quadrilingual Lexicon}
 \label{s:lexicon}
+
+The resources described in this section can be found in the project's Seafile in the folder:
+{\tt CLIR-PubPsych/Code/MT/DBtranslator/models/CT} 
+
 
 \subsection{Multilingual MeSH}
 \label{ss:meshLex}
@@ -289,47 +293,7 @@ Finally, we have selected a set of tokens within our controlled terms not covere
 
 
 
-\section{Controlled Term Translation}
-\label{s:cttrad}
-
-\subsection{Methodoly}
-We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych Database (Section~\ref{s:ct}).
-Notice that the most accurate translation would be achieved with the multilingual MeSH, the other three resources add noise to the translations but increase the coverage of the engine.
-
-\bigskip
-\noindent
-We follow the strategy below:
-\begin{enumerate}
- \item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \\ 
-       Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
- \item Part Translation
-      \begin{enumerate}[label*=\arabic*.]
-      \item  All possible capitalisations of the part are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.\\ 
-       Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
-      \item The original capitalisation is restored.
-      \end{enumerate}
-
- \item Word Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
-      \begin{enumerate}[label*=\arabic*.]
-	\item The part is split into words and words are translated independently.  
-	\item  All possible capitalisations of the word are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
-	\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
-	\item If the entry is not available, we copy the source token as translation for the three other languages.
-	\item The original capitalisation is restored.
-      \end{enumerate}
-     
-  \item Words and parts are joined with the appropriate punctuation to build the final translation of the original CT.
-     
-\end{enumerate}
-
-\bigskip
-We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH, and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons. We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise retrieval quality and not translation quality. 
-
-
-
-
-
-\begin{table}[t]
+\begin{table}[h]
 \centering
 \flushleft{English}
 
@@ -394,11 +358,68 @@ We apply the previous methodology to translate the CTs using two different lexic
 \label{tab:tradsCT}
 \end{table}
 
+
+\section{Controlled Term Translation}
+\label{s:cttrad}
+
+\subsection{Methodoly}
+We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych Database (Section~\ref{s:ct}).
+Notice that the most accurate translation would be achieved with the multilingual MeSH, the other three resources add noise to the translations but increase the coverage of the engine.
+
+\bigskip
+\noindent
+We follow the strategy below:
+\begin{enumerate}
+ \item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \\ 
+       Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
+ \item Part Translation
+      \begin{enumerate}[label*=\arabic*.]
+      \item  All possible capitalisations of the part are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.\\ 
+       Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
+      \item The original capitalisation is restored.
+      \end{enumerate}
+
+ \item Word Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
+      \begin{enumerate}[label*=\arabic*.]
+	\item The part is split into words and words are translated independently.  
+	\item  All possible capitalisations of the word are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
+	\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
+	\item If the entry is not available, we copy the source token as translation for the three other languages.
+	\item The original capitalisation is restored.
+      \end{enumerate}
+     
+  \item Words and parts are joined with the appropriate punctuation to build the final translation of the original CT.
+     
+\end{enumerate}
+
+\bigskip
+We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise retrieval quality and not translation quality. 
+
 \subsection{Software}
 
 A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
 \footnote{\url{}https://github.com/clubs-project/DBtranslator}
 together with all the software developed to translate the different components of the PubPshyc database.
+The complete translation pipeline going from downloading the field for all the documents in the database, to translate them and uploading the translations is run by {\tt tradCTs.sh}:
+
+\begin{verbatim}
+user@machine:~/home/DBtranslator/scripts/$  bash tradCTs.sh -h
+tradCTs.sh -f CTH|CTL|ITH|ITL [-h] 
+
+where:
+    -h  show this help text
+    -f  field to translate [CTH|CTL|ITH|ITL]
+
+Example:
+    bash tradCTs.sh -f CTH
+\end{verbatim}
+
+If you want to consider a new field, add it to {\tt preproField4trad.py}. If you want to use the script only on a subset of the database, please, modify the Solr query accordingly in the same file. 
+
+The up-to-date instructions for installing and using the software can be found in the git repository:
+
+\url{https://github.com/clubs-project/DBtranslator}
+
 
 
 % \section{Conclusions}
@@ -410,7 +431,7 @@ together with all the software developed to translate the different components o
 % ---- Appendeces ----
 %
 \appendix
-\section{Basic Rules for Plural Formation Used}
+\section{Appendix: Basic Rules for Plural Formation}
 \label{ap:plural}
 
 In order to obtain the a possible singular form of unseen tokens we apply the following basic rules:
