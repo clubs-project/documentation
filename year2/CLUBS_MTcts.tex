@@ -66,7 +66,7 @@ This document describes the data, resources, methodology and software developed 
 % \label{s:mesh}
 
 For a first analysis, we extract all the controlled terms (CTs) in the frozen Solr instance "pubpsych-core"%
-\footnote{Database as in 4th August 2017.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} in Spanish but we did not retrieve any result for {\tt CTSH} or {\tt CTS} either, the other fields with information related to controlled terms.
+\footnote{Database as in 4th August 2017.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} in Spanish but we did not retrieve any result for {\tt CTSH} or {\tt CTS} either, the other fields with information related to controlled terms \red{we dealt with these terms at the begining, but they seem to have disappeared now?}.
 
 Some of the entries have two parts, the descriptor and a class specification in parentheses:
 {\small 
@@ -77,7 +77,7 @@ Some of the entries have two parts, the descriptor and a class specification in 
 \end{verbatim}
 }
 
-This allows to further split the controlled terms and diminish the number of unique terms to translate as seen in rows \emph{uniq no()} and \emph{uniq only()} of Table~\ref{tab:ct}, where we show the figures for unique terms without the class specification and with it.
+This allows to further split the controlled terms and diminish the number of unique terms to translate as seen in rows \emph{uniq descriptors} and \emph{uniq specifications} of Table~\ref{tab:ct}.
 
 
 \begin{table}[h]
@@ -86,10 +86,10 @@ This allows to further split the controlled terms and diminish the number of uni
   \toprule
          & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
   \midrule
-    CT$lan$L           & 3,659,210 & 4,639,171 & 2,371,110 & 0\\
-    CT$lan$L uniq      &    56,754 &    60,939 &    51,759 & 0\\
-    CT$lan$L uniq no() &    23,556 &    27,734 &    18,623 & 0\\
-    CT$lan$L uniq only() &     393 &       392 &       187 & 0\\
+    CT$lan$L            & 3,659,210 & 4,639,171 & 2,371,110 & 0\\
+    CT$lan$L uniq       &    56,754 &    60,939 &    51,759 & 0\\
+    uniq descriptors    &    23,556 &    27,734 &    18,623 & 0\\
+    uniq specifications &       393 &       392 &       187 & 0\\
   \bottomrule
  \end{tabular}
 \caption{Number of controlled terms per language in the PubPsych Database. See text for the nomenclature.}
@@ -149,7 +149,7 @@ The resources described in this section can be found in the project's Seafile in
 We extract the main part of our quadrilingual lexicon from {\tt MeSH\_2017\_de+en+fr+es.xml} in an appropriate format for CT translation. We extract one list per language L1, where for each term (preferred, non-preferred, and permutations) describing a concept in L1 only the preferred term in the other languages L2, L3 and L4 is added as translation. The identifier of the concept is also added. With this procedure we obtain 175,004 concepts for English, 96,333 for French, 70,694 for German and 66,828 for Spanish. Notice that it is asymmetrical because the different languages have different number of \emph{synonyms} (permutations and strings).
 
 \bigskip
-\noindent Example for the English terms for concept ID:M0000020: 
+\noindent Example for the English terms for concept ID:M0000020. We show first the complete MeSH entry for the concept, and then the four files that are generated were one can see why different languages have different numbers of entries:
 
 {\small 
 \begin{verbatim}
@@ -200,7 +200,7 @@ mesh.frkey.txt:
 %    Slaughter House|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
 %    Slaughterhouses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
 
-Notice that within a language, the elements are unique but there might be degeneracy when we concatenate the 4 languages.
+Notice that within a language, the elements are unique but there might be degeneracy when we concatenate the 4 languages ---in this example, \emph{Abomasum} is a key both for English and French.
 
 \subsection{Multilingual Wikipedia Entries}
 \label{ss:wpLex}
@@ -268,7 +268,7 @@ Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation e
 \subsection{Post-edited Automatic Translations}
 \label{ss:manual}
 
-Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translate them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
+Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translated them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
 
 
 \begin{table}[t]
@@ -370,25 +370,25 @@ Notice that the most accurate translation would be achieved with the multilingua
 \noindent
 We follow the strategy below:
 \begin{enumerate}
- \item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \\ 
+ \item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \red{we know the source language because the name of the field contains it, there is a field per language}\\ 
        Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
  \item Part Translation
       \begin{enumerate}[label*=\arabic*.]
-      \item  All possible capitalisations of the part are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.\\ 
+      \item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \red{casing would be better?}\\ 
        Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
       \item The original capitalisation is restored.
       \end{enumerate}
 
- \item Word Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
+ \item Token Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
       \begin{enumerate}[label*=\arabic*.]
-	\item The part is split into words and words are translated independently.  
-	\item  All possible capitalisations of the word are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
+	\item The part is split into tokens and words are translated independently.  
+	\item  All possible capitalisations of the token are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
 	\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
 	\item If the entry is not available, we copy the source token as translation for the three other languages.
 	\item The original capitalisation is restored.
       \end{enumerate}
      
-  \item Words and parts are joined with the appropriate punctuation to build the final translation of the original CT.
+  \item Tokens and parts are joined with the appropriate punctuation to build the final translation of the original CT.
      
 \end{enumerate}
 
