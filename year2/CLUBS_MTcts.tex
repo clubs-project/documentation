@@ -10,6 +10,7 @@
 \usepackage{enumitem}
 \usepackage{multirow}
 \usepackage{amssymb}
+\usepackage{listings}
 
 \setlength{\textheight}{24cm}  
 \setlength{\textwidth}{15cm}
@@ -31,482 +32,489 @@
 
 %opening
 \title{
-\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
-\Huge D3.1 -- Cross-lingual Thesaurus and \\ Controlled Term Translation \\ 
+	\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+	\Huge D3.1 -- Cross-lingual Thesaurus and \\ Controlled Term Translation \\ 
 }
 \author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^{1}$, Roland Ramthun$^{2}$ \medskip \\ 
-                        \Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
-\date{\vspace*{2cm} -- v0.2 --\\March 2018}
+	\Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
+\date{\vspace*{2cm} -- v0.2.1 --\\March 2018}
 
 
 \begin{document}
-
-\clearpage\maketitle
-\thispagestyle{empty}
-
-\vspace*{5cm}
-\begin{abstract}
-This document describes the data, resources, methodology and software developed to translate the controlled terms and related text available as metadata in the PubPshyc database.
-\end{abstract}
-
-\newpage
-\tableofcontents
-\clearpage
-
-% guarrada, no va el \cleardoublepage
-% \clearpage\mbox{}\clearpage
-
-%\newpage
-% \section{Introduction}
-% \label{s:intro}
-
-\section{Controlled Terms in PubPsych}
-\label{s:ct}
-% \section{MeSH Multilingual Lexicon}
-% \label{s:mesh}
-
-For a first analysis, we extract all the controlled terms (CTs) in the frozen Solr instance "pubpsych-core"%
-\footnote{Database as in 4th August 2017.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} in Spanish but we did not retrieve any result for {\tt CTSH} or {\tt CTS} either, the other fields with information related to controlled terms \red{we dealt with these terms at the begining, but they seem to have disappeared now?}.
-
-Some of the entries have two parts, the descriptor and a class specification in parentheses:
-{\small 
-\begin{verbatim}
-   Action Potentials
-   Action Potentials (drug effects)
-   Action Potentials (genetics)
-\end{verbatim}
-}
-
-This allows to further split the controlled terms and diminish the number of unique terms to translate as seen in rows \emph{uniq descriptors} and \emph{uniq specifications} of Table~\ref{tab:ct}.
-
-
-\begin{table}[h]
-\centering
-\begin{tabular}{lrrrr}
-  \toprule
-         & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
-  \midrule
-    CT$lan$L            & 3,659,210 & 4,639,171 & 2,371,110 & 0\\
-    CT$lan$L uniq       &    56,754 &    60,939 &    51,759 & 0\\
-    uniq descriptors    &    23,556 &    27,734 &    18,623 & 0\\
-    uniq specifications &       393 &       392 &       187 & 0\\
-  \bottomrule
- \end{tabular}
-\caption{Number of controlled terms per language in the PubPsych Database. See text for the nomenclature.}
-\label{tab:ct}
-\end{table} 
-
-After this preliminary analysis to study the size of the database, we select the relevant fields to be translated:
-\begin{description}
- \item[CT$lan$H:] "Controlled term high". As the name says, these are terms from controlled vocabulary (MeSH, PSYNDEX terms, etc.), not freely assigned terms.
- \item[CT$lan$L:] "Controlled terms low". As CT$lan$H, but the person who created the record, gave these entries a lower importance for describing the content than the ones in CT$lan$H.
- \item[IT$lan$H:] "Additional descriptor high". As the name says, additional describing terms, which may have been freely chosen by the person who created the record, so they do not need to come from a controlled terminology.
- \item[IT$lan$L:] "Additional descriptor low". As IT$lan$H, but with lower descriptive relevance.
-\end{description}
-
-In order to translate these 16 fields (4 fields per language) we create a quadrilingual lexicon as explained in the next section.
-% 
-% \subsection{Coverage by MeSH (and in-domain WP titles)}
-% \label{ss:mesh}
-% 
-% In order to see the coverage of the controlled terms by our resources we first extract a list per language of the terms that represent a concept in the multilingual MeSH. For all these terms we have the 4-language-translation. See the number of elements in the MeSH row in Table~\ref{tab:ct}.
-% 
-% We lowercase all the entries and look for the unique elements in our CTs that cannot be translated by the MeSH thesauri (MeSH $unk$ row in Table~\ref{tab:coverage}). We do the same with a list of aligned in-domain Wikipedia titles (WP $unk$) and with the combination of both resources (MeSH+WP $unk$). The translatable elements cover almost all the French CTs (98\%) but only a 78\% and  73\% for German and English ones respectively. The class that appears in parentheses must be also translated independently \red{(TODO grab statistics)}
-% 
-% \begin{table}[t]
-% \centering
-% \begin{tabular}{lrrrr}
-%   \toprule
-%          & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
-%   \midrule
-%    \midrule
-%     CT$lan$L uniq no()    & 23,556 & 27,734 & 18,623 & 0\\
-%     ~~-MeSH $unk$         &  4,704 &  7,387 &    221 & 0 \\
-%     ~~-WP $unk$           & 15,564 & 18,421 & 11,096 & 0\\
-%     ~~-MeSH+WP $unk$      &  4,271 &  6,724 &    197 & 0 \\
-%    \midrule
-%     CT$lan$L no()         & 3,659,210 &  4,639,171 & 2,371,110  & 0\\
-%     ~~-MeSH+WP $covered$  & 2,861,446 &  3,366,307 & 2,322,733  & 0 \\
-%                           &    (78\%) &     (73\%) &     (98\%) & 0 \\
-%   \bottomrule
-%  \end{tabular}
-% \caption{Untranslatable terms of \emph{CT$lan$L no()} by MeSH and WP thesauri after lowercasing the entries.}
-% \label{tab:coverage}
-% \end{table} 
-% 
-
-
-\section{Quadrilingual Lexicon}
-\label{s:lexicon}
-
-The resources described in this section can be found in the project's Seafile in the folder:
-{\tt CLIR-PubPsych/Code/MT/DBtranslator/models/CT} 
-
-
-\subsection{Multilingual MeSH}
-\label{ss:meshLex}
-
-We extract the main part of our quadrilingual lexicon from {\tt MeSH\_2017\_de+en+fr+es.xml} in an appropriate format for CT translation. We extract one list per language L1, where for each term (preferred, non-preferred, and permutations) describing a concept in L1 only the preferred term in the other languages L2, L3 and L4 is added as translation. The identifier of the concept is also added. With this procedure we obtain 175,004 concepts for English, 96,333 for French, 70,694 for German and 66,828 for Spanish. Notice that it is asymmetrical because the different languages have different number of \emph{synonyms} (permutations and strings).
-
-\bigskip
-\noindent Example for the English terms for concept ID:M0000020. We show first the complete MeSH entry for the concept, and then the four files that are generated were one can see why different languages have different numbers of entries:
-
-{\small 
-\begin{verbatim}
-MeSH_2017_de+en+fr+es.xml:
- 
-<concept id="M0000020">
-	<term id="T000045" lang="eng" preferred="true">
+	
+	\clearpage\maketitle
+	\thispagestyle{empty}
+	
+	\vspace*{5cm}
+	\begin{abstract}
+		This document describes the data, resources, methodology and software developed to translate the controlled terms and related text available as metadata in the PubPsych database.
+	\end{abstract}
+	
+	\newpage
+	\tableofcontents
+	\clearpage
+	
+	% guarrada, no va el \cleardoublepage
+	% \clearpage\mbox{}\clearpage
+	
+	%\newpage
+	% \section{Introduction}
+	% \label{s:intro}
+	
+	\section{Controlled Terms in PubPsych}
+	\label{s:ct}
+	% \section{MeSH Multilingual Lexicon}
+	% \label{s:mesh}
+	
+	For a first analysis, we extract some of the controlled terms (CTs) in the frozen Solr instance "pubpsych-core"%
+	\footnote{PubPsych record set as of 4th August 2017.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} (Spanish CTs) but we did not retrieve any result for {\tt CTSH} either, the other field with information related to controlled terms \red{we dealt with these terms at the begining, but they seem to have disappeared now?}.
+	
+	%TODO: RR add info about source dbs and CT<lan>x fields
+	
+	Some of the entries have two parts, the descriptor and a class specification in parentheses:
+	{\small 
+		\begin{verbatim}
+		Action Potentials
+		Action Potentials (drug effects)
+		Action Potentials (genetics)
+		\end{verbatim}
+	}
+	
+	This allows to further split the controlled terms into a descriptor and a specification thereby reducing the number of unique terms to translate as seen in rows \emph{uniq descriptors} and \emph{uniq specifications} of Table~\ref{tab:ct}.
+	
+	
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{lrrrr}
+			\toprule
+			& \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
+			\midrule
+			CT$lan$L total           & 3,659,210 & 4,639,171 & 2,371,110 & 0\\
+			CT$lan$L uniq       &    56,754 &    60,939 &    51,759 & 0\\
+			descriptors uniq   &    23,556 &    27,734 &    18,623 & 0\\
+			specifications uniq &       393 &       392 &       187 & 0\\
+			\bottomrule
+		\end{tabular}
+		\caption{Number of controlled terms per language in the PubPsych Database. See text for the nomenclature. CT$lan$L denotes the name of the language dependent PubPsych fields for CTs, e.g. CTDL for German or CTSL for Spanish}
+		\label{tab:ct}
+	\end{table} 
+	
+	After this preliminary analysis to study the expectable quantity of different terms, we select the relevant fields to be translated:
+	\begin{description}
+		\item[CT$lan$H:] "Controlled term high". These are terms from controlled vocabulary (MeSH, APA/PSYNDEX terms, etc.), not freely assigned terms.
+		\item[CT$lan$L:] "Controlled terms low". As CT$lan$H, but the person who created the record gave these entries a lower importance for describing the content than the ones in CT$lan$H.
+		\item[IT$lan$H:] "Additional descriptor high". As the name says, additional describing terms, which may have been freely chosen by the person who created the record, so they do not need to come from a controlled terminology.
+		\item[IT$lan$L:] "Additional descriptor low". As IT$lan$H, but with lower descriptive relevance.
+	\end{description}
+	
+	%TODO: I would be more logical to move this table before the analysis, but then the analysis should include all these fields.
+	
+	In order to translate these 16 fields (4 fields per language) we create a quadrilingual lexicon as explained in the next section.
+	% 
+	% \subsection{Coverage by MeSH (and in-domain WP titles)}
+	% \label{ss:mesh}
+	% 
+	% In order to see the coverage of the controlled terms by our resources we first extract a list per language of the terms that represent a concept in the multilingual MeSH. For all these terms we have the 4-language-translation. See the number of elements in the MeSH row in Table~\ref{tab:ct}.
+	% 
+	% We lowercase all the entries and look for the unique elements in our CTs that cannot be translated by the MeSH thesauri (MeSH $unk$ row in Table~\ref{tab:coverage}). We do the same with a list of aligned in-domain Wikipedia titles (WP $unk$) and with the combination of both resources (MeSH+WP $unk$). The translatable elements cover almost all the French CTs (98\%) but only a 78\% and  73\% for German and English ones respectively. The class that appears in parentheses must be also translated independently \red{(TODO grab statistics)}
+	% 
+	% \begin{table}[t]
+	% \centering
+	% \begin{tabular}{lrrrr}
+	%   \toprule
+	%          & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
+	%   \midrule
+	%    \midrule
+	%     CT$lan$L uniq no()    & 23,556 & 27,734 & 18,623 & 0\\
+	%     ~~-MeSH $unk$         &  4,704 &  7,387 &    221 & 0 \\
+	%     ~~-WP $unk$           & 15,564 & 18,421 & 11,096 & 0\\
+	%     ~~-MeSH+WP $unk$      &  4,271 &  6,724 &    197 & 0 \\
+	%    \midrule
+	%     CT$lan$L no()         & 3,659,210 &  4,639,171 & 2,371,110  & 0\\
+	%     ~~-MeSH+WP $covered$  & 2,861,446 &  3,366,307 & 2,322,733  & 0 \\
+	%                           &    (78\%) &     (73\%) &     (98\%) & 0 \\
+	%   \bottomrule
+	%  \end{tabular}
+	% \caption{Untranslatable terms of \emph{CT$lan$L no()} by MeSH and WP thesauri after lowercasing the entries.}
+	% \label{tab:coverage}
+	% \end{table} 
+	% 
+	
+	
+	\section{Quadrilingual Lexicon}
+	\label{s:lexicon}
+	
+	The resources described in this section can be found in the project's Seafile in the folder:
+	{\tt CLIR-PubPsych/Code/MT/DBtranslator/models/CT} 
+	
+	%TODO No use of multilingual APA thesaurus
+	
+	\subsection{Multilingual MeSH}
+	\label{ss:meshLex}
+	
+	We extract the largest part of our quadrilingual lexicon from a quadrilingual MeSH version created with MeSHMerger\footnote{\url{https://github.com/clubs-project/MeSHMerger}} {\tt file MeSH\_2017\_de+en+fr+es.xml}. The format of the data has been changed to a list format for CT translation. We extract one list per language L1, where for each term (preferred, non-preferred, and permutations) describing a concept in L1 only the preferred term in the other languages L2, L3 and L4 is added as translation. This ensures that any term for any concept in any language is always mapped to the preferred term in the other languages. The identifier of the concept is also added. With this procedure we obtain 175,004 concepts for English, 96,333 for French, 70,694 for German and 66,828 for Spanish. The difference between languages stems from the different number of \emph{synonyms} (permutations and strings) in the MeSH translations.
+	
+	\bigskip
+	\noindent Example for the English terms for concept {\tt ID:M0000020}. We first show the complete MeSH entry for the concept, and then the four files that are generated were one can see why different languages have different numbers of entries:
+	
+	{\small 
+		\lstset{language=XML}
+		\begin{lstlisting} 
+		MeSH_2017_de+en+fr+es.xml:
+		<concept id="M0000020">
+		<term id="T000045" lang="eng" preferred="true">
 		<string>Abomasum</string>
 		<permutation>Abomasums</permutation>
-	</term>
-	<term id="spa0000603" lang="spa" preferred="true">
+		</term>
+		<term id="spa0000603" lang="spa" preferred="true">
 		<string>Abomaso</string>
-	</term>
-	<term id="spa0049997" lang="spa" preferred="false">
+		</term>
+		<term id="spa0049997" lang="spa" preferred="false">
 		<string>Cuajar</string>
-	</term>
-	<term id="ger0000018" lang="ger" preferred="true">
+		</term>
+		<term id="ger0000018" lang="ger" preferred="true">
 		<string>Labmagen</string>
-	</term>
-	<term id="fre0063293" lang="fre" preferred="true">
+		</term>
+		<term id="fre0063293" lang="fre" preferred="true">
 		<string>Abomasum</string>
-	</term>
-	<term id="fre0000018" lang="fre" preferred="false">
+		</term>
+		<term id="fre0000018" lang="fre" preferred="false">
 		<string>Caillette</string>
-	</term>
-</concept>
-
-mesh.dekey.txt:
-        Labmagen|||en:Abomasum|||es:Abomaso|||fr:Abomasum|||ID:M0000020
-  
-mesh.enkey.txt:
-        Abomasum|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-        Abomasums|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-        
-mesh.eskey.txt:       
-        Abomaso|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-        Cuajar|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-
-mesh.frkey.txt:  
-        Abomasum|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
-        Caillette|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
-\end{verbatim}
-}
-
-%    Slaughter Houses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
-%    House, Slaughter|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
-%    Houses, Slaughter|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
-%    Slaughter House|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
-%    Slaughterhouses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
-
-Notice that within a language, the elements are unique but there might be degeneracy when we concatenate the 4 languages ---in this example, \emph{Abomasum} is a key both for English and French.
-
-\subsection{Multilingual Wikipedia Entries}
-\label{ss:wpLex}
-
-% \subsubsection{Multilingual Wikipedia In-domain Titles}
-
-We have extracted multilingual in-domain titles from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}}
- \cite{barronEtAl:2015}. 
-Lexicons have been built from aligned articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
-
-Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81.369 entries. 
-% After removing duplicates, we obtain the figures of Table~\ref{tab:4lex} depending on the language.
-The lexicon contains both single words and phrases related to our domain, but in lots of cases entries correspond to named entities:
-
-\bigskip
- \begin{small}
-% \begin{tabular}[h]{rl rl rl rl}
-%   ID En    & Title En       & ID Es   & Title Es        &  ID Fr    & Title Fr            &  ID De   & Title De \\
-%   1053998  & Perception     &176025   & Percepci\'on    & 360640    &Perception           & 387646   & Wahrnehmung \\
-%   10269587 & Echoic\_memory & 4636204 & Memoria\_ecoica & 3858294   & M\'emoire\_auditive & 4334978  & Echoisches\_Ged\"achtnis \\
-% \end{tabular}
-  \begin{tabular}[h]{llll}
-    \toprule
-    En     &Es          & Fr             & De \\
-    \midrule
-    Perception     & Percepci\'on      &Perception            & Wahrnehmung \\
-    Echoic\_memory & Memoria\_ecoica   & M\'emoire\_auditive  & Echoisches\_Ged\"achtnis \\
-    Emil\_Kraepelin & Emil\_Kraepelin  & Emil\_Kraepelin      & Emil\_Kraepelin \\
-    ... & ... & ... & ... \\
-    \bottomrule
- \end{tabular}
-\end{small}
-
-\bigskip
-In a similar way, we extract aligned category names from Wikipedia, but this time, we select all of them and not only those related to physcology. 38,038 entries are obtained in this case.
-
-As for the MeSH lexicon, we build 4 files, one per language, with the entries in the four languages aligned. In this case though, there is no associated ID:
-
-{\small 
-\begin{verbatim}
-wp.dekey.txt:
-    Wahrnehmung|||en:Perception|||es:Percepción|||fr:Perception
-    Echoisches Gedächtnis|||en:Echoic memory|||es:Memoria ecoica|||fr:Mémoire auditive
-    
-wp.enkey.txt:
-    Perception|||es:Percepción|||de:Wahrnehmung|||fr:Perception
-    Echoic memory|||es:Memoria ecoica|||de:Echoisches Gedächtnis|||fr:Mémoire auditive
-    
-wp.eskey.txt:
-    Percepción|||en:Perception|||de:Wahrnehmung|||fr:Perception
-    Memoria ecoica|||en:Echoic memory|||de:Echoisches Gedächtnis|||fr:Mémoire auditive
-    
-wp.frkey.txt:
-    Perception|||en:Perception|||es:Percepción|||de:Wahrnehmung
-    Mémoire auditive|||en:Echoic memory|||es:Memoria ecoica|||de:Echoisches Gedächtnis
-\end{verbatim}
-}
-
-
-\subsection{Apertium Dictionaries}
-\label{ss:apertium}
-
-Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation engine that uses bilingual dictionaries for lexical transfer. We have used three of their dictionaries\footnote{\url{http://wiki.apertium.org/wiki/List_of_dictionaries}} ($en$-$de$, $en$-$es$ and $es$-$fr$) to extract a quadlingual dictionary with the overlapping entries. Table~\ref{tab:4lex} shows the number of entries of this multilingual dictionary in comparison with the other sources.
-
-\subsection{Post-edited Automatic Translations}
-\label{ss:manual}
-
-Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translated them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
-
-
-\begin{table}[t]
-\centering
-\begin{tabular}{lrrrr}
-  \toprule
-         & \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
-  \midrule
-     MeSH                     & 70,694 & 175,004 & 96,333 & 66,828\\
-%      WP (health+phsy.)  & 81,369 & 80,762  & 80,285 & 81,059\\
-     WPtitles (health+phsy.)  & 81,369 & 81,369  & 81,369 & 81,369\\
-     WPcategories             & 38,038 & 38,038  & 38,038 & 38,038\\
-     Apertium                 &  7,792 &  5,935  &  6,020 &  5,846\\
-     Manual                   &  4,262 &  4,142  &  4,047 &  4,081\\
-  \midrule
-     \emph{Total}             & 202,128&304,277 & 225,607 & 195,937\\
-  \bottomrule
- \end{tabular}
-\caption{Number of aligned terms per language in our multilingual resources. The row with the total excludes duplicate entries.}
-\label{tab:4lex}
-\end{table} 
-
-
-
-\begin{table}[h]
-\centering
-\flushleft{English}
-
-\small
-\begin{tabular}{llrrrrr}
-\toprule
-&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
-         \cmidrule(lr){3-4}   \cmidrule(lr){5-7}
-&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
-\midrule
-\multirow{5}{*}{\begin{sideways}MeSH\end{sideways}} 
-&ACCNO  &    344,453 (30.4\%)  &   787,342 (69.6\%)  & 1,325,648 (70.9\%)  & 545,113 (29.1\%) & 1834 \\
-&DFK    &    544,275 (33.3\%)  & 1,092,037 (66.7\%)  & 2,043,618 (77.2\%)  & 603,889 (22.8\%) & 2051 \\
-&NORART &      5,630 (24.6\%)  &    17,223 (75.4\%)  &    34,048 (86.9\%)  &   5,128 (13.1\%) &  86 \\
-&PDID   &        197 (43.9\%)  &       252 (56.1\%)  &       623 (80.5\%)  &     151 (19.5\%) &  87 \\
-&PMID   &  2,987,945 (86.9\%)  &   448,879 (13.1\%)  & 5,007,120 (97.1\%)  &  151,482 (2.9\%) & 242 \\
-\midrule
-\multirow{5}{*}{\begin{sideways}QuadLex\end{sideways}} 
-&ACCNO  &    586,440 (51.8\%)  & 545,355 (48.2\%)  & 1,861,278 (99.5\%)  & 9,483 (0.5\%) & 33 \\
-&DFK    &    900,396 (55.0\%)  & 735,916 (45.0\%)  & 2,640,589 (99.7\%)  & 6,918 (0.3\%) & 57 \\
-&NORART &      5,779 (25.3\%)  &  17,074 (74.7\%)  &    38,941 (99.4\%)  &   235 (0.6\%) &  9 \\
-&PDID   &        287 (63.9\%)  &     162 (36.1\%)  &       771 (99.6\%)  &     3 (0.4\%) &  1 \\
-&PMID   &  3,094,379 (90.0\%)  & 342,445 (10.0\%)  & 5,155,774 (99.9\%)  & 2,828 (0.1\%) & 30 \\
-\bottomrule
-\end{tabular}
-
-\flushleft{\normalsize German}
-\begin{tabular}{llrrrrr}
-\toprule
-&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
-         \cmidrule(lr){3-4}   \cmidrule(lr){5-7}
-&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
-\midrule
-\multirow{3}{*}{\begin{sideways}MeSH\end{sideways}} 
-&DFK    &   480,050 (29.1\%)  & 1,172,023 (70.9\%)  & 1,328,236 (61.7\%)  & 823,705 (38.3\%) & 3528 \\
-&PDID   &       182 (38.0\%)  &       297 (62.0\%)  &       425 (64.4\%)  &     235 (35.6\%) &  132 \\
-&PMID   & 2,915,784 (84.5\%)  &   535,085 (15.5\%)  & 4,321,857 (94.7\%)  & 240,222 (5.3\%)  &  160 \\
-\midrule
-\multirow{1}{*}{\begin{sideways}~QuadLex\end{sideways}} 
-&DFK     & 1,002,373 (60.7\%)  & 649,700 (39.3\%)  & 2,150,866 (100.0\%)  & 1,075 (0.0\%)  & 30 \\
-&PDID~~~~&       319 (66.6\%)  &     160 (33.4\%)  &       660 (100.0\%)  &     0 (0.0\%) &  0 \\
-&PMID    & 3,067,454 (88.9\%)  & 383,415 (11.1\%)  & 4,561,948 (100.0\%)  &   131 (0.0\%)  & 13 \\
-\bottomrule
-\end{tabular}
-
-
-\flushleft{\normalsize French}
-\begin{tabular}{llrrrrr}
-\toprule
-&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
-         \cmidrule(lr){3-4}   \cmidrule(lr){5-7}
-&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
-\midrule
-\multirow{1}{*}{\begin{sideways}M\end{sideways}} 
-&PMID~~~~&  2,520,288 (75.3\%)  & ~824,711 (24.7\%)  & ~~5,508,721 (92.9\%)  & ~419,105 (7.1\%)  & ~961 \\
-\midrule
-\multirow{-1}{*}{\begin{sideways}Q\end{sideways}} 
-&PMID     & 2,648,537 (79.2\%)  & 696,462 (20.8\%)  & 5,737,329 (96.8\%)  & 190,497 (3.2\%)  & 334 \\
-\bottomrule
-\end{tabular}
-\caption{Number of CT\emph{lan}L translated with the multilingual MeSH and the full QuadLexicon for English, German and French. There are no entries for Spanish. A CT term is splitted into two parts (the descriptor and the class specification), and in case of no-matching it is further splitted into tokens.}
-\label{tab:tradsCT}
-\end{table}
-
-
-\section{Controlled Term Translation}
-\label{s:cttrad}
-
-\subsection{Methodoly}
-We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych Database (Section~\ref{s:ct}).
-Notice that the most accurate translation would be achieved with the multilingual MeSH, the other three resources add noise to the translations but increase the coverage of the engine.
-
-\bigskip
-\noindent
-We follow the strategy below:
-\begin{enumerate}
- \item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \red{we know the source language because the name of the field contains it, there is a field per language}\\ 
-       Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
- \item Part Translation
-      \begin{enumerate}[label*=\arabic*.]
-      \item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \red{casing would be better?}\\ 
-       Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
-      \item The original capitalisation is restored.
-      \end{enumerate}
-
- \item Token Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
-      \begin{enumerate}[label*=\arabic*.]
-	\item The part is split into tokens and words are translated independently.  
-	\item  All possible capitalisations of the token are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
-	\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
-	\item If the entry is not available, we copy the source token as translation for the three other languages.
-	\item The original capitalisation is restored.
-      \end{enumerate}
-     
-  \item Tokens and parts are joined with the appropriate punctuation to build the final translation of the original CT.
-     
-\end{enumerate}
-
-\bigskip
-We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise retrieval quality and not translation quality. 
-
-\subsection{Software}
-
-A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
-\footnote{\url{}https://github.com/clubs-project/DBtranslator}
-together with all the software developed to translate the different components of the PubPshyc database.
-The complete translation pipeline going from downloading the field for all the documents in the database, to translate them and uploading the translations is run by {\tt tradCTs.sh}:
-
-\begin{verbatim}
-user@machine:~/home/DBtranslator/scripts/$  bash tradCTs.sh -h
-tradCTs.sh -f CTH|CTL|ITH|ITL [-h] 
-
-where:
-    -h  show this help text
-    -f  field to translate [CTH|CTL|ITH|ITL]
-
-Example:
-    bash tradCTs.sh -f CTH
-\end{verbatim}
-
-If you want to consider a new field, add it to {\tt preproField4trad.py}. If you want to use the script only on a subset of the database, please, modify the Solr query accordingly in the same file. 
-
-The up-to-date instructions for installing and using the software can be found in the git repository:
-
-\url{https://github.com/clubs-project/DBtranslator}
-
-
-
-% \section{Conclusions}
-% \label{s:conclusions}
-
-
-
-%
-% ---- Appendeces ----
-%
-\appendix
-\section{Appendix: Basic Rules for Plural Formation}
-\label{ap:plural}
-
-In order to obtain the a possible singular form of unseen tokens we apply the following basic rules:
-
-\renewcommand{\labelitemi}{$\star$}
-\paragraph{English}
-\begin{itemize}
-\itemsep-0.2em 
- \item NOUN-y $\Leftarrow$ NOUN-ies
- \item NOUN $\Leftarrow$ NOUN-es
- \item NOUN $\Leftarrow$ NOUN-s
-\end{itemize}
-
-\paragraph{French}
-\begin{itemize}
-\itemsep-0.2em 
- \item NOUN $\Leftarrow$ NOUN-s
-\end{itemize}
-
-\paragraph{German}
-\begin{itemize}
-\itemsep-0.2em 
- \item NOUN (\"-) $\Leftarrow$ NOUN-er
- \item NOUN $\Leftarrow$ NOUN-n
- \item NOUN $\Leftarrow$ NOUN-e
- \item NOUN $\Leftarrow$ NOUN-s
-\end{itemize}
-
-\paragraph{Spanish}
-\begin{itemize}
-\itemsep-0.2em 
- \item NOUN $\Leftarrow$ NOUN-es
- \item NOUN $\Leftarrow$ NOUN-s
-\end{itemize}
-
-
-% CODE
-%    # for Spanish
-%     if len(singular)>1 and language=="es":
-%        if singular[:-2] == 'es': 
-%           singular = singular[:-2]
-%        elif singular[-1] == 's': 
-%           singular = singular[:-1]
-%     # for French
-%     if len(singular)>1 and language=="fr":
-%        if singular[-1] == 's': 
-%           singular = singular[:-1]
-%     # for English
-%     if len(singular)>3 and language=="en":
-%        if singular[:-3] == 'ies': 
-%           return singular[:-3]+"y"
-%     if len(singular)>2 and language=="en":
-%        if singular[:-2] == 'es': 
-%           return singular[:-2]
-%     if len(singular)>1 and language=="en":
-%        if singular[-1] == 's': 
-%           singular = singular[:-1]
-%     # for German
-%     if len(singular)>2 and language=="de":
-%        if singular[:-2] == 'er': 
-%           return remove_diacritic(singular[:-2]).decode() #we need to remove the umlaut too
-%        if singular[-1] == 'n': 
-%           singular = singular[:-1]
-%     if len(singular)>1 and language=="de":
-%        if singular[-1] == 'e' or  singular[-1] == 's': 
-%           singular = singular[:-1]
-
-
-
-%
-% ---- Bibliography ----
-%
-\addcontentsline{toc}{section}{References}
-\bibliographystyle{plain}
-\bibliography{genericMT}
-
-
+		</term>
+		</concept>
+		\end{lstlisting}
+		
+		\begin{lstlisting} 
+		mesh.dekey.txt:
+		Labmagen|||en:Abomasum|||es:Abomaso|||fr:Abomasum|||ID:M0000020
+		
+		mesh.enkey.txt:
+		Abomasum|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+		Abomasums|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+		
+		mesh.eskey.txt:       
+		Abomaso|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+		Cuajar|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+		
+		mesh.frkey.txt:  
+		Abomasum|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
+		Caillette|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
+		\end{lstlisting}
+	}
+	
+	%    Slaughter Houses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+	%    House, Slaughter|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+	%    Houses, Slaughter|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+	%    Slaughter House|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+	%    Slaughterhouses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
+	
+	Notice that within each file/language, the keys are unique but there might be degeneracy when we concatenate the 4 languages into a single file -- in this example, \emph{Abomasum} is a key both for English and French.
+	
+	\subsection{Multilingual Wikipedia Entries}
+	\label{ss:wpLex}
+	
+	% \subsubsection{Multilingual Wikipedia In-domain Titles}
+	
+	We have extracted multilingual in-domain titles from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}}
+	\cite{barronEtAl:2015}. 
+	Lexicons have been built from aligned articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
+	
+	Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81.369 entries. 
+	% After removing duplicates, we obtain the figures of Table~\ref{tab:4lex} depending on the language.
+	The lexicon contains both single words and phrases related to our domain, but in lots of cases entries correspond to named entities:
+	
+	\bigskip
+	\begin{small}
+		% \begin{tabular}[h]{rl rl rl rl}
+		%   ID En    & Title En       & ID Es   & Title Es        &  ID Fr    & Title Fr            &  ID De   & Title De \\
+		%   1053998  & Perception     &176025   & Percepci\'on    & 360640    &Perception           & 387646   & Wahrnehmung \\
+		%   10269587 & Echoic\_memory & 4636204 & Memoria\_ecoica & 3858294   & M\'emoire\_auditive & 4334978  & Echoisches\_Ged\"achtnis \\
+		% \end{tabular}
+		\begin{tabular}[h]{llll}
+			\toprule
+			En     &Es          & Fr             & De \\
+			\midrule
+			Perception     & Percepci\'on      &Perception            & Wahrnehmung \\
+			Echoic\_memory & Memoria\_ecoica   & M\'emoire\_auditive  & Echoisches\_Ged\"achtnis \\
+			Emil\_Kraepelin & Emil\_Kraepelin  & Emil\_Kraepelin      & Emil\_Kraepelin \\
+			... & ... & ... & ... \\
+			\bottomrule
+		\end{tabular}
+	\end{small}
+	
+	\bigskip
+	In a similar way, we extract aligned category names from Wikipedia, but this time, we select all of them and not only those related to physcology. 38,038 entries are obtained in this case.
+	
+	As for the MeSH lexicon, we build 4 files, one per language, with the entries in the four languages aligned. In this case though, there is no associated ID:
+	
+	{\small 
+		\begin{verbatim}
+		wp.dekey.txt:
+		Wahrnehmung|||en:Perception|||es:Percepción|||fr:Perception
+		Echoisches Gedächtnis|||en:Echoic memory|||es:Memoria ecoica|||fr:Mémoire auditive
+		
+		wp.enkey.txt:
+		Perception|||es:Percepción|||de:Wahrnehmung|||fr:Perception
+		Echoic memory|||es:Memoria ecoica|||de:Echoisches Gedächtnis|||fr:Mémoire auditive
+		
+		wp.eskey.txt:
+		Percepción|||en:Perception|||de:Wahrnehmung|||fr:Perception
+		Memoria ecoica|||en:Echoic memory|||de:Echoisches Gedächtnis|||fr:Mémoire auditive
+		
+		wp.frkey.txt:
+		Perception|||en:Perception|||es:Percepción|||de:Wahrnehmung
+		Mémoire auditive|||en:Echoic memory|||es:Memoria ecoica|||de:Echoisches Gedächtnis
+		\end{verbatim}
+	}
+	
+	
+	\subsection{Apertium Dictionaries}
+	\label{ss:apertium}
+	
+	Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation engine that uses bilingual dictionaries for lexical transfer. We have used three of their dictionaries\footnote{\url{http://wiki.apertium.org/wiki/List_of_dictionaries}} ($en$-$de$, $en$-$es$ and $es$-$fr$) to extract a quadlingual dictionary with the overlapping entries. Table~\ref{tab:4lex} shows the number of entries of this multilingual dictionary in comparison with the other sources.
+	
+	\subsection{Post-edited Automatic Translations}
+	\label{ss:manual}
+	
+	Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translated them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
+	
+	
+	\begin{table}[t]
+		\centering
+		\begin{tabular}{lrrrr}
+			\toprule
+			& \mc{1}{c}{German} & \mc{1}{c}{English} & \mc{1}{c}{French} & \mc{1}{c}{Spanish}\\
+			\midrule
+			MeSH                     & 70,694 & 175,004 & 96,333 & 66,828\\
+			%      WP (health+phsy.)  & 81,369 & 80,762  & 80,285 & 81,059\\
+			WPtitles (health+phsy.)  & 81,369 & 81,369  & 81,369 & 81,369\\
+			WPcategories             & 38,038 & 38,038  & 38,038 & 38,038\\
+			Apertium                 &  7,792 &  5,935  &  6,020 &  5,846\\
+			Manual                   &  4,262 &  4,142  &  4,047 &  4,081\\
+			\midrule
+			\emph{Total}             & 202,128&304,277 & 225,607 & 195,937\\
+			\bottomrule
+		\end{tabular}
+		\caption{Number of aligned terms per language in our multilingual resources. The row with the total excludes duplicate entries.}
+		\label{tab:4lex}
+	\end{table} 
+	
+	
+	
+	\begin{table}[h]
+		\centering
+		\flushleft{English}
+		
+		\small
+		\begin{tabular}{llrrrrr}
+			\toprule
+			&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+			\cmidrule(lr){3-4}   \cmidrule(lr){5-7}
+			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
+			\midrule
+			\multirow{5}{*}{\begin{sideways}MeSH\end{sideways}} 
+			&ACCNO  &    344,453 (30.4\%)  &   787,342 (69.6\%)  & 1,325,648 (70.9\%)  & 545,113 (29.1\%) & 1834 \\
+			&DFK    &    544,275 (33.3\%)  & 1,092,037 (66.7\%)  & 2,043,618 (77.2\%)  & 603,889 (22.8\%) & 2051 \\
+			&NORART &      5,630 (24.6\%)  &    17,223 (75.4\%)  &    34,048 (86.9\%)  &   5,128 (13.1\%) &  86 \\
+			&PDID   &        197 (43.9\%)  &       252 (56.1\%)  &       623 (80.5\%)  &     151 (19.5\%) &  87 \\
+			&PMID   &  2,987,945 (86.9\%)  &   448,879 (13.1\%)  & 5,007,120 (97.1\%)  &  151,482 (2.9\%) & 242 \\
+			\midrule
+			\multirow{5}{*}{\begin{sideways}QuadLex\end{sideways}} 
+			&ACCNO  &    586,440 (51.8\%)  & 545,355 (48.2\%)  & 1,861,278 (99.5\%)  & 9,483 (0.5\%) & 33 \\
+			&DFK    &    900,396 (55.0\%)  & 735,916 (45.0\%)  & 2,640,589 (99.7\%)  & 6,918 (0.3\%) & 57 \\
+			&NORART &      5,779 (25.3\%)  &  17,074 (74.7\%)  &    38,941 (99.4\%)  &   235 (0.6\%) &  9 \\
+			&PDID   &        287 (63.9\%)  &     162 (36.1\%)  &       771 (99.6\%)  &     3 (0.4\%) &  1 \\
+			&PMID   &  3,094,379 (90.0\%)  & 342,445 (10.0\%)  & 5,155,774 (99.9\%)  & 2,828 (0.1\%) & 30 \\
+			\bottomrule
+		\end{tabular}
+		
+		\flushleft{\normalsize German}
+		\begin{tabular}{llrrrrr}
+			\toprule
+			&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+			\cmidrule(lr){3-4}   \cmidrule(lr){5-7}
+			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
+			\midrule
+			\multirow{3}{*}{\begin{sideways}MeSH\end{sideways}} 
+			&DFK    &   480,050 (29.1\%)  & 1,172,023 (70.9\%)  & 1,328,236 (61.7\%)  & 823,705 (38.3\%) & 3528 \\
+			&PDID   &       182 (38.0\%)  &       297 (62.0\%)  &       425 (64.4\%)  &     235 (35.6\%) &  132 \\
+			&PMID   & 2,915,784 (84.5\%)  &   535,085 (15.5\%)  & 4,321,857 (94.7\%)  & 240,222 (5.3\%)  &  160 \\
+			\midrule
+			\multirow{1}{*}{\begin{sideways}~QuadLex\end{sideways}} 
+			&DFK     & 1,002,373 (60.7\%)  & 649,700 (39.3\%)  & 2,150,866 (100.0\%)  & 1,075 (0.0\%)  & 30 \\
+			&PDID~~~~&       319 (66.6\%)  &     160 (33.4\%)  &       660 (100.0\%)  &     0 (0.0\%) &  0 \\
+			&PMID    & 3,067,454 (88.9\%)  & 383,415 (11.1\%)  & 4,561,948 (100.0\%)  &   131 (0.0\%)  & 13 \\
+			\bottomrule
+		\end{tabular}
+		
+		
+		\flushleft{\normalsize French}
+		\begin{tabular}{llrrrrr}
+			\toprule
+			&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+			\cmidrule(lr){3-4}   \cmidrule(lr){5-7}
+			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
+			\midrule
+			\multirow{1}{*}{\begin{sideways}M\end{sideways}} 
+			&PMID~~~~&  2,520,288 (75.3\%)  & ~824,711 (24.7\%)  & ~~5,508,721 (92.9\%)  & ~419,105 (7.1\%)  & ~961 \\
+			\midrule
+			\multirow{-1}{*}{\begin{sideways}Q\end{sideways}} 
+			&PMID     & 2,648,537 (79.2\%)  & 696,462 (20.8\%)  & 5,737,329 (96.8\%)  & 190,497 (3.2\%)  & 334 \\
+			\bottomrule
+		\end{tabular}
+		\caption{Number of CT\emph{lan}L translated with the multilingual MeSH and the full QuadLexicon for English, German and French. There are no entries for Spanish. A CT term is splitted into two parts (the descriptor and the class specification), and in case of no-matching it is further splitted into tokens.}
+		\label{tab:tradsCT}
+	\end{table}
+	
+	
+	\section{Controlled Term Translation}
+	\label{s:cttrad}
+	
+	\subsection{Methodoly}
+	We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych Database (Section~\ref{s:ct}).
+	Notice that the most accurate translation would be achieved with the multilingual MeSH, the other three resources add noise to the translations but increase the coverage of the engine.
+	
+	\bigskip
+	\noindent
+	We follow the strategy below:
+	\begin{enumerate}
+		\item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \red{we know the source language because the name of the field contains it, there is a field per language}\\ 
+		Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
+		\item Part Translation
+		\begin{enumerate}[label*=\arabic*.]
+			\item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \red{casing would be better?}\\ 
+			Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
+			\item The original capitalisation is restored.
+		\end{enumerate}
+		
+		\item Token Translation. If a part is not found in the dictionary, it is translated in a word-by-word basis.
+		\begin{enumerate}[label*=\arabic*.]
+			\item The part is split into tokens and words are translated independently.  
+			\item  All possible capitalisations of the token are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
+			\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
+			\item If the entry is not available, we copy the source token as translation for the three other languages.
+			\item The original capitalisation is restored.
+		\end{enumerate}
+		
+		\item Tokens and parts are joined with the appropriate punctuation to build the final translation of the original CT.
+		
+	\end{enumerate}
+	
+	\bigskip
+	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise retrieval quality and not translation quality. 
+	
+	\subsection{Software}
+	
+	A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
+	\footnote{\url{}https://github.com/clubs-project/DBtranslator}
+	together with all the software developed to translate the different components of the PubPshyc database.
+	The complete translation pipeline going from downloading the field for all the documents in the database, to translate them and uploading the translations is run by {\tt tradCTs.sh}:
+	
+	\begin{verbatim}
+	user@machine:~/home/DBtranslator/scripts/$  bash tradCTs.sh -h
+	tradCTs.sh -f CTH|CTL|ITH|ITL [-h] 
+	
+	where:
+	-h  show this help text
+	-f  field to translate [CTH|CTL|ITH|ITL]
+	
+	Example:
+	bash tradCTs.sh -f CTH
+	\end{verbatim}
+	
+	If you want to consider a new field, add it to {\tt preproField4trad.py}. If you want to use the script only on a subset of the database, please, modify the Solr query accordingly in the same file. 
+	
+	The up-to-date instructions for installing and using the software can be found in the git repository:
+	
+	\url{https://github.com/clubs-project/DBtranslator}
+	
+	
+	
+	% \section{Conclusions}
+	% \label{s:conclusions}
+	
+	
+	
+	%
+	% ---- Appendeces ----
+	%
+	\appendix
+	\section{Appendix: Basic Rules for Plural Formation}
+	\label{ap:plural}
+	
+	In order to obtain the a possible singular form of unseen tokens we apply the following basic rules:
+	
+	\renewcommand{\labelitemi}{$\star$}
+	\paragraph{English}
+	\begin{itemize}
+		\itemsep-0.2em 
+		\item NOUN-y $\Leftarrow$ NOUN-ies
+		\item NOUN $\Leftarrow$ NOUN-es
+		\item NOUN $\Leftarrow$ NOUN-s
+	\end{itemize}
+	
+	\paragraph{French}
+	\begin{itemize}
+		\itemsep-0.2em 
+		\item NOUN $\Leftarrow$ NOUN-s
+	\end{itemize}
+	
+	\paragraph{German}
+	\begin{itemize}
+		\itemsep-0.2em 
+		\item NOUN (\"-) $\Leftarrow$ NOUN-er
+		\item NOUN $\Leftarrow$ NOUN-n
+		\item NOUN $\Leftarrow$ NOUN-e
+		\item NOUN $\Leftarrow$ NOUN-s
+	\end{itemize}
+	
+	\paragraph{Spanish}
+	\begin{itemize}
+		\itemsep-0.2em 
+		\item NOUN $\Leftarrow$ NOUN-es
+		\item NOUN $\Leftarrow$ NOUN-s
+	\end{itemize}
+	
+	
+	% CODE
+	%    # for Spanish
+	%     if len(singular)>1 and language=="es":
+	%        if singular[:-2] == 'es': 
+	%           singular = singular[:-2]
+	%        elif singular[-1] == 's': 
+	%           singular = singular[:-1]
+	%     # for French
+	%     if len(singular)>1 and language=="fr":
+	%        if singular[-1] == 's': 
+	%           singular = singular[:-1]
+	%     # for English
+	%     if len(singular)>3 and language=="en":
+	%        if singular[:-3] == 'ies': 
+	%           return singular[:-3]+"y"
+	%     if len(singular)>2 and language=="en":
+	%        if singular[:-2] == 'es': 
+	%           return singular[:-2]
+	%     if len(singular)>1 and language=="en":
+	%        if singular[-1] == 's': 
+	%           singular = singular[:-1]
+	%     # for German
+	%     if len(singular)>2 and language=="de":
+	%        if singular[:-2] == 'er': 
+	%           return remove_diacritic(singular[:-2]).decode() #we need to remove the umlaut too
+	%        if singular[-1] == 'n': 
+	%           singular = singular[:-1]
+	%     if len(singular)>1 and language=="de":
+	%        if singular[-1] == 'e' or  singular[-1] == 's': 
+	%           singular = singular[:-1]
+	
+	
+	
+	%
+	% ---- Bibliography ----
+	%
+	\addcontentsline{toc}{section}{References}
+	\bibliographystyle{plain}
+	\bibliography{genericMT}
+	
+	
 \end{document}
