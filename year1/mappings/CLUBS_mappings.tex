@@ -1,0 +1,175 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, array, pdflscape}
+\usepackage{geometry}
+\usepackage{graphics,subfigure,graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{enumerate}
+
+\setlength{\textheight}{24cm}  
+\setlength{\textwidth}{15cm}
+\setlength\oddsidemargin{0cm}
+\setlength\evensidemargin{0cm}
+\setlength\voffset{-1cm}
+
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}	
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+\newcommand{\Ni}{({\em i\,})~}
+\newcommand{\Nii}{({\em ii\,})~}
+\newcommand{\Niii}{({\em iii\,})~}
+
+%opening
+\title{
+\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+\Huge D1.5 -- Mapping Approaches for \\ Vocabularies and Queries in PubPsych }
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
+\date{\vspace*{2cm} -- v1.0 --\\March 2017}
+
+
+
+\begin{document}
+
+\clearpage\maketitle
+\thispagestyle{empty}\thispagestyle{empty}
+
+\vspace*{5cm}
+\begin{abstract}
+This document describes the first approaches envisaged to obtain in-domain vocabularies, build their multilingual counterparts and how they are expected to be used within the project to translate some of the meta-data. Their application to query translation is also sketched. 
+\end{abstract}
+
+\newpage
+\tableofcontents
+\clearpage
+
+% guarrada, no va el \cleardoublepage
+% \clearpage\mbox{}\clearpage
+
+%\newpage
+\section{Introduction}
+\label{s:intro}
+
+As described in the description of work of the project, we want to approach our Cross-Language Information Retrieval task (CLIR) by using machine translation (MT), either by translating the full content of the digital repository into all the other languages, or by translating only the query. In both cases, multilingual lexicons are a must. Especially relevant are for two of the four approaches envisaged. 
+
+\begin{enumerate}
+ \item \emph{Query translation approach}: When a search expression is entered, the portal extends the query by injecting translations of the terms or phrases found in it, and runs the modified version against the search index. The quality of the translation might be relevant for the accuracy of the system, although this approach is expected to improve the recall.
+
+ \item \emph{Knowledge-based approach}: A multilingual thesaurus provides the controlled terms that are used in the metadata records and maps them to the target languages. A search using a multilingual thesaurus requires the searchers' terms to be mapped to the thesaurus. However, the terms used to construct a query can remain in the searchers' own language. Since PubPsych records utilize more than one controlled vocabulary, a mapping of index terms (concordances between controlled terms) is also necessary. This approach should improve retrieval results because the index terms (using the appropriate scientific language) from the documents are used. 
+\end{enumerate}
+
+Both approaches, of course, are related because using the multilingual thesaurus for the queries allows their translation.
+Next, Section~\ref{s:vocab} describes the available resources and the procedure considered to build a English-French-German-Spanish quad-lexicon with both in-domain and general-domain entries. Later, Section~\ref{s:smt} explains how to hybridise this quad-lexicon with machine translation tables and their use for query translation.
+
+
+\section{Multilingual Vocabularies}
+\label{s:vocab}
+
+The construction of our multilingual vocabulary will be based on the Medical Subject Headings Thesaurus (MeSH). Also important for our project is the Thesaurus of Psychological Index Terms of the American Psychological Association (APA Thesaurus). The PubPsych cooperation partners also make use of PSYNDEX, ERIC, PASCAL and ISOC-Psicolog\'ia to tag the content of their articles. The APA Thesaurus is similar to the term sets of the MeSH and of the ERIC. PSYNDEX Terms is the authorized German translation of the APA Thesaurus. The PASCAL thesaurus is trilingual (French, English, Spanish) and has MeSH (English) integrated. ISOC-Psicolog\'ia is a thesaurus in Spanish with a similar structure to APA, so a mapping could be obtained. Notice that only PSYNDEX Terms and the Tesauro ISOC de Psicolog\'ia are domain specific.  
+
+The alignment of these resources will allow to build a quad-lexicon in English-French-German-Spanish. Given the intersection of APA, MeSH and PSYNDEX thesauri, we expect to align different languages by pivoting into English and using the IDs to relate all the resources or, at least, the subset of common elements. \red{@roland, do you wanna explain already here all the problems and the final decision to use only mesh or in D3.1?} A quad-lexicon built in this way is expected to cover well the translation of the controlled terms used in PubPshyc documents. However, it will lack out-of-domain vocabulary important for query translation. In order to alleviate this problem, we will enlarge our quad-lexicon with other external resources and build and extended vocabulary with:
+
+\begin{itemize}
+ \item Wikipedia titles and category names
+ \item Combination of public bilingual lexicons
+ \item In-domain translation tables from in-house SMT systems 
+\end{itemize}
+
+
+
+\section{Mapping Vocabularies to Queries}
+\label{s:smt}
+
+Queries in PubPsych are neither guided by a grammar nor limited to a controlled vocabulary but allow the user to search with free text. Therefore, their translation with only a basic in-domain quad-lexicon such as that extracted from MeSH is not enough for the purpose.
+
+When mapping vocabularies to queries, we will not confine ourselves to technical terms but also attempt to cover frequently used query terms. For this reason, we described in the previous section additional resources to build an extended lexicon which will be also used for the translation of the PubPsych's controlled terms. In addition, for query translation, we plan to add translation tables coming from machine translation systems (SMT) so that we can check the best approach given that we use:
+
+\begin{itemize}
+ \item Extended quad-lexicon
+ \item SMT translation tables
+ \item Extended quad-lexicon + SMT translation tables 
+\end{itemize}
+
+An SMT translation table maps sequences of words (\emph{phrases}) from one language into another and associates a score to the pair:
+
+{\small
+\begin{verbatim}
+...
+headache ||| Bestimmung ||| 9.40918e-05 0.0018484 0.000202066 0.0028329
+headache ||| Kopfschmerz ||| 0.59375 0.438596 0.103825 0.0708215 
+headache ||| Kopfschmerzen , ||| 0.00168082 0.446541 0.000202066 0.0118873 
+headache ||| Kopfschmerzen an ||| 0.0369781 0.446541 0.000202066 0.000583065 
+headache ||| Kopfschmerzen ||| 0.411348 0.446541 0.31694 0.201133 
+headache ||| Kopfschmerzes ||| 0.225531 0.384615 0.00492965 0.0141643 
+headache ||| Mischungen ||| 0.00462226 0.0714286 0.000202066 0.0028329 
+...
+\end{verbatim}
+}
+
+These tables are bilingual and pivot techniques will be needed to build the multilingual phrase table. The quality of such approaches for obtaining the quad-lingual mappings remains to be checked.
+
+The vocabulary of a phrase table depends on the corpus used to train the SMT system. For the query translation task, we will use the parallel corpus extracted from the PubPsych database and described in D1.2. This way, the table will contain entries related to psychology but also common vocabulary present in text of any origin.
+
+Finally, we will need to take into account the difficulty to detect the language of a query. In order to partially solve this issue, we will build the quad-lexicon in a (\emph{key}, \emph{value}) format. The \emph{key} stores all the vocabulary of the four languages without specifying the language, whereas the \emph{value} stores the translation into the other three languages, this time with the language information as seen in the following example:
+{\small
+\begin{verbatim}
+Cefalgia|||en:Headache|||de:Kopfschmerz|||fr:Céphalée
+Céphalée|||en:Headache|||es:Cefalea|||de:Kopfschmerz
+Headache|||es:Cefalea|||de:Kopfschmerz|||fr:Céphalée
+Kopfschmerz|||en:Headache|||es:Cefalea|||fr:Céphalée 
+\end{verbatim}
+}
+
+\noindent This way, we expect to detect the language simply as the one that matches our lexicon. In case of ambiguity, the languages will be chosen according to the most frequent language used in PubPsych.
+
+Assuming the existence of the quad-lexicon in the (\emph{key}, \emph{value}) format, we will implement the most general query translation engine as follows:
+
+\begin{enumerate}
+ \item Let Lucene parse the full query and extract the terms
+ \item Split terms into decreasing small parts (chunks)
+ \item For each chunk of length $n$ first try to match it against the quad-lexicon, then against SMT chunks of size $n$. If we match either the quad-lexicon or a SMT phrase, we stop. On the contrary, we repeat the process with chunk of length $n-1$.
+ \item If a query chunking length $n$ leads to $>1$ chunks, which all match, then test again with $n-1$ chunks and see if the remainder words can be matched successfully
+\end{enumerate}
+
+This methodology has two main advantages: \Ni there is no need for language identification and \Nii it is very fast because it is just a look-up in a table, and it can be used online.
+
+
+% FOR THE UPCOMING DELIVERABLE 3.2
+% Methodology for the extraction of the (multilingual) translation tables
+% 
+%     Mimic PubPshyc preprocessing on in-domain corpus
+%     (Software available at https://github.com/clubs-project/PubPsych)
+%     Training and tuning of SMT systems en-de, en-es, en-fr
+%     Filtering the lexical and phrase tables, minimise the noise by
+%         keeping only the top1 choice,
+%         removing low-probability phrase-pairs
+%         removing phrases containing numbers
+%     "Pivot techniques" to build the multilingual phrase-table
+%         features based (probabilities)
+%         counts based
+% 
+
+
+
+
+\section{Conclusions}
+\label{s:conclusions}
+
+We have introduced the main methodology envisaged to deal with controlled terms and queries within PubPsych. In both tasks, we rely on the construction of a quad-lingual lexicon in English-French-German-Spanish with both in-domain and general domain vocabulary.
+
+
+%
+% ---- Bibliography ----
+%
+% \addcontentsline{toc}{section}{References}
+% \bibliographystyle{plain}
+% \bibliography{genericMT}
+
+
+\end{document}
