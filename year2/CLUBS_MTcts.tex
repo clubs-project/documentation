@@ -37,7 +37,7 @@
 }
 \author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^{1}$, Roland Ramthun$^{2}$ \medskip \\ 
 	\Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
-\date{\vspace*{2cm} -- v0.2.1 --\\March 2018}
+\date{\vspace*{2cm} -- v0.2.2 --\\March 2018}
 
 
 \begin{document}
@@ -215,11 +215,14 @@
 	
 	% \subsubsection{Multilingual Wikipedia In-domain Titles}
 	
-	We have extracted multilingual in-domain titles from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}}
+	To increase the amount of psychological term translations, we have extracted multilingual in-domain titles from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}}
 	\cite{barronEtAl:2015}. 
 	Lexicons have been built from aligned articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
+	%TODO Cristina, could you elaborate on which model was used for which language any why? This is hard to understand if you do not know WikiTailor
 	
 	Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81.369 entries. 
+	%TODO Which data was used, phrases from article text or titles, as said above? I think I get what you did for the high precision/low recall multilingual lexicon, but wha did you do for the low precision/high recall version?
+	
 	% After removing duplicates, we obtain the figures of Table~\ref{tab:4lex} depending on the language.
 	The lexicon contains both single words and phrases related to our domain, but in lots of cases entries correspond to named entities:
 	
@@ -243,7 +246,7 @@
 	\end{small}
 	
 	\bigskip
-	In a similar way, we extract aligned category names from Wikipedia, but this time, we select all of them and not only those related to physcology. 38,038 entries are obtained in this case.
+	In a similar way, we extract aligned category names from Wikipedia, but this time, we select all of them and not only those related to psychology. 38,038 entries are obtained in this case.
 	
 	As for the MeSH lexicon, we build 4 files, one per language, with the entries in the four languages aligned. In this case though, there is no associated ID:
 	
@@ -271,12 +274,12 @@
 	\subsection{Apertium Dictionaries}
 	\label{ss:apertium}
 	
-	Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation engine that uses bilingual dictionaries for lexical transfer. We have used three of their dictionaries\footnote{\url{http://wiki.apertium.org/wiki/List_of_dictionaries}} ($en$-$de$, $en$-$es$ and $es$-$fr$) to extract a quadlingual dictionary with the overlapping entries. Table~\ref{tab:4lex} shows the number of entries of this multilingual dictionary in comparison with the other sources.
+	Apertium~\cite{forcadaEtal:2011} is a free/open-source ruled-based translation engine that uses bilingual dictionaries for lexical transfer. We have used three of their dictionaries\footnote{\url{http://wiki.apertium.org/wiki/List_of_dictionaries}} ($en$-$de$, $en$-$es$ and $es$-$fr$) to extract a quadrilingual dictionary with the overlapping entries. Table~\ref{tab:4lex} shows the number of entries of this multilingual dictionary in comparison with the other sources.
 	
 	\subsection{Post-edited Automatic Translations}
 	\label{ss:manual}
 	
-	Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translated them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language.
+	Finally, we have selected a set of tokens within our controlled terms not covered by the previous resources and translated them with the automatic translation engine DeepL\footnote{\url{https://www.deepl.com}}  (translator as of 25th January and 1st-2nd February 2018). These $\sim$4,000 entries have been manually post-edited  mainly to improve mistranslations due to ambiguous options, but the post-editor was neither native in the four languages nor in-domain expert. Table~\ref{tab:4lex} shows the exact number of entries depending on the source language in the row "Manual". Mismatches in the numbers of one row hint to the availability of synonyms for a language.
 	
 	
 	\begin{table}[t]
@@ -295,7 +298,7 @@
 			\emph{Total}             & 202,128&304,277 & 225,607 & 195,937\\
 			\bottomrule
 		\end{tabular}
-		\caption{Number of aligned terms per language in our multilingual resources. The row with the total excludes duplicate entries.}
+		\caption{Number of aligned terms per language in our multilingual resources. The row with the total excludes duplicate entries between the sources.}
 		\label{tab:4lex}
 	\end{table} 
 	
@@ -371,14 +374,14 @@
 	\label{s:cttrad}
 	
 	\subsection{Methodoly}
-	We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych Database (Section~\ref{s:ct}).
-	Notice that the most accurate translation would be achieved with the multilingual MeSH, the other three resources add noise to the translations but increase the coverage of the engine.
+	We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych database (Section~\ref{s:ct}).
+	Notice that the most accurate translation would be achieved with the multilingual MeSH alone. The other three resources add noise to the translations but significantly increase the coverage of the engine.
 	
 	\bigskip
 	\noindent
 	We follow the strategy below:
 	\begin{enumerate}
-		\item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are cleaned and translated independently. \red{we know the source language because the name of the field contains it, there is a field per language}\\ 
+		\item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are subsequently cleaned and translated independently. 
 		Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
 		\item Part Translation
 		\begin{enumerate}[label*=\arabic*.]
@@ -401,14 +404,14 @@
 	\end{enumerate}
 	
 	\bigskip
-	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries it is able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximise retrieval quality and not translation quality. 
+	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries they are able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximize retrieval quality and not translation quality. 
 	
 	\subsection{Software}
 	
 	A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
 	\footnote{\url{}https://github.com/clubs-project/DBtranslator}
-	together with all the software developed to translate the different components of the PubPshyc database.
-	The complete translation pipeline going from downloading the field for all the documents in the database, to translate them and uploading the translations is run by {\tt tradCTs.sh}:
+	together with all the software developed to translate the different components of the PubPsych database.
+	The complete translation pipeline going from downloading the field data for all the documents in the database, to translate them and uploading the translations is run by {\tt tradCTs.sh}:
 	
 	\begin{verbatim}
 	user@machine:~/home/DBtranslator/scripts/$  bash tradCTs.sh -h
