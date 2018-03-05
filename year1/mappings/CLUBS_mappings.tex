@@ -7,6 +7,7 @@
 \usepackage{color}
 \usepackage{url}
 \usepackage{enumerate}
+\usepackage{enumitem}
 
 \setlength{\textheight}{24cm}  
 \setlength{\textwidth}{15cm}
@@ -42,7 +43,7 @@
 
 \vspace*{5cm}
 \begin{abstract}
-This document describes the first approaches envisaged to obtain in-domain vocabularies, build their multilingual counterparts and how they are expected to be used within the project to translate some of the meta-data. Their application to query translation is also sketched. 
+This document describes the in-domain vocabularies the project has, and how to build their multilingual counterparts from them. It also proposes several public resources we can use to complement and extend this data with general-domain vocabulary. Finally, the application of the multilingual lexicons to controlled terms and query translations is also sketched. 
 \end{abstract}
 
 \newpage
@@ -56,7 +57,7 @@ This document describes the first approaches envisaged to obtain in-domain vocab
 \section{Introduction}
 \label{s:intro}
 
-As described in the description of work of the project, we want to approach our Cross-Language Information Retrieval task (CLIR) by using machine translation (MT), either by translating the full content of the digital repository into all the other languages, or by translating only the query. In both cases, multilingual lexicons are a must. Especially relevant are for two of the four approaches envisaged. 
+As described in the description of work of the project, we want to approach our cross-language information retrieval task by using machine translation, either by translating the full content of the digital repository into all the other languages and/or by translating only the query. In both cases, multilingual lexicons are a must. Especially relevant are for two of the four approaches envisaged:
 
 \begin{enumerate}
  \item \emph{Query translation approach}: When a search expression is entered, the portal extends the query by injecting translations of the terms or phrases found in it, and runs the modified version against the search index. The quality of the translation might be relevant for the accuracy of the system, although this approach is expected to improve the recall.
@@ -88,7 +89,7 @@ The alignment of these resources will allow to build a quad-lexicon in English-F
 
 Queries in PubPsych are neither guided by a grammar nor limited to a controlled vocabulary but allow the user to search with free text. Therefore, their translation with only a basic in-domain quad-lexicon such as that extracted from MeSH is not enough for the purpose.
 
-When mapping vocabularies to queries, we will not confine ourselves to technical terms but also attempt to cover frequently used query terms. For this reason, we described in the previous section additional resources to build an extended lexicon which will be also used for the translation of the PubPsych's controlled terms. In addition, for query translation, we plan to add translation tables coming from machine translation systems (SMT) so that we can check the best approach given that we use:
+When mapping vocabularies to queries, we will not confine ourselves to technical terms but also attempt to cover frequently used query terms. For this reason, we described in the previous section additional resources to build an extended lexicon which will be also used for the translation of the PubPsych's controlled terms. In addition, for query translation, we plan to add translation tables coming from statistical machine translation systems (SMT) so that we can check the best approach given that we use:
 
 \begin{itemize}
  \item Extended quad-lexicon
@@ -119,22 +120,29 @@ The vocabulary of a phrase table depends on the corpus used to train the SMT sys
 Finally, we will need to take into account the difficulty to detect the language of a query. In order to partially solve this issue, we will build the quad-lexicon in a (\emph{key}, \emph{value}) format. The \emph{key} stores all the vocabulary of the four languages without specifying the language, whereas the \emph{value} stores the translation into the other three languages, this time with the language information as seen in the following example:
 {\small
 \begin{verbatim}
-Cefalgia|||en:Headache|||de:Kopfschmerz|||fr:Céphalée
-Céphalée|||en:Headache|||es:Cefalea|||de:Kopfschmerz
-Headache|||es:Cefalea|||de:Kopfschmerz|||fr:Céphalée
-Kopfschmerz|||en:Headache|||es:Cefalea|||fr:Céphalée 
+(Cefalgia, en:Headache|||de:Kopfschmerz|||fr:Céphalée)
+(Céphalée, en:Headache|||es:Cefalea|||de:Kopfschmerz)
+(Headache, es:Cefalea|||de:Kopfschmerz|||fr:Céphalée)
+(Kopfschmerz, en:Headache|||es:Cefalea|||fr:Céphalée)
 \end{verbatim}
 }
+% Cefalgia|||en:Headache|||de:Kopfschmerz|||fr:Céphalée
+% Céphalée|||en:Headache|||es:Cefalea|||de:Kopfschmerz
+% Headache|||es:Cefalea|||de:Kopfschmerz|||fr:Céphalée
+% Kopfschmerz|||en:Headache|||es:Cefalea|||fr:Céphalée 
 
 \noindent This way, we expect to detect the language simply as the one that matches our lexicon. In case of ambiguity, the languages will be chosen according to the most frequent language used in PubPsych.
 
 Assuming the existence of the quad-lexicon in the (\emph{key}, \emph{value}) format, we will implement the most general query translation engine as follows:
 
 \begin{enumerate}
- \item Let Lucene parse the full query and extract the terms
- \item Split terms into decreasing small parts (chunks)
+ \item Let Lucene parse the full query and extract the terms.
+ \item Try to match each term against the quad-lexicon, then against SMT tables. If a term matches, we are done with the term. If not:
+ \begin{enumerate}[label*=\arabic*.]
+ \item Split terms into decreasing small parts (chunks).
  \item For each chunk of length $n$ first try to match it against the quad-lexicon, then against SMT chunks of size $n$. If we match either the quad-lexicon or a SMT phrase, we stop. On the contrary, we repeat the process with chunk of length $n-1$.
- \item If a query chunking length $n$ leads to $>1$ chunks, which all match, then test again with $n-1$ chunks and see if the remainder words can be matched successfully
+ \item If a query chunking of length $n$ leads to $>1$ chunks, which all match, then test again with $n-1$ chunks and see if the remainder words can be matched successfully. \red{now I don't understand this point}
+ \end{enumerate}
 \end{enumerate}
 
 This methodology has two main advantages: \Ni there is no need for language identification and \Nii it is very fast because it is just a look-up in a table, and it can be used online.
@@ -163,6 +171,7 @@ This methodology has two main advantages: \Ni there is no need for language iden
 
 We have introduced the main methodology envisaged to deal with controlled terms and queries within PubPsych. In both tasks, we rely on the construction of a quad-lingual lexicon in English-French-German-Spanish with both in-domain and general domain vocabulary.
 
+Notice that the quality of the multilingual vocabularies built either coming from thesauri or from translation tables can modify the final strategy for the translation of the controlled terms and queries.
 
 %
 % ---- Bibliography ----
