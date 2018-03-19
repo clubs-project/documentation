@@ -1,0 +1,259 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, array, pdflscape}
+\usepackage{geometry}
+\usepackage{graphics,subfigure,graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{enumerate}
+\usepackage[table]{xcolor}
+\usepackage{multirow}
+
+\pagestyle{headings}
+
+\setlength{\textheight}{24cm}  
+\setlength{\textwidth}{15cm}
+\setlength\oddsidemargin{0cm}
+\setlength\evensidemargin{0cm}
+\setlength\voffset{-1cm}
+
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}	
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+\newcommand{\Ni}{({\em i\,})~}
+\newcommand{\Nii}{({\em ii\,})~}
+\newcommand{\Niii}{({\em iii\,})~}
+
+%opening
+\title{
+\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+\Huge M1.3.2 CLUBS - Testing retrieval performance
+  \\ 
+}
+\author{\vspace*{1cm}\\ \LARGE Juliane Stiller \& Vivien Petras \medskip \\ \Large Humboldt-Universit\"at zu Berlin}
+\date{\vspace*{2cm} -- v3.0 --\\March 2018}
+
+
+\begin{document}
+
+\clearpage\maketitle
+\thispagestyle{empty}
+
+\vspace*{5cm}
+\begin{abstract}
+This document will detail the experiment that will be conducted to determine, which of the five approaches performs best with regard to retrieval performance.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\clearpage
+
+% guarrada, no va el \cleardoublepage
+% \clearpage\mbox{}\clearpage
+
+%\newpage
+\section{Introduction}
+To identify which of the translation approaches work best with regard to the retrieval performance in PubPsych, we perform a retrieval performance test. The different translation approaches chosen to be tested are detailed in the Deliverable M1.3.2 CLUBS - Evaluation Plan and in table \ref{tab:approaches}. This document will detail the approach for one part of the extrinsic user-focused evaluation: which translation approach produces better results for user queries? How is the retrieval performance influenced by the different approaches?
+
+\begin{table}[h]
+\resizebox{\textwidth}{!}{%
+ \centering\textbf{}
+\begin{tabular}[h]{lllccc}
+    \toprule
+Solution &   Nr. & Method / Approach & Intrinsic & extrinsic system-focused & relevance / extrinsic user-focused\\
+    \midrule
+\multirow{2}{*}{Query translation (QT)}  & 1a     & CV mapping   & X  & X & \multirow{2}{*}{Winner method}\\
+  & 1b    & CV mapping + MT aligned chunks    & X  & X \\
+    \midrule
+Abstract translation (TR1 + TR2)  & 2a     & SMT / NMT   & X  & X & X\\
+    \midrule
+\multirow{2}{*}{Knowledge-based solution (KA)}  & 3a     & CV mapping   & X  & X & \multirow{2}{*}{Winner method}\\
+  & 3b    & CV mapping + MT aligned chunks   & X  & X \\
+    \midrule
+\multirow{6}{*}{English as Pivot (EP)}  & 4a     & 1a + 2   & X  & X & \multirow{6}{*}{Winner method}\\
+  & 4b    & 1a + 3a   & X  & X \\
+    & 4c    & 1a + 3b  & X  & X \\
+      & 4d    & 1b + 2   & X  & X \\
+        & 4e    & 1b + 3a   & X  & X \\
+              & 4g   & 1b + 3b   & X  & X \\
+    \midrule
+\multirow{2}{*}{Merging (MA)}  & 5a     & 2 + 3a   & X  & X & \multirow{2}{*}{Winner method}\\
+  & 5b    & 2 + 3b   & X  & X \\
+  \bottomrule
+ \end{tabular}}
+  \caption{Approaches for each solution and the evaluations.}
+ \label{tab:approaches}
+\end{table}
+
+\section{Topic creation}
+
+50 queries were chosen from the English query corpus based on the range of topics they represent as well as a representation of query categories. 
+
+Domain experts will determine the information needs for each query and describe them in textual form.
+
+Example:\\
+Query: Bullying and teacher
+Description: Documents on bullying in schools and other educational institution and teachers’ reactions and management strategies, also documents on bullying committed by teachers.
+
+A record is relevant, when it fulfills the information need represented by the original
+query and by the suggested information need description. For some measures, we will use binary relevance, for others, there will be a scale.
+
+The information need descriptions will not be translated from English assuming that all assessors will know English sufficiently to understand the information need and be able to assess documents in accordance with the information need.
+
+
+\section{Ad-hoc retrieval task}
+
+The 50 queries and their translations (200 in total) will be sent to the Solr instance to retrieve results. 
+For each query in each language, we store the top 10 documents (depth 10): for 200 queries that would be 2000 documents at the most. For each document, all the fields (or the equivalent information) that will be shown in the portal will be extracted and presented to the assessors.
+For each run, we store the top 10 list with relevant fields and the rank in the search result list.
+
+The following runs will be set-up:
+\newline
+
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+
+\hline
+\textbf{Queries} & \textbf{Baseline} & \textbf{QT} & \textbf{TR-1} & \textbf{TR-2} & \textbf{KA} & \textbf{EP} & \textbf{MA} \\ \hline
+\textbf{BL-DE} & BL-1 & QT-BL-1 & TR-1.1 & TR-2.1 & KA-1 & MA-1 & MR-1 \\ \hline
+\textbf{BL-EN} & BL-2 & QT-BL-2 & TR-1.2 & TR-2.2 & KA-2 & MA-2 & MR-2 \\ \hline
+\textbf{BL-FR} & BL-3 & QT-BL-3 & TR-1.3 & TR-2.3 & KA-3 & MA-3 & MR-3 \\ \hline
+\textbf{BL-ES} & BL-4 & QT-BL-4 & TR-1.4 & TR-2.4 & KA-4 & MA-4 & MR-4 \\ \hline
+
+\end{tabular}
+\newline
+
+There are 28 runs. For each run, 50 result lists are produced with 10 documents - one for each query. If there is no overlap between the 28 result lists for each query (one list per 28 runs), we have to assess 14,000 documents. We estimate a big overlap between the result lists, so there will be less than 14,000 documents that need to be assessed.
+
+\section{Pooling for relevance assessment - pooling by language?}
+
+We assume that the language of the source document is in general equal to the language of the title and the abstract. So based on the language field value, the documents are split by language.
+Documents in languages different than German, English, Spanish or French are ignored in the assessment. 
+
+\section{Assessing results}
+
+For determining the relevance of a document for a given query, we need assessors with German, French or Spanish and additional English language skills (the descriptions for each query will be only in English). The assessors will get extensive relevance assessment guidelines. Due to budget constraints, each document will be only assessed by one judge. Although we could think about a double assessment of English documents to calculate inter-annotator agreement.
+
+Results are assessed based on the description for each query. For each document, the following three-point scale for relevance applies:
+\begin{enumerate}
+\item Not relevant – the record does not fulfill the information need, the information is not relevant.
+\item Partially relevant – the record partially fulfills the information need, but there are some doubts as to
+whether the whole information need is covered.
+\item Highly relevant – the record as represented fulfills the information need and is highly relevant.
+\end{enumerate}
+
+Problem: Different assessors assess relevance of documents coming from one query. This will contribute to inter-annotator differences within a query’s relevance assessments. Due to the multilinguality of this task, we cannot provide an assessment for all documents of a query coming from a single judge.
+
+\section{Comparing results}
+
+For calculating metrics on retrieval performance, we will look into the following measures:
+\begin{itemize}
+\item R-precision: If the number of relevant documents is r$<$=10, we only look at the documents up to the r-th rank of the list. If the number of relevant documents is $>$10, then we calculate R-precision based on 10, which would result in R-precision of 1 if all 10 result documents are relevant.
+\item P@10: We calculate the precision at 10 for the result list. As we only look at the first 10 results, precision will not separately calculated
+\item Recall(10): How many of the relevant documents were found? If r$<$=10, recall is measured based on the actual number r. If r$>$=10, the recall is measured based on r=10 because only 10 result documents will be looked at. Recall will be 1 if the result list contains only relevant documents and r$>$=10.
+\item nDCG: ranked-based measures (discounted cumulative gain): Here the relevance of each documents is important, more relevant documents are more important than less relevant documents. Highly relevant documents should also occur high up in the ranked results lists.
+\end{itemize}
+
+\section{Time plan}
+
+\begin{tabular}{|l|p{3cm}|p{3cm}|}
+\hline
+\textbf{Month} & \textbf{Description} & \textbf{Requirement} \\ \hline
+Dec. 17 & Determine 50 topics & %frei
+\\ \hline
+March 18 & Descriptions for topics & 1 English speaking domain experts \\ \hline
+%frei 
+& Assessment guidelines ready & %frei 
+\\ \hline
+September 18 & Assessment software ready & %frei
+\\ \hline
+June 18 - December 18 & Recruiting assessors & 1 judges for each language = 3 judges \\ \hline
+January 19 & Assessments & %frei 
+\\ \hline
+March 19 & Calculating results & %frei 
+\\ \hline
+\end{tabular}
+
+\newpage
+
+\appendix
+\section{Example}
+
+Following an example for a given query x:
+Assessments showed that in the pool are 15 highly relevant documents, 50 partially relevant document and 200 non-relevant documents. So there is the ideal result list possible which could retrieve 10 highly relevant documents.
+
+The Ideal DCG metrics can serve as baseline for comparing to rankings:
+Ideal DCG based on the above numbers:
+\newline
+
+\begin{tabular}{|r|p{1.8cm}|p{1.8cm}|r|r|}
+\hline
+\textbf{Rank} & \textbf{Graded relevance} & \textbf{Relevance value} & \textbf{Cumulated Gain} & \textbf{IDCG} \\ \hline
+1 & Highly relevant & 2 & 2 & 2 \\ \hline
+2 & Highly relevant & 2 & 4 & 4 \\ \hline
+3 & Highly relevant & 2 & 6 & 5,261859507 \\ \hline
+4 & Highly relevant & 2 & 8 & 6,261859507 \\ \hline
+5 & Highly relevant & 2 & 10 & 7,123212623 \\ \hline
+6 & highly relevant & 2 & 12 & 7,896918238 \\ \hline
+7 & Highly relevant & 2 & 14 & 8,609332612 \\ \hline
+8 & Highly relevant & 2 & 16 & 9,275999279 \\ \hline
+9 & Highly relevant & 2 & 18 & 9,906929032 \\ \hline
+10 & Highly relevant & 2 & 20 & 10,50898902 \\ \hline
+\end{tabular}
+\newline
+
+The results list of query x for the baseline run:
+\newline
+
+\begin{tabular}{|r|c|p{1.8cm}|p{1.8cm}|p{1.8cm}|r|r|}
+\hline
+\textbf{Rank} & \textbf{Doc} & \textbf{Binary Relevance} & \textbf{Graded relevance} & \textbf{Relevance value} & \textbf{CG} & \textbf{DCG} \\ \hline
+1 & Doc1 & relevant & Highly relevant & 2 & 2 & 2 \\ \hline
+2 & Doc2 & relevant & partially relevant & 1 & 3 & 3 \\ \hline
+3 & Doc3 & relevant & Highly relevant & 2 & 5 & 4,2618595 \\ \hline
+4 & Doc4 & relevant & partially relevant & 1 & 6 & 4,7618595 \\ \hline
+5 & Doc5 & relevant & Highly relevant & 2 & 8 & 5,6232126 \\ \hline
+6 & Doc6 & relevant & highly relevant & 2 & 10 & 6,3969182 \\ \hline
+7 & Doc7 & relevant & Highly relevant & 2 & 12 & 7,1093326 \\ \hline
+8 & Doc8 & non-relevant & non-relevant & 0 & 12 & 7,1093326 \\ \hline
+9 & Doc9 & relevant & partially relevant & 1 & 13 & 7,4247975 \\ \hline
+10 & Doc10 & relevant & Highly relevant & 2 & 15 & 8,0268575 \\ \hline
+\end{tabular}
+\newline
+
+System TR1 produces the following result list:
+\newline
+
+\begin{tabular}{|r|c|p{1.8cm}|p{1.8cm}|p{1.8cm}|r|r|}
+\hline
+\textbf{Rank} & \textbf{Doc} & \textbf{Binary Relevance} & \textbf{Graded relevance} & \textbf{Relevance value} & \textbf{CG} & \textbf{DCG} \\ \hline
+1 & Doc1 & relevant & Highly relevant & 2 & 2 & 2 \\ \hline
+2 & Doc3 & relevant & Highly relevant & 2 & 4 & 4 \\ \hline
+3 & Doc52 & relevant & partially relevant & 1 & 5 & 4,63092975 \\ \hline
+4 & Doc14 & non-relevant & non-relevant & 0 & 5 & 4,63092975 \\ \hline
+5 & Doc25 & relevant & Highly relevant & 2 & 7 & 5,49228287 \\ \hline
+6 & Doc16 & relevant & partially relevant & 1 & 8 & 5,87913568 \\ \hline
+7 & Doc7 & relevant & Highly relevant & 2 & 10 & 6,59155005 \\ \hline
+8 & Doc5 & relevant & Highly relevant & 2 & 12 & 7,25821672 \\ \hline
+9 & Doc39 & non-relevant & non-relevant & 0 & 12 & 7,25821672 \\ \hline
+10 & Doc10 & relevant & Highly relevant & 2 & 14 & 7,86027671 \\ \hline
+\end{tabular}
+\newline
+
+Comparing System TR1 to Baseline (as an example only for one query). R-precision, P@10 and Recall are equal for r=$>$10.
+\newline
+
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Retrieval metric} & \textbf{Baseline} & \textbf{TR1} \\ \hline
+R-precision (10) & 0,9 & 0,8 \\ \hline
+P@10 & 0,9 & 0,8 \\ \hline
+Recall(10) & 0,9 & 0,8 \\ \hline
+nDCG at rank 10 & 0,7638 & 0,7480 \\ \hline
+\end{tabular}
+\end{document}
