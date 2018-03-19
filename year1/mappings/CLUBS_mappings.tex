@@ -131,7 +131,7 @@ Finally, we will need to take into account the difficulty to detect the language
 % Headache|||es:Cefalea|||de:Kopfschmerz|||fr:Céphalée
 % Kopfschmerz|||en:Headache|||es:Cefalea|||fr:Céphalée 
 
-\noindent This way, we expect to detect the language simply as the one that matches our lexicon. In case of ambiguity, the languages will be chosen according to the most frequent language used in PubPsych.
+\noindent This way, we expect to detect the language simply as the one that matches our lexicon. In case of ambiguity, the languages will be chosen according to the most frequent language used in PubPsych or by using the language of the other terms in the query when possible.
 
 Assuming the existence of the quad-lexicon in the (\emph{key}, \emph{value}) format, we will implement the most general query translation engine as follows:
 
