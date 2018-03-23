@@ -202,48 +202,48 @@
 	\noindent Example for the English terms for concept {\tt ID:M0000020}. We first show the complete MeSH entry for the concept, and then the four files that are generated were one can see why different languages have different numbers of entries:
 	
 	{\small 
-		\lstset{language=XML}
-		\begin{lstlisting} 
-		MeSH_2017_de+en+fr+es.xml:
-		<concept id="M0000020">
-		<term id="T000045" lang="eng" preferred="true">
-		<string>Abomasum</string>
-		<permutation>Abomasums</permutation>
-		</term>
-		<term id="spa0000603" lang="spa" preferred="true">
-		<string>Abomaso</string>
-		</term>
-		<term id="spa0049997" lang="spa" preferred="false">
-		<string>Cuajar</string>
-		</term>
-		<term id="ger0000018" lang="ger" preferred="true">
-		<string>Labmagen</string>
-		</term>
-		<term id="fre0063293" lang="fre" preferred="true">
-		<string>Abomasum</string>
-		</term>
-		<term id="fre0000018" lang="fre" preferred="false">
-		<string>Caillette</string>
-		</term>
-		</concept>
-		\end{lstlisting}
+	\lstset{language=XML}
+	\begin{lstlisting} 
+	MeSH_2017_de+en+fr+es.xml:
+	<concept id="M0000020">
+	<term id="T000045" lang="eng" preferred="true">
+	<string>Abomasum</string>
+	<permutation>Abomasums</permutation>
+	</term>
+	<term id="spa0000603" lang="spa" preferred="true">
+	<string>Abomaso</string>
+	</term>
+	<term id="spa0049997" lang="spa" preferred="false">
+	<string>Cuajar</string>
+	</term>
+	<term id="ger0000018" lang="ger" preferred="true">
+	<string>Labmagen</string>
+	</term>
+	<term id="fre0063293" lang="fre" preferred="true">
+	<string>Abomasum</string>
+	</term>
+	<term id="fre0000018" lang="fre" preferred="false">
+	<string>Caillette</string>
+	</term>
+	</concept>
+	\end{lstlisting}
 		
-		\begin{lstlisting} 
-		mesh.dekey.txt:
-		Labmagen|||en:Abomasum|||es:Abomaso|||fr:Abomasum|||ID:M0000020
+	\begin{lstlisting} 
+	mesh.dekey.txt:
+	Labmagen|||en:Abomasum|||es:Abomaso|||fr:Abomasum|||ID:M0000020
+	
+	mesh.enkey.txt:
+	Abomasum|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+	Abomasums|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
 		
-		mesh.enkey.txt:
-		Abomasum|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-		Abomasums|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+	mesh.eskey.txt:       
+	Abomaso|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
+	Cuajar|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
 		
-		mesh.eskey.txt:       
-		Abomaso|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-		Cuajar|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
-		
-		mesh.frkey.txt:  
-		Abomasum|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
-		Caillette|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
-		\end{lstlisting}
+	mesh.frkey.txt:  
+	Abomasum|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
+	Caillette|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
+	\end{lstlisting}
 	}
 	
 	%    Slaughter Houses|||es:Mataderos|||de:Schlachthöfe|||fr:Abattoirs|||ID:M0000003
@@ -355,7 +355,7 @@
 		\small
 		\begin{tabular}{llrrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{3}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-7}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
 			\midrule
@@ -378,7 +378,7 @@
 		\flushleft{\normalsize German}
 		\begin{tabular}{llrrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{3}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-7}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
 			\midrule
@@ -398,7 +398,7 @@
 		\flushleft{\normalsize French}
 		\begin{tabular}{llrrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{3}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{3}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-7}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} & \mc{1}{c}{uniq}\\
 			\midrule
@@ -429,7 +429,7 @@
 		Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
 		\item Part Translation
 		\begin{enumerate}[label*=\arabic*.]
-			\item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \red{casing would be better?}\\ 
+			\item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \\ 
 			Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
 			\item The original capitalisation is restored.
 		\end{enumerate}
@@ -565,7 +565,7 @@
 		\small
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
 			\midrule
@@ -584,7 +584,7 @@
 		\flushleft{\normalsize German}
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)}\\
 			\midrule
@@ -602,7 +602,7 @@
 		\flushleft{\normalsize French}
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
 			\midrule
@@ -625,7 +625,7 @@
 		\small
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
 			\midrule
@@ -648,7 +648,7 @@
 		\flushleft{\normalsize German} \\
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)}\\
 			\midrule
@@ -671,7 +671,7 @@
 		\small
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
 			\midrule
@@ -694,7 +694,7 @@
 		\flushleft{\normalsize German} \\
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)}\\
 			\midrule
@@ -711,7 +711,7 @@
 		\flushleft{\normalsize French} \\
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
 			\midrule
@@ -726,7 +726,7 @@
 		\flushleft{\normalsize Spanish}
 		\begin{tabular}{llrrrr}
 			\toprule
-			&       & \mc{2}{c}{Parts} & \mc{2}{c}{Tokens}\\
+			&       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
 			\cmidrule(lr){3-4}   \cmidrule(lr){5-6}
 			&Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
 			\midrule
