@@ -11,6 +11,7 @@
 \usepackage{multirow}
 \usepackage{amssymb}
 \usepackage{listings}
+\usepackage[multiple]{footmisc}
 
 \setlength{\textheight}{24cm}  
 \setlength{\textwidth}{15cm}
@@ -69,7 +70,7 @@
 	The different database segments in PubPsych use controlled terms from different systems (e.g. the Medical Subject Headings or the APA thesaurus) or even no controlled terminology at all. Many databases include indexing terms, meaning these terms are descriptive, but freely assigned and not from a controlled vocabulary.
 	
 	\bigskip
-	The relevant fields holding the controlled term and indexing term information are
+	\noindent The relevant fields holding the controlled term and indexing term information are
 		\begin{description}
 		\item[CT\mbox{\boldmath $lan$}H:] "Controlled term high". These are terms from controlled vocabulary (MeSH, APA/PSYNDEX terms, etc.), not freely assigned terms.
 		\item[CT\mbox{\boldmath $lan$}L:] "Controlled terms low". As CT$lan$H, but the person who created the record gave these entries a lower importance for describing the content than the ones in CT$lan$H.
@@ -204,14 +205,14 @@
 	{\small 
 	\lstset{language=XML}
 	\begin{lstlisting} 
-	MeSH_2017_de+en+fr+es.xml:
+   MeSH_2017_de+en+fr+es.xml:
 	<concept id="M0000020">
 	<term id="T000045" lang="eng" preferred="true">
 	<string>Abomasum</string>
 	<permutation>Abomasums</permutation>
 	</term>
 	<term id="spa0000603" lang="spa" preferred="true">
-	<string>Abomaso</string>
+	<string>Abomaso</string>	
 	</term>
 	<term id="spa0049997" lang="spa" preferred="false">
 	<string>Cuajar</string>
@@ -229,18 +230,18 @@
 	\end{lstlisting}
 		
 	\begin{lstlisting} 
-	mesh.dekey.txt:
+   mesh.dekey.txt:
 	Labmagen|||en:Abomasum|||es:Abomaso|||fr:Abomasum|||ID:M0000020
 	
-	mesh.enkey.txt:
+   mesh.enkey.txt:
 	Abomasum|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
 	Abomasums|||es:Abomaso|||de:Labmagen|||fr:Abomasum|||ID:M0000020
 		
-	mesh.eskey.txt:       
+   mesh.eskey.txt:       
 	Abomaso|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
 	Cuajar|||en:Abomasum|||de:Labmagen|||fr:Abomasum|||ID:M0000020
 		
-	mesh.frkey.txt:  
+   mesh.frkey.txt:  
 	Abomasum|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
 	Caillette|||en:Abomasum|||es:Abomaso|||de:Labmagen|||ID:M0000020
 	\end{lstlisting}
@@ -259,11 +260,15 @@
 	
 	% \subsubsection{Multilingual Wikipedia In-domain Titles}
 	
-	To increase the amount of psychological term translations, we have extracted multilingual in-domain titles from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}}
-	\cite{barronEtAl:2015}. 
-	Lexicons have been built from aligned articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
-	%TODO Cristina, could you elaborate on which model was used for which language any why? This is hard to understand if you do not know WikiTailor
+% 	To increase the amount of psychological term translations, we have extracted multilingual in-domain titles from Wikipedia with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}}
+% 	\cite{barronEtAl:2015}. 
+% 	Lexicons have been built from aligned articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
+% 	%TODO Cristina, could you elaborate on which model was used for which language any why? This is hard to understand if you do not know WikiTailor
+
+		
+	To increase the amount of psychological term translations, we have extracted multilingual in-domain titles from Wikipedia on psychology and health with the WikiTailor tool\footnote{\url{https://github.com/cristinae/WikiTailor}} \cite{barronEtAl:2015}. 
 	
+	WikiTailor extracts domain articles by exploring the categories graph starting from the category describing the domain (psychology and health in our case) and identifying a subset of related categories and their associated articles\footnote{We use models WT0.5-100 or WT0.5-500 depending on the language. Refer to WikiTailor manual if you want to replicate these models \url{http://cristinae.github.io/WikiTailor/}}. These articles are gathered independently for English, German, French and Spanish and, afterwards, the intersection or union of the articles is done. For the intersection, we use the articles that have been identified simultaneously in the four languages. For the union, we expand the set of articles to include all the articles that have been identified as in-domain articles at least in one of the languages with the equivalent article in the other three languages in case it exists.	
 	Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81,369 entries. 
 	%TODO Which data was used, phrases from article text or titles, as said above? I think I get what you did for the high precision/low recall multilingual lexicon, but what did you do for the low precision/high recall version?
 	
@@ -348,6 +353,46 @@
 	
 	
 	
+	\section{Controlled Term Translation}
+	\label{s:cttrad}
+	
+	\subsection{Methodology}
+	We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych database (Section~\ref{s:ct}).
+	Notice that the most accurate translation would be achieved with the multilingual MeSH alone. The other three resources add noise to the translations but significantly increase the coverage of the engine.
+	
+	\bigskip
+	\noindent
+	We follow the strategy below:
+	\begin{enumerate}
+		\item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are subsequently cleaned and translated independently. 
+		Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
+		\item Part Translation
+		\begin{enumerate}[label*=\arabic*.]
+			\item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \\ 
+			Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
+			\item The original capitalisation is restored.
+		\end{enumerate}
+		
+		\item Token Translation. If a part is not found in the dictionary, it is translated on a token-by-token basis.
+		\begin{enumerate}[label*=\arabic*.]
+			\item The part is split into tokens and words are translated independently.  
+			\item  All possible capitalisations of the token are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
+			\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
+			\item If the entry is not available, we copy the source token as translation for the three other languages.
+			\item The original capitalisation is restored.
+		\end{enumerate}
+		
+		\item Tokens and parts are joined with the appropriate punctuation to build the final translation of the original CT.
+		
+	\end{enumerate}
+	
+	\bigskip
+	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries they are able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. The MeSH thesaurus alone covers between 25\%-87\% of the all the controlled terms depending on the database and language. These numbers improve as we consider the coverage we can obtain by using also word-level mappings. The word-level mappings together with the usage of the extended lexicon allows us to reach almost a 100\% in all the cases. Results for CT$lan$H, IT$lan$H and IT$lan$L are shown in Appendix~\ref{ap:cts}.
+	
+	Even if at this point we cannot evaluate the quality of the translations, note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximize retrieval quality and not translation quality. 
+	
+	
+	
 	\begin{table}[h]
 		\centering
 		\flushleft{English}
@@ -412,44 +457,7 @@
 		\caption{Number of CT\emph{lan}L translated with the multilingual MeSH and the full QuadLexicon for English, German and French. There are no entries for Spanish. A CT term is splitted into two parts (the descriptor and the class specification), and in case of no-matching it is further splitted into tokens.}
 		\label{tab:tradsCT}
 	\end{table}
-	
-	
-	\section{Controlled Term Translation}
-	\label{s:cttrad}
-	
-	\subsection{Methodology}
-	We use the resources described in the previous section to translate the controlled terms appearing in the articles of the PubPsych database (Section~\ref{s:ct}).
-	Notice that the most accurate translation would be achieved with the multilingual MeSH alone. The other three resources add noise to the translations but significantly increase the coverage of the engine.
-	
-	\bigskip
-	\noindent
-	We follow the strategy below:
-	\begin{enumerate}
-		\item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are subsequently cleaned and translated independently. 
-		Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
-		\item Part Translation
-		\begin{enumerate}[label*=\arabic*.]
-			\item  All possible capitalisations of the part (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained. \\ 
-			Ex: \emph{Action Potentials$|||$es:Potenciales de Acción$|||$de:Aktionspotentiale$|||$fr:Potentiels d'action}
-			\item The original capitalisation is restored.
-		\end{enumerate}
-		
-		\item Token Translation. If a part is not found in the dictionary, it is translated on a token-by-token basis.
-		\begin{enumerate}[label*=\arabic*.]
-			\item The part is split into tokens and words are translated independently.  
-			\item  All possible capitalisations of the token are looked up in the corresponding quadrilingual lexicon and, in case the entry exists, the translations into the other three languages are obtained.
-			\item If the entry is not available, some basic rules regarding the formation of plural nouns (see Appendix~\ref{ap:plural}) are applied to obtain a singular form for the entry. In case the entry exists, the translations into the other three languages for the singular form are obtained and used to translate it.
-			\item If the entry is not available, we copy the source token as translation for the three other languages.
-			\item The original capitalisation is restored.
-		\end{enumerate}
-		
-		\item Tokens and parts are joined with the appropriate punctuation to build the final translation of the original CT.
-		
-	\end{enumerate}
-	
-	\bigskip
-	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation in both cases because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries they are able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. Note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximize retrieval quality and not translation quality. 
-	
+
 	\subsection{Software}
 	
 	A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
@@ -486,7 +494,7 @@
 	% ---- Appendeces ----
 	%
 	\appendix
-	\section{Appendix: Basic Rules for Plural Formation}
+	\section{Basic Rules for Plural Formation}
 	\label{ap:plural}
 	
 	In order to obtain the a possible singular form of unseen tokens we apply the following basic rules:
@@ -554,9 +562,9 @@
 	%        if singular[-1] == 'e' or  singular[-1] == 's': 
 	%           singular = singular[:-1]
 	
-	
-	\section{Appendix: Translation Coverage for CT\mbox{\boldmath $lan$}H, IT\mbox{\boldmath $lan$}H and IT\mbox{\boldmath $lan$}L}
-	\label{ap:plural}
+% 	\newpage
+	\section{Translation Coverage for CT\mbox{\boldmath $lan$}H, IT\mbox{\boldmath $lan$}H and IT\mbox{\boldmath $lan$}L}
+	\label{ap:cts}
 
 	\begin{table}[h]
 		\centering
