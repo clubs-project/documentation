@@ -33,11 +33,11 @@
 %opening
 \title{
 	\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
-	\Huge D3.1 -- Cross-lingual Thesaurus and \\ Controlled Term Translation \\ 
+	\Huge M3.1 -- Cross-lingual Thesaurus and \\ Controlled Term Translation \\ 
 }
 \author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^{1}$, Roland Ramthun$^{2}$ \medskip \\ 
 	\Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
-\date{\vspace*{2cm} -- v0.2.3 --\\March 2018}
+\date{\vspace*{2cm} -- v1.0 --\\March 2018}
 
 
 \begin{document}
@@ -68,15 +68,16 @@
 	
 	The different database segments in PubPsych use controlled terms from different systems (e.g. the Medical Subject Headings or the APA thesaurus) or even no controlled terminology at all. Many databases include indexing terms, meaning these terms are descriptive, but freely assigned and not from a controlled vocabulary.
 	
+	\bigskip
 	The relevant fields holding the controlled term and indexing term information are
 		\begin{description}
-		\item[CT$lan$H:] "Controlled term high". These are terms from controlled vocabulary (MeSH, APA/PSYNDEX terms, etc.), not freely assigned terms.
-		\item[CT$lan$L:] "Controlled terms low". As CT$lan$H, but the person who created the record gave these entries a lower importance for describing the content than the ones in CT$lan$H.
-		\item[IT$lan$H:] "Additional descriptor high". As the name says, additional describing terms, which may have been freely chosen by the person who created the record, so they do not need to come from a controlled terminology.
-		\item[IT$lan$L:] "Additional descriptor low". As IT$lan$H, but with lower descriptive relevance.
+		\item[CT\mbox{\boldmath $lan$}H:] "Controlled term high". These are terms from controlled vocabulary (MeSH, APA/PSYNDEX terms, etc.), not freely assigned terms.
+		\item[CT\mbox{\boldmath $lan$}L:] "Controlled terms low". As CT$lan$H, but the person who created the record gave these entries a lower importance for describing the content than the ones in CT$lan$H.
+		\item[IT\mbox{\boldmath $lan$}H:] "Additional descriptor high". As the name says, additional describing terms, which may have been freely chosen by the person who created the record, so they do not need to come from a controlled terminology.
+		\item[IT\mbox{\boldmath $lan$}L:] "Additional descriptor low". As IT$lan$H, but with lower descriptive relevance.
 	\end{description}
 	
-	Table~\ref{tab:cts-per-db} and table~\ref{tab:its-per-db} give an overview about the available descriptive term data available for each database segment.
+	Table~\ref{tab:cts-per-db} and Table~\ref{tab:its-per-db} give an overview about the available descriptive term data available for each database segment.
 	
 		\begin{table}[h]
 		\centering
@@ -84,15 +85,15 @@
 			\toprule
 			& \mc{1}{c}{CTEH/CTEL} & \mc{1}{c}{CTDH/CTDL} & \mc{1}{c}{CTFH/CTFL} & \mc{1}{c}{CTSH/CTSL}\\
 			\midrule
-			MEDLINE           & 90,4\%/96\% & 90,4\%/96\% & 90,4\%/96\% & -/-\\
-			ERIC       &    53,2\%/98,9\% &    -/- &    -/- & -/-\\
+			MEDLINE           & 90.4\%/96.0\% & 90.4\%/96.0\% & 90.4\%/96.0\% & -/-\\
+			ERIC              & 53.2\%/98.9\% &    -/- &    -/- & -/-\\
 			ISOC   &    -/- &    -/- &    -/- & -/-\\
 			NARCIS &       -/- &       -/- &       -/- & -/-\\
-			NORART &       -/94,2\% &       -/- &       -/- & -/-\\
+			NORART &       -/94.2\% &       -/- &       -/- & -/-\\
 			PASCAL &       -/- &       -/- &       -/- & -/-\\
-			PsychData &       -/94,3\% &       -/94,3\% &       -/- & -/-\\
+			PsychData &       -/94.3\% &       -/94.3\% &       -/- & -/-\\
 			PsychOpen &       -/- &       -/- &       -/- & -/-\\
-			PSYNDEX &       96\%/93,2\% &       96\%/93,2\% &       -/- & -/-\\
+			PSYNDEX &       96.0\%/93.2\% &       96.0\%/93.2\% &       -/- & -/-\\
 			\bottomrule
 		\end{tabular}
 		\caption{Relative availability of controlled terms for records per database segment}
@@ -105,23 +106,24 @@
 		\toprule
 		& \mc{1}{c}{ITEH/ITEL} & \mc{1}{c}{ITDH/ITDL} & \mc{1}{c}{ITFH/ITFL} & \mc{1}{c}{ITSH/ITSL}\\
 		\midrule
-		MEDLINE           & 9,9\%/8,9\% & -/- & -/- & -/-\\
-		ERIC       &    43,6\%/20,9\% &    -/- &    -/- & -/-\\
-		ISOC   &    -/- &    -/- &    -/- & -/95,9\%\\
-		NARCIS &       40,8\%/- &       -/- &       -/- & -/-\\
-		NORART &       -/34,6\% &       -/- &       -/- & -/-\\
-		PASCAL &       -/99,4\% &       -/0\% &       -/99,4\% & -/99,2\%\\
+		MEDLINE    & 9.9\%/8.9\% & -/- & -/- & -/-\\
+		ERIC       &    43.6\%/20.9\% &    -/- &    -/- & -/-\\
+		ISOC   &    -/- &    -/- &    -/- & -/95.9\%\\
+		NARCIS &       40.8\%/- &       -/- &       -/- & -/-\\
+		NORART &       -/34.6\% &       -/- &       -/- & -/-\\
+		PASCAL &       -/99.4\% &       -/0\% &       -/99.4\% & -/99.2\%\\
 		PsychData &       -/- &       -/- &       -/- & -/-\\
-		PsychOpen &       80,8\%/- &       -/- &       -/- & -/-\\
-		PSYNDEX &       4,4\%/1,3\% &       4,5\%/1,3\% &       -/- & -/-\\
+		PsychOpen &       80.8\%/- &       -/- &       -/- & -/-\\
+		PSYNDEX &       4.4\%/1.3\% &       4.5\%/1.3\% &       -/- & -/-\\
 		\bottomrule
 	\end{tabular}
 	\caption{Relative availability of indexing terms for records per database segment}
 	\label{tab:its-per-db}
 \end{table}
 
-	For a first analysis, we extract some of the controlled terms (CTs) from a frozen Solr instance
-	\footnote{PubPsych record set as of 4th August 2017 with     1,037,536  entries.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. Notice that there are no {\tt CTSL} (Spanish CTs) but we did not retrieve any result for {\tt CTSH} either, the other field with information related to controlled terms.
+	For a first analysis, we extract some of the controlled terms (CTs) from a frozen Solr instance%
+	\footnote{PubPsych record set as of 4th August 2017 with 1,037,536  entries.}  using the fields {\tt CTDL}, {\tt CTEL}, {\tt CTFL} and {\tt CTSL}. Table~\ref{tab:ct} shows the statistics per language. We use CT$lan$L for this analysis because it is the field appearing in more records.
+% 	Notice that there are no {\tt CTSL} (Spanish CTs) but we did not retrieve any result for {\tt CTSH} either, the other field with information related to controlled terms.
 	
 	Some of the entries have two parts, the descriptor and a class specification in parentheses:
 	{\small 
@@ -262,7 +264,7 @@
 	Lexicons have been built from aligned articles in the psychology and health domains for English, German, French and Spanish using WikiTailor models WT0.5-100 or WT0.5-500 depending on the language.
 	%TODO Cristina, could you elaborate on which model was used for which language any why? This is hard to understand if you do not know WikiTailor
 	
-	Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81.369 entries. 
+	Using the intersection of in-domain articles in the four languages we obtain a high precision/low recall multilingual lexicon with 497 entries. With the union of in-domain articles we gather a low precision/high recall multilingual lexicon with 81,369 entries. 
 	%TODO Which data was used, phrases from article text or titles, as said above? I think I get what you did for the high precision/low recall multilingual lexicon, but what did you do for the low precision/high recall version?
 	
 	% After removing duplicates, we obtain the figures of Table~\ref{tab:4lex} depending on the language.
@@ -553,7 +555,7 @@
 	%           singular = singular[:-1]
 	
 	
-	\section{Appendix: Translation Coverage for CT$lan$H, IT$lan$H and IT$lan$L}
+	\section{Appendix: Translation Coverage for CT\mbox{\boldmath $lan$}H, IT\mbox{\boldmath $lan$}H and IT\mbox{\boldmath $lan$}L}
 	\label{ap:plural}
 
 	\begin{table}[h]
