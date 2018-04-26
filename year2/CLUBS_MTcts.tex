@@ -12,6 +12,8 @@
 \usepackage{amssymb}
 \usepackage{listings}
 \usepackage[multiple]{footmisc}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
 
 \setlength{\textheight}{24cm}  
 \setlength{\textwidth}{15cm}
@@ -351,8 +353,7 @@
 		\label{tab:4lex}
 	\end{table} 
 	
-	
-	
+		
 	\section{Controlled Term Translation}
 	\label{s:cttrad}
 	
@@ -362,7 +363,7 @@
 	
 	\bigskip
 	\noindent
-	We follow the strategy below:
+	We follow the strategy below and sketched in Figure~\ref{fig:diagram}:
 	\begin{enumerate}
 		\item A CT is splitted into the descriptor and the class specification (Section~\ref{s:ct}). Both parts are subsequently cleaned and translated independently. 
 		Ex: \emph{Action Potentials (genetics)} $\Rightarrow$ \emph{Action Potentials, genetics}
@@ -386,6 +387,62 @@
 		
 	\end{enumerate}
 	
+	
+   \tikzstyle{io} = [rectangle, draw=black, fill=white, rounded corners, text width=12em, text badly centered, inner sep=8pt, node distance=2.5cm]
+  \tikzstyle{decision} = [diamond, draw, fill=white, text width=5em, text badly centered, node distance=3.5cm, inner sep=0pt]
+  \tikzstyle{block} = [rectangle, draw=black, fill=white, node distance=2.5cm, text width=12em, text badly centered, minimum height=2.5em, inner sep=0pt]
+  \tikzstyle{line} = [draw,->,-latex,black,line width=1pt]
+  \begin{figure}[t!]
+    \centering
+    \begin{tikzpicture}[auto,draw=black,line width=1pt,scale=0.65,transform shape]
+	% Place nodes
+    
+	\node [io] (input) {\large INPUT: Term};
+	\node [block, below of=input, text width=26em, minimum height=3.5em, node distance=2cm] (init) {Generation of term alternatives\\ (\emph{Action Potentials}, \emph{action potentials}, \emph{Action potentials}) };
+
+	\node [decision, below of=init, node distance=2.5cm] (q) {in quad-lexicon?};
+	\node [block, left of=q, node distance=6cm, text width=22em, minimum height=4.5em] (extract)  {Extract entry\\(\emph{Action Potentials$|||$es:Potenciales de Acci\'on$|||$ de:Aktionspotentiale$|||$fr:Potentiels d'action})};
+	\node [block, below of=extract, node distance=2.35cm] (restore1) {Restore capitalisation};
+	\node [io, below of=restore1, node distance=1.9cm] (end) {\large OUTPUT: Quad-term};
+	
+	\node [block, below of=q, node distance=2.4cm] (split) {Split by tokens};
+	\node [block, below of=split, node distance=1.8cm] (token) {Token alternatives};
+	\node [decision, below of=token, node distance=2.5cm] (q2) {in quad-lexicon?};
+	\node [block, right of=q2, node distance=5cm, text width=8em] (extract2)  {Extract entry};
+	\node [block, below of=extract2, node distance=2.3cm] (restore2) {Restore capitalisation};
+	\node [decision, below of=restore2, node distance=2.6cm] (q3) {more tokens?};
+	\node [block, below of=q3, node distance=2.2cm] (restore3) {Recompose entry};
+	\node [io, below of=restore3, node distance=1.9cm] (end2) {\large OUTPUT: Quad-term};
+	\node [block, below of=q2, node distance=2.3cm, text width=8em] (singular)  {Singular form};
+	\node [decision, below of=singular, node distance=2.5cm] (q4) {in quad-lexicon?};
+	\node [block, below of=q4, node distance=2.3cm, text width=8em] (copy)  {Copy token};
+	
+	% Draw edges 
+	\path [line] (input) -- (init);
+	\path [line] (init) -- (q);
+	\path [line] (q) -- (split);
+	\path [line] (extract) -- (restore1);
+	\path [line] (restore1) -- (end);
+	\path [line] (q) -- node [near start, color=black] {yes} (extract);
+	\path [line] (q) -- node [, color=black] {no}(split);
+	\path [line] (split) -- (token);
+	\path [line] (token) -- (q2);
+	\path [line] (q2) -- node [near start, color=black] {\hspace*{2em} yes} (extract2);
+	\path [line] (extract2) -- (restore2);
+	\path [line] (restore2) -- (q3);
+	\draw [line] (q3.east) -- ++(2cm,0cm)  |- node [near start, color=black] {yes~~} (token);
+	\path [line] (q3) -- node [, color=black] {no}(restore3);
+	\path [line] (restore3) -- (end2);
+	\path [line] (q2) -- node [, color=black] {no}(singular);
+	\path [line] (singular) -- (q4);
+	\path [line] (q4.east) --  ++(0.7cm,0cm)  |- node [near start, color=black] {} (extract2);
+	\path [line] (q4) -- node [, color=black] {no}(copy);
+	\path [line] (copy.east) --  ++(1cm,0cm)  |- node [near start, color=black] {} (restore2);
+    \end{tikzpicture}
+    \caption{Flux diagram for the controlled term translation. If a complete term cannot be matched, a token by token translation is applied.}
+    \label{fig:diagram}
+\end{figure}
+
 	\bigskip
 	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries they are able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. The MeSH thesaurus alone covers between 25\%-87\% of the all the controlled terms depending on the database and language. These numbers improve as we consider the coverage we can obtain by using also word-level mappings. The word-level mappings together with the usage of the extended lexicon allows us to reach almost a 100\% in all the cases. Results for CT$lan$H, IT$lan$H and IT$lan$L are shown in Appendix~\ref{ap:cts}.
 	
@@ -393,7 +450,7 @@
 	
 	
 	
-	\begin{table}[h]
+	\begin{table}[t]
 		\centering
 		\flushleft{English}
 		
