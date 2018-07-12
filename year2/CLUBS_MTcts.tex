@@ -356,7 +356,21 @@
 	
 	\subsection{Cleaning and Quad-lexicon Compilation}
 	\label{ss:cleaning}
-
+	We have cleaned and compiled two quadrilingual lexicons: one that only consists of entries of the MeSH dictionary and one that consists of the entries of all the other dictionaries. We have separated the sources since we consider the MeSH entries to be of higher quality.
+	
+	We have applied the following cleaning steps to both dictionaries:
+	\begin{itemize}
+		\item Lowercase tokens
+		\item Remove diacritics (e.g \textit{r\"ucklauf} $\rightarrow$ \textit{rucklauf})
+		\item Replace \textit{\ss} with \textit{ss} (that is how Solr deals with this character)
+		\item Delete \textit{[dokumenttyp]} annotation (e.g. \textit{biografie [dokumenttyp]} $\rightarrow$ \textit{biografie})
+		\item Remove the whole entry if the source word or a translation is empty
+		\item Remove the whole entry if the source word or a translation is a stopword in any of the languages
+	\end{itemize}
+	
+	Moreover, we eliminated source words that were source words in more than one language, sticking to the following order: English was favoured over German, German over French and French over Spanish. In order to cover different spellings, we have also introduced some duplicates: Source words containing umlauts were duplicated with a version in which the umlaut was replaced by the basic character and an \textit{e} (\textit{rücklauf} was not only changed to \textit{rucklauf}, but also lead to another entry with \textit{ruecklauf} as a source word). Similarly, we have added duplicates for words ending with \textit{-ise} respectively \textit{-ize}, \mbox{\textit{-isation}} respectively \textit{-ization} and \textit{-our} and \textit{-or} to account for differences between American and British English. 	Furthermore, we manually deleted some wrong entries. 
+	
+	After applying this procedure to each other dictionary from the sections \ref{ss:wpLex}, \ref{ss:apertium} and \ref{ss:manual}, we merged them into one dictionary, while, in the case of duplicates, following this priority setting: The lexicon built with WikiTailor was favoured over the dictionary made of Wikipedia category name alignments, that one over untradDEall and untradDEall over dict.% TODO: replace untradDEAll and dict with the real names
 		
 	\section{Controlled Term Translation}
 	\label{s:cttrad}
@@ -606,6 +620,7 @@
 	\subsection{Off-line Software}
 
 	\subsection{Online Integration into PubPsych}
+
 	
 	
 	\section{Conclusions}
