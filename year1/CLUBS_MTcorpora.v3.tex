@@ -459,14 +459,14 @@ Table \ref{tab:publang} shows stats on the extracted corpus grouped by the publi
 \toprule
 pub\_lang  & records  & subtitle\_en & title\_de & title\_en & title\_es & title\_fr &  \\
 \midrule
-chi                  & 1            & 0            & 0         & 1         & 0         & 0         &  \\
-dut                   & 1            & 0            & 0         & 1         & 0         & 0         &  \\
-en                   & 24           & 0            & 0         & 24        & 0         & 0         &  \\
+chi               & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+dut               & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+en               & 24           & 0            & 0         & 24        & 0         & 0         &  \\
 eng               & 711          & 3            & 87        & 711       & 1         & 0         &  \\
-fre                  & 7            & 0            & 0         & 6         & 0         & 7         &  \\
-ger                  & 11           & 0            & 11        & 11        & 0         & 0         &  \\
-ita                  & 1            & 0            & 0         & 1         & 0         & 0         &  \\
-jpn                & 2            & 0            & 0         & 2         & 0         & 0         &  \\
+fre               & 7            & 0            & 0         & 6         & 0         & 7         &  \\
+ger               & 11           & 0            & 11        & 11        & 0         & 0         &  \\
+ita               & 1            & 0            & 0         & 1         & 0         & 0         &  \\
+jpn              & 2            & 0            & 0         & 2         & 0         & 0         &  \\
 por           & 1            & 0            & 0         & 1         & 0         & 0         &  \\
 spa          & 4            & 0            & 0         & 4         & 4         & 0         &  \\
 \bottomrule
@@ -504,23 +504,80 @@ And already detected necessities:
 
 For the last version of translator we have gathered additional corpora in  German--French, German--Spanish and French--Spanish in order to improve the first weak point of the previous corpus reported in the conclusions of the document. These data are only out-of-domain as PubPshyc does not have aligned documents for these pairs.
 
-We have also improved the pre-processing of the data after some issues detected in the first corpus. The current pre-processing includes: \red{Please, Sophie, check}
+We have also improved the pre-processing of the data after some issues detected in the first corpus. The current pre-processing includes:
 
 \begin{enumerate}
 \itemsep0em 
+ \item Removal of sentences where more tha $50\%$ of the text is in a non-latin alphabet (this removes equations and sentences in other languages such as Greek or Chinese)
+ \item HTML entities cleaning (for instance, correcting double conversions such as aposaposquote; instead of \&aposquote;)
  \item Text normalisation
  \item Text tokenisation
- \item Removal of sentences where more tha $50\%$ of the text is in a non-latin alphabet (this removes equations and sentences in other languages such as Greek or Chinese)
  \item Truecasing
  \item Duplicate removal
 \end{enumerate}
 
 \noindent
 The full pre-processing pipeline is available in the git repository of the project\footnote{\url{https://github.com/clubs-project/corpora-extraction-scripts/tree/master/cleaning}}.
-
+Major differences come for the EMEA data, a corpus with lots of duplicate parallel sentences and equations. In this case, we finally get a clean subcorpus with only a quarter of the orginal sentences.
 
 
 \subsection{Parallel Corpora Figures}
+
+
+\begin{landscape}
+
+\begin{table}[t]
+% \small
+\begin{tabular}{l rrr rrr rrr}
+\toprule
+    & \mc{3}{c}{En--De} & \mc{3}{c}{En--Es} & \mc{3}{c}{En--Fr}\\
+    \cmidrule(lr){2-4}   \cmidrule(lr){5-7}   \cmidrule(lr){8-10} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{DeTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{EsTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EnTok.} & \mc{1}{c}{FrTok.}\\
+\midrule
+UN             &     114.085 &   5.001.920 &  4.555.627 & 8.229.875 & 256.932.146 & 294.068.300 & 9.091.417 & 282.087.198 & 329.282.596\\
+EP             &   1.862.433 &  52.674.125 & 50.126.351 & 1.910.098 &  54.065.460 &  56.618.936 & 1.956.314 &  55.312.925 &  60.886.010\\
+ComCrawl       &   2.394.117 &  58.649.429 & 54.440.232 & 1.840.956 &  46.659.115 &  49.438.475 & 3.231.507 &  80.589.534 &  89.562.986\\
+\it{subTOTAL}  & \it{4.370.635} &  \it{116.325.474} & \it{109.122.210}&  \it{11.980.929} & \it{357.656.721}  & \it{400.125.711} &\it{14.279.238} &  \it{417.989.657} & \it{479.731.592}  \\
+\midrule
+EMEA         & 237.607 &  4.111.481 & 3.779.495 &  240.888 &  4.229.668 &  4.697.635 &  246.315 &  4.258.733 & 5.036.208\\
+ScieloBio    & -- & -- & -- &  116.999 & 3.246.340 & 3.376.848 & -- & -- & --\\
+ScieloHealth & -- & -- & -- &  532.287 & 14.016.862 & 14.649.695 & 8.990 & 242.750 & 304.494\\
+\it{subTOTAL}  &  \it{237.607} &  \it{4.111.481} & \it{3.779.495} & \it{890.174} & \it{2.149.2870} & \it{22.724.178} & \it{255.305}  & \it{4.501.483}  & \it{5.340.702}  \\
+\midrule
+PubPsych     &  542.690 & 10.023.347 & 9.161.397 & 112.148 & 2.907.160 & 3.222.127 & 44.505 & 457.745 & 560.716\\
+\midrule
+\it{TOTAL}  & \it{5.150.932} & \it{130.460.302} & \it{122.063.102} & \it{12.983.251}  & \it{383.603.026}  & \it{14.579.048} & \it{14.579.048} & \it{422.948.885} & \it{485.633.010}  \\
+\bottomrule
+\bigskip
+\bigskip\\
+\toprule
+    & \mc{3}{c}{De--Es} & \mc{3}{c}{De--Fr} & \mc{3}{c}{Es--Fr}\\
+    \cmidrule(lr){2-4}   \cmidrule(lr){5-7}   \cmidrule(lr){8-10} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{DeTok.} & \mc{1}{c}{EsTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{DeTok.} & \mc{1}{c}{FrTok.} 
+    & \mc{1}{c}{Sent.} & \mc{1}{c}{EsTok.} & \mc{1}{c}{FrTok.}\\
+\midrule
+UN             &   120.334 &  4.773.923 &  6.115.036 &  120.529 &  4.736.002 &  6.111.522 & 8.488.449 & 307.870.137 & 314.689.536\\
+EP             &   842.324 & 49.824.584 & 54.749.655 &1.901.615 & 51.051.092 & 58.973.416 & 1.937.659 &  57.569.936 &  60.481.886\\
+JRC            &   963.545 & 28.133.439 & 33.757.484 &  951.566 & 27.759.441 & 33.481.936 &  962.918 &  33.533.403 &  33.674.993\\
+NC             &   209.534 &  5.453.601 &  6.119.785 &  185.039 &  4.763.166 &  5.581.034 &  194.943 &  5.763.484 &  6.008.991\\
+\it{subTOTAL}  & \it{3.135.737} &  \it{88.185.547} & \it{100.741.960}&  \it{3.158.749} & \it{88.309.701}  & \it{104.147.908} &\it{11.583.969} &  \it{404.736.960} & \it{414.855.406}  \\
+\midrule
+EMEA         & 258.428 &  4.138.271 & 4.988.972 &  265.202 &  4.171.805 &  5.354.591 &  265.230 &  5.117.314 & 5.472.197\\
+\midrule
+\it{TOTAL}  & \it{3.394.165} & \it{92.323.818} & \it{105.730.932} & \it{3.423.951}  & \it{92.481.506}  & \it{109.502.499} & \it{11.849.199} & \it{409.854.274} & \it{420.327.603}  \\
+\bottomrule
+\end{tabular}
+ \caption{Size of the parallel corpora after the new cleaning pipeline obtained from the different sources described in Section~\ref{ss:pubPar}  with  (Multi-) United Nations (UN), Europarl V7 (EP), Common Crawl (ComCrawl), JRC-Acquis (JRC), EMEA and Scielo. Figures of the PubPsych corpus are shown for comparison.}
+ \label{tab:setsParFinalEn}
+\end{table}
+
+
+\end{landscape}
+
+
 
 %
 % ---- Bibliography ----
