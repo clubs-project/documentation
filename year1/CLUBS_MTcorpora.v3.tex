@@ -371,6 +371,8 @@ Tables~\ref{tab:setsParGen} and \ref{tab:setsMonoGen} show a summary of the amou
 %    19240403   513255135 en-fr/generalBio.fr-en.tc.en
 %    19240403   592213184 en-fr/generalBio.fr-en.tc.fr
 
+For the second version of the corpus, we include data for the language pairs not involving English (See Apendix~\ref{s:additional}) which is only available for the out-of-domain setting. We use Europarl~\cite{europarl:2005}, United Nations Corpus~\cite{multiun:2012}, JR-ACQUIS~\cite{tiedemann:2012} and News Commentary~\cite{tiedemann:2012} for that purpose. For somehow alleviating the scarcity of data in German, we also include the MODEL Rapid corpus~\cite{rozisSkadins:2017} for all the language pairs involving German. Finally, we include the first 2 million parallel sentences from the EUbookshop~\cite{skadinsEtal:2014} for German--Spanish and German--French. The latter two sources are supposed to be more noisy than the previous ones and for this reason we only include them for the pairs with less data.
+
 
 \subsection{Development and Test Sets}
 \label{ss:genTests}
@@ -501,8 +503,9 @@ And already detected necessities:
 
 \appendix                                     
 \section{Additional Corpora}
+\label{s:additional}
 
-For the last version of translator we have gathered additional corpora in  German--French, German--Spanish and French--Spanish in order to improve the first weak point of the previous corpus reported in the conclusions of the document. These data are only out-of-domain as PubPshyc does not have aligned documents for these pairs.
+For the last version of translator we have gathered additional corpora in German--English, German--French, German--Spanish and French--Spanish in order to improve the weak points of the previous corpus reported in the conclusions of the document. These data are only out-of-domain as PubPshyc does not have aligned documents for these pairs.
 
 We have also improved the pre-processing of the data after some issues detected in the first corpus. The current pre-processing includes:
 
@@ -539,7 +542,10 @@ Major differences come for the EMEA data, a corpus with lots of duplicate parall
 UN             &     114.085 &   5.001.920 &  4.555.627 & 8.229.875 & 256.932.146 & 294.068.300 & 9.091.417 & 282.087.198 & 329.282.596\\
 EP             &   1.862.433 &  52.674.125 & 50.126.351 & 1.910.098 &  54.065.460 &  56.618.936 & 1.956.314 &  55.312.925 &  60.886.010\\
 ComCrawl       &   2.394.117 &  58.649.429 & 54.440.232 & 1.840.956 &  46.659.115 &  49.438.475 & 3.231.507 &  80.589.534 &  89.562.986\\
-\it{subTOTAL}  & \it{4.370.635} &  \it{116.325.474} & \it{109.122.210}&  \it{11.980.929} & \it{357.656.721}  & \it{400.125.711} &\it{14.279.238} &  \it{417.989.657} & \it{479.731.592}  \\
+NC             &     221.211 &   5.502.983 &  5.608.068 &   236.969 &   6.019.121 &   6.881.068 &   207.894 &   5.237.637  &  6.240.595 \\
+JRC            &     473.128 &  15.629.431 & 14.050.433 &  -- & -- & -- &  -- & -- & -- \\
+Rapid          &   1.010.295 &  22.707.408 & 22.151.469 &  -- & -- & -- &  -- & -- & -- \\
+\it{subTOTAL}  & \it{6.075.269} &  \it{160.165.296} & \it{150.932.180}&  \it{12.217.898} & \it{363.675.842}  & \it{407.006.779} &\it{14.487.132} &  \it{423.227.294} & \it{485.972.187}  \\
 \midrule
 EMEA         & 237.607 &  4.111.481 & 3.779.495 &  240.888 &  4.229.668 &  4.697.635 &  246.315 &  4.258.733 & 5.036.208\\
 ScieloBio    & -- & -- & -- &  116.999 & 3.246.340 & 3.376.848 & -- & -- & --\\
@@ -548,9 +554,8 @@ ScieloHealth & -- & -- & -- &  532.287 & 14.016.862 & 14.649.695 & 8.990 & 242.7
 \midrule
 PubPsych     &  542.690 & 10.023.347 & 9.161.397 & 112.148 & 2.907.160 & 3.222.127 & 44.505 & 457.745 & 560.716\\
 \midrule
-\it{TOTAL}  & \it{5.150.932} & \it{130.460.302} & \it{122.063.102} & \it{12.983.251}  & \it{383.603.026}  & \it{14.579.048} & \it{14.579.048} & \it{422.948.885} & \it{485.633.010}  \\
+\it{TOTAL}  & \it{6.753.879} &  \it{148.073.799} & \it{137.456.811} & \it{13.220.220}  & \it{388.075.872}  & \it{432.953.084} & \it{14.786.942} & \it{428.186.522} & \it{491.873.605}  \\
 \bottomrule
-\bigskip
 \bigskip\\
 \toprule
     & \mc{3}{c}{De--Es} & \mc{3}{c}{De--Fr} & \mc{3}{c}{Es--Fr}\\
@@ -560,17 +565,18 @@ PubPsych     &  542.690 & 10.023.347 & 9.161.397 & 112.148 & 2.907.160 & 3.222.1
     & \mc{1}{c}{Sent.} & \mc{1}{c}{EsTok.} & \mc{1}{c}{FrTok.}\\
 \midrule
 UN             &   120.334 &  4.773.923 &  6.115.036 &  120.529 &  4.736.002 &  6.111.522 & 8.488.449 & 307.870.137 & 314.689.536\\
-EP             &   842.324 & 49.824.584 & 54.749.655 &1.901.615 & 51.051.092 & 58.973.416 & 1.937.659 &  57.569.936 &  60.481.886\\
-JRC            &   963.545 & 28.133.439 & 33.757.484 &  951.566 & 27.759.441 & 33.481.936 &  962.918 &  33.533.403 &  33.674.993\\
-NC             &   209.534 &  5.453.601 &  6.119.785 &  185.039 &  4.763.166 &  5.581.034 &  194.943 &  5.763.484 &  6.008.991\\
-\it{subTOTAL}  & \it{3.135.737} &  \it{88.185.547} & \it{100.741.960}&  \it{3.158.749} & \it{88.309.701}  & \it{104.147.908} &\it{11.583.969} &  \it{404.736.960} & \it{414.855.406}  \\
+EP             & 1.842.324 & 49.824.584 & 54.749.655 &1.901.615 & 51.051.092 & 58.973.416 & 1.937.659 &  57.569.936 &  60.481.886\\
+JRC            &   963.545 & 28.133.439 & 33.757.484 &  951.566 & 27.759.441 & 33.481.936 &   962.918 &  33.533.403 &  33.674.993\\
+NC             &   209.534 &  5.453.601 &  6.119.785 &  185.039 &  4.763.166 &  5.581.034 &   194.943 &  5.763.484 &  6.008.991\\
+Rapid          &   526.605 & 11.499.817 & 13.484.752 &  975.509 & 21.045.994 & 25.922.810 &  -- & -- & -- \\
+\it{subTOTAL}  & \it{3.662.342} &  \it{99.685.364} & \it{114.226.712}&  \it{4.134.258} & \it{109.355.695}  & \it{130.070.718} &\it{11.583.969} &  \it{404.736.960} & \it{414.855.406}  \\
 \midrule
 EMEA         & 258.428 &  4.138.271 & 4.988.972 &  265.202 &  4.171.805 &  5.354.591 &  265.230 &  5.117.314 & 5.472.197\\
 \midrule
-\it{TOTAL}  & \it{3.394.165} & \it{92.323.818} & \it{105.730.932} & \it{3.423.951}  & \it{92.481.506}  & \it{109.502.499} & \it{11.849.199} & \it{409.854.274} & \it{420.327.603}  \\
+\it{TOTAL}  & \it{3.920.770} & \it{103.823.635} & \it{119.215.684} & \it{4.399.460}  & \it{113.527.500}  & \it{135.425.309} & \it{11.849.199} & \it{409.854.274} & \it{420.327.603}  \\
 \bottomrule
 \end{tabular}
- \caption{Size of the parallel corpora after the new cleaning pipeline obtained from the different sources described in Section~\ref{ss:pubPar}  with  (Multi-) United Nations (UN), Europarl V7 (EP), Common Crawl (ComCrawl), JRC-Acquis (JRC), EMEA and Scielo. Figures of the PubPsych corpus are shown for comparison.}
+ \caption{Size of the parallel corpora after the new cleaning pipeline obtained from the different sources described in Section~\ref{ss:pubPar}  with  (Multi-) United Nations (UN), Europarl V7 (EP), Common Crawl (ComCrawl), JRC-Acquis (JRC), MODEL Rapid (Rapid), EMEA and Scielo. Figures of the PubPsych corpus are shown for comparison.}
  \label{tab:setsParFinalEn}
 \end{table}
 
