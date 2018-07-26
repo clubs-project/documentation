@@ -7,6 +7,8 @@
 \usepackage{color}
 \usepackage{url}
 \usepackage{enumerate}
+\usepackage{bibentry}
+\nobibliography*
 
 \usepackage[labelsep=period]{caption}
 \usepackage{subcaption}
@@ -48,9 +50,9 @@
 \clearpage\maketitle
 \thispagestyle{empty}
 
-\vspace*{5cm}
+\vspace*{4cm}
 \begin{abstract}
-This document describes the statistical and neural machine translation systems used as baselines within the CLUBS project and their evaluation with automatic metrics. Those systems are trained with large out-of-domain and/or small in-domain corpora, which is described in deliverable M1.2.
+This document describes the statistical and neural machine translation systems used as baselines within the CLuBS project and their evaluation with automatic metrics. We also present several experiments to improve the baselines and we justify the choice of the system for the first translation prototype. Those systems are trained with large out-of-domain and/or small in-domain corpora, which is described in deliverable M1.2. Modifications and improvements for the final prototype are also sketched.
 \end{abstract}
 
 \newpage
@@ -68,9 +70,9 @@ In the last years, statistical machine translation systems (SMT) have shown to o
 
 As always, there are pros and cons for using one family of systems or the other. SMT systems need less data to get a similar performance and can be trained in a desktop computer. On the other hand, the most modest NMT systems need at least one week of GPU time to get competitive results. A more detailed discussion is reported in deliverable M1.4.
 
-In the CLuBS project we face two main issues. First, we want to translate among all four languages De--En--Es--Fr. Second, we want translations on a very especific domain: phsycology. For translating between languages with few data, SMT engines offer the possibility of pivot translation. Translation models for translating L1-to-L2 and L2-to-L3 can be joined to build a translator L1-to-L3~\cite{zhuEtal:2014}. Usually the pivot language L2 is a rich language such as English. Then, only a small amount of parallel data in the pair L1-L3 is needed for tuning the system. On the other hand, NMT systems offer the possibility of a join training and zero-shot translation \cite{johnsonEtal:2016,haEtal:2016,firatEtAlb:2016}. Training a single model for L1-to-L2 and L3-to-L4 allows a zero-shot translation L1-to-L4. This is probably due to the fact that context vectors (or attention vectors) for different languages seem to share a space when trained together. 
+In the CLuBS project we face two main issues. First, we want to translate among all four languages \en--\de--\fr--\es. Second, we want translations on a very specific domain: psychology. The combination of the two aspects makes gathering the appropriate data difficult: we either cannot get data for all language pairs or, in case we can, the data does not match our domain.  For translating between languages with few data, SMT engines offer the possibility of pivot translation. Translation models for translating L1-to-L2 and L2-to-L3 can be joined to build a translator L1-to-L3~\cite{zhuEtal:2014}. Usually the pivot language L2 is a rich language such as English. Then, only a small amount of parallel data in the pair L1-L3 is needed for tuning the system. On the other hand, NMT systems offer the possibility of a joint training and zero-shot translation \cite{johnsonEtal:2016,haEtal:2016,firatEtAlb:2016}. Training a single model for L1-to-L2 and L3-to-L4 allows a zero-shot translation L1-to-L4. This is probably due to the fact that context vectors (or attention vectors) for different languages seem to share a space when trained together. 
 
-In the CLuBS setting, one needs either 12 domain adapted SMT or bilingual NMT systems, or a single multilingual NMT system. This document presents the first results with the three different families. Systems are trained with the generic corpora described in deliverable M1.2 and evaluated on both in-domain and out-of-domain data. Section~\ref{s:eval} introduces the automatic metrics we use to evaluate the MT engines. Next, Sections~\ref{s:smt} and \ref{s:nmt} describe the SMT and NMT engines respectively, and show their results. Finally, we depict the next steps in Section~\ref{s:conclusions}.
+In the CLuBS setting, one needs either 12 domain adapted SMT or bilingual NMT systems to cover all translation directions, or a single multilingual NMT system. This document presents the first results with the three different families. Systems are trained with the generic corpora described in deliverable M1.2 and evaluated on both out-of-domain data and in-domain whenever it is possible. Section~\ref{s:eval} introduces the automatic metrics we use for this evaluation. Next, Sections~\ref{s:smt} and \ref{s:nmt} describe the SMT and NMT engines respectively, and show their performance. Section~\ref{s:moreExperiments} introduces several experiments conducted to improve specific aspects in NMT.  Finally, we summarise and depict the next steps in Section~\ref{s:conclusions}.
 
 
 \section{Automatic Evaluation Metrics}
@@ -80,7 +82,7 @@ Manual evaluation is the most reliable way to quantify the quality of a translat
 
 The {\tt Asiya} evaluation package~\cite{PBML_Asiya:2010, Gonzalez:2012} includes more than 500 metrics and their variants at lexical, syntactic and semantic levels. Syntactic and semantic metrics need linguistic processors to annotate the translations and are not available to all the languages, but a large set of lexical metrics can always be used. In the following, we select a subset of lexical metrics to be applied to English, French, German and Spanish:
 
-\newpage
+% \newpage
 \paragraph{Lexical metrics} 
 \begin{itemize}
  \item PER~\cite{PER}, TER~\cite{TER}, WER~\cite{WER}: Based on edit distances
@@ -94,7 +96,7 @@ The {\tt Asiya} evaluation package~\cite{PBML_Asiya:2010, Gonzalez:2012} include
 \section{Statistical Machine Translation Systems}
 \label{s:smt}
 
-In our experiments, we build a state-of-the-art phrase-based SMT system based on {\tt Moses} \cite{moses:2007} trained both on a large general domain corpus and on a smaller in-domain one. Domain adaptation of the general domain system via the development set is applied. Translators are trained for the Es--En, De--En and Fr--En language pairs and pivot translation is not used at this point. 
+In our experiments, we build a state-of-the-art phrase-based SMT system based on {\tt Moses} \cite{moses:2007} trained both on a large general domain corpus and on a smaller in-domain one. Domain adaptation of the general domain system via the development set is applied. Translators are trained for the \es--\en, \de--\en\ and \fr--\en\ language pairs and pivot translation is not used at this point. 
 The corpora for training, development and testing and their pre-processing are described in deliverable M1.2 and summarised in Tables~\ref{tab:setsParGen} and \ref{tab:testsParGen}. These tables include the complete corpora which is treated differently depending on the engine. SMT engines apply an additional cleaning step, where sentences with more than 100 tokens in any of the languages and sentences 9 times longer in one language than in the other one are discarded. These sentences are not likely to be parallel and, besides, the alignment software is not able to perform well on this data. 
 On the other hand, neural systems discard sentences that are longer than 50 words, since the translation quality for these sentences drops and would damage the training process.
 
@@ -104,6 +106,11 @@ Word alignment is done with {\tt GIZA++}~\cite{giza} and both phrase extraction 
 A 5-gram language model is estimated using interpolated Kneser-Ney discounting with {\tt SRILM}~\cite{srilm}. Since we have monolingual corpora of four main topics (Wikipedia, Politics, Medicine and Psychology), we build the corresponding language models and compile a general one by interpolation of the previous four and tuning the weights on the PubPsych development set.
 
 
+\subsection{Analysis of the Results}
+\label{ss:smtResults}
+
+We evaluate the translation engines involving English, that is, those language pairs for which we have parallel corpora, with a set of lexical metrics. We use {\tt news-test2013} as out-of-domain test set and the {\tt pubPsych test} of titles and abstracts as in-domain test sets.  We run our experiments with three different systems:
+ 
 
 \begin{landscape}
 \begin{table}
@@ -129,7 +136,8 @@ ScieloBio    & -- & -- & -- &  117,862 & 3,252,183 & 3,382,511 & -- & -- & --\\
 ScieloHealth & -- & -- & -- &  558,714 & 14,382,853 & 15,031,533 & 9,129 & 244,486 & 308,055\\
 \bf{Subtotal}  & \bf{1,108,752} &  \bf{14,477,119} & \bf{13,197,725} & \bf{1,774,909} & \bf{31,969,684} & \bf{34,389,550} & \bf{1,101,697}  & \bf{14,561,851}  & \bf{17,355,034}  \\
 \midrule
-pubPsych     &  241,749 & 6,584,364 & 6,135,612 & 88,848 & 2,640,441 & 2,909,559 & -- & -- & --\\
+pubPsychAbstracts    &  241,749 & 6,584,364 & 6,135,612 & 88,848 & 2,640,441 & 2,909,559 & -- & -- & --\\
+pubPsychTitles        & 306.640 & 3.480.727 & 3.059.048 & 25.105 & 293.164 & 340.203 & 45.137 & 463.610 & 567.618\\
 \midrule
 \bf{Total}  & \bf{5,832,814} & \bf{139,115,553} & \bf{130,070,731} & \bf{16,871,690}  & \bf{456,036,219}  & \bf{509,976,785} & \bf{19,240,403} & \bf{513,255,135} & \bf{592,213,184}  \\
 \bottomrule
@@ -158,8 +166,9 @@ news-test2013  & 3,000 & 64,809 & 63,411 & 3,000 & 64,809 & 70,540 & 3,000 & 64,
 EMEA dev        & 2,000 & 38,658 & 37,945 & 2,000 & 36,676 & 39,959 & 2,000 & 34,554 & 41,026 \\
 EMEA test       & 2,000 & 36,864 & 35,773 & 2,000 & 34,359 & 38,615 & 2,000 & 33,316 & 39,674 \\
 \midrule
-pubPsych dev    & 1,500 & 39,968 & 37,557 & 1,500 & 45,611 & 50,831 & -- & -- & --\\
-pubPsych test   & 2,162 & 60,219 & 55,610 & 2,486 & 74,382 & 81,575 & 823 & 25,884 & 29,226 \\
+pubPsych devAbs    & 1,500 & 39,968 & 37,557 & 1,500 & 45,611 & 50,831 & -- & -- & --\\
+pubPsych testAbs   & 2,162 & 60,219 & 55,610 & 2,486 & 74,382 & 81,575 & 823 & 25,884 & 29,226 \\
+pubPsych testTit  &    737 &  9.691 &  8.202 &   575 &  6.935 &  8.002 & 187 &  2.589 & 3.012 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -211,7 +220,7 @@ SMTpp	 & 54.87 & 38.23 & 51.23 & 33.18 & 7.13 & 39.50 & 32.24 & 44.86 & 92.25 \\
 \bottomrule
 \end{tabular}
 
- \caption{Automatic evaluation of the baseline MT systems for German-to-English on three test sets: News (newstest2013), Abstracts (PubPsychAbstracts) and Titles (PubPsychTitles). See Section~\ref{s:smt} for system's description.}
+ \caption{Automatic evaluation of the baseline MT systems for German-to-English on three test sets: News (news-test2013), Abstracts (PubPsych testAbst) and Titles (PubPsych testTit). See Section~\ref{s:smt} for system's description.}
  \label{tab:DeEn}
 \end{table}
 
@@ -271,11 +280,6 @@ SMTpp	 & 66.11 & 54.71 & 63.92 & 24.52 & 5.60 & 34.84 & 44.96 & 32.94 & 92.41 \\
 
 
 
-\subsection{Analysis of the Results}
-\label{ss:smtResults}
-
-We evaluate the translation engines involving English, that is, those language pairs for which we have parallel corpora, with a set of lexical metrics. We use {\tt news-test2013} as out-of-domain test set and the {\tt pubPsych test} of titles and abstracts as in-domain test sets.  We run our experiments with three different systems:
- 
 \begin{itemize}
  \item {\bf SMTgen.} Statistical system trained exclusively with the general domain data and using {\tt news-test2012} as development set
  \item {\bf SMTgenPP.} Statistical system trained exclusively with the general domain data and using {\tt pubPsych dev} as development set for domain adaptation. We do not use this system for testing out-of-domain data as it has been domain-adapted
@@ -283,7 +287,7 @@ We evaluate the translation engines involving English, that is, those language p
 \end{itemize}
 
 Tables~\ref{tab:DeEn} and \ref{tab:EnDe} report the automatic evaluation for German-to-English and English-to-German. As expected, for translating out-of-domain data the general system SMTgen performs much better than SMTpp, since the general domain corpus is 24 times larger. However, the specialised system performs better for translating the in-domain tests because the vocabulary is more adequate. Notice that domain-adapting the general system via the development set (SMTgenPP) the translation quality on PubPsych is only slightly improved, but the increment is statistical significant when using SMTpp. One can see for instance in the  German-to-English translation, that the BLEU scores for abstracts increase with these three systems from  12.82$\rightarrow$13.16$\rightarrow$15.71 for abstracts and 
-23.79$\rightarrow$24.96$\rightarrow$33.18 for titles. The same trend is observed for English-to-German but with lower scores. The translation quality is however too low especially for abstracts (BLEU is 15.71 for De2En and 11.05 for En2De) and this is a first motivation to try to use neural systems to make the most of the data.
+23.79$\rightarrow$24.96$\rightarrow$33.18 for titles. The same trend is observed for English-to-German but with lower scores. The translation quality is however too low especially for abstracts (BLEU is 15.71 for \de2\en\ and 11.05 for \en2\de) and this is a first motivation to try to use neural systems to make the most of the data.
  
 
 \begin{table}[t]
@@ -390,7 +394,7 @@ SMTpp	 & 54.69 & 38.20 & 49.18 & 36.80 & 7.13 & 41.40 & 58.50 & 48.59 & 73.75 \\
 
 Tables~\ref{tab:EsEn} and \ref{tab:EnEs} report the automatic evaluation for Spanish-to-English and English-to-Spanish respectively. The conclusions and trends are the same as for German--English, only with a better translation quality as measured by the automatic metrics. In general, the inflexions and compound nature of German, make it a difficult language to translate from and especially into. This together to the fact that the general domain corpus is relatively small for German ($\sim5M$ parallel sentences compared to the $\sim16M$ in Spanish) justify the difference in the automatic metrics scores.
 
-Finally, for French--English we do not have data to train the specialised system, but the large amount of general corpora allows a translation quality for this pair similar to that obtained for Spanish--English with the in-domain corpus for titles and around 6 BLEU points worse for abstracts. The concrete figures can be read in Tables~\ref{tab:FrEn} and \ref{tab:EnFr} French-to-English and English-to-French respectively.
+Finally, for French--English we do not have data to train the specialised system, but the large amount of general corpora allows a translation quality for this pair similar to that obtained for Spanish--English with the in-domain corpus for titles which are easier to translate, and around 6 BLEU points worse for abstracts. The concrete figures can be read in Tables~\ref{tab:FrEn} and \ref{tab:EnFr} for French-to-English and English-to-French respectively. The capability of neural systems to deal with zero-shot language pairs is a second motivation to explore their performance in our setting.
 
 \begin{table}[t]
 \small
@@ -528,12 +532,12 @@ In our project, we follow the pure transfer learning approach. That implies trai
 A master thesis in the framework of the project~\cite{tesisAdam} explored various scenarios regarding the available adaptation data, namely: 
 %As NMT systems operate on a pre-defined vocabulary, using additional corpora for fine-tuning and existing system is a non-trivial task. In this specific case, the vocabulary of Wikipedia can be added to the initial vocabulary of the unadapted system as a solution to this issue.
 
-\begin{enumerate}
-\itemsep0em
+\begin{itemize}
+\itemsep0.2em
 	\item\label{i:pp} using only parallel, clean data (\textit{pubPsych}, {\bf NMTpp})
 	\item using only the extracted data from comparable corpora (\textit{Wikipedia}, {\bf NMTwp}) with three different sizes of additional data (5k, 10k and 30k parallel sentences per language pair)
 	\item using the combination of the two data sets ({\bf NMTmrg}) with three different sizes of additional data (5k, 10k and 30k parallel sentences per language pair)
-\end{enumerate}
+\end{itemize}
 
 Notice that the additional data partitions are significantly smaller than the PubPsych adaptation data (1,414,958 sentence pairs in total with respect to 60,000, 120,000 and 360,000 sentence pairs added), and their covered domain is less homogeneous as they are extracted automatically from articles about health and psychology. On the other hand, they are available for all language pairs. We perform the partitioning in order to investigate the tradeoff between the amount of data and its quality.
 % , as in our ranking approach (see~\cite{tesisAdam}) it is assumed that more related sentence pairs receive a higher score. This way, the data sets will contain more noise by increasing its size.
@@ -646,8 +650,8 @@ In the light of the previous analysis, we choose to test our systems using the m
 	\label{tab:nmtEnDe}               
 \end{table}
 
-
-Here, the arrows after the BLEU scores indicate significant differences ($p=0.005$) when compared to the adapted results achieved in the PP adaptation scenario, while the ones before the numbers stand for significant differences with respect to the baseline system.
+% 
+% Here, the arrows after the BLEU scores indicate significant differences ($p=0.005$) when compared to the adapted results achieved in the PP adaptation scenario, while the ones before the numbers stand for significant differences with respect to the baseline system.
 
 Tables \ref{tab:nmtEnDe}--\ref{tab:xfr} show the BLEU scores for the different systems and language pairs. Arrows before BLEU scores represent significant changes with respect to the baseline performance (NMT) as calculated by the bootstrap resampling method implemented in Moses~\cite{koehn04}. Statistical significance is indicated at $p=0.005$. Arrows after the BLEU scores indicate significant differences when compared to the adapted results achieved by NMTpp. The evaluations are performed after 1 and 4 epochs of adaptation respectively, depending on the test set as described above. With the NMTpp system on the in-domain data, we obtain significant improvement in all cases, that generally lies between 1 and 2 BLEU scores. In certain cases the improvements are not significant though, most notably on the $en$--$fr$ language pair where there is no adaptation data available (other cases are $es\rightarrow en$ on the \textit{pubPsych abstracts} sets, and $de\rightarrow en$ on \textit{pubPsych titles}). 
 
@@ -810,25 +814,71 @@ Tables \ref{tab:nmtEnDe}--\ref{tab:xfr} show the BLEU scores for the different s
 	\label{tab:xfr}
 \end{table}
 
-When enriching our data with parallel sentences extracted from Wikipedia in the health domain, we see that for most translation directions and test sets the results are 1--2 BLEU points worse compared to the baseline system's performance, often reaching significant levels. Certain scenarios perform slightly better than the unadapted system, the improvement, however, is usually not significant compared to the baseline. The quality of the data seems to be not high enough to significantly improve the in-domain performance. It has to be noted that in addition to the lower quality, the actual domain coverage of the data does not necessarily align completely with that of the test sets. This is backed up by the fact that adapting with the WP data leads to significant improvements on the out-of-domain \textit{news-test2013} dataset (except for $en\rightarrow es$ and $en\rightarrow de$), while on the close-domain EMEA test sets we observe a behavior similar to the strictly in-domain \textit{pubPsych} sets. As we aimed for covering a large number of articles when extracting from the health and psychology domains, the automatic adaptation set contains many parallel sentences that are only slightly related to these topics and they have proben not to be useful.
+When enriching our data with parallel sentences extracted from Wikipedia in the health domain, we see that results are 1--2 BLEU points worse compared to the baseline system's performance, when the training corpus already has a large amount of data in the given language pair (e.g. \en--\de) or we evaluate on the in-domain PubPsych tests.
+% for most translation directions and test sets the results are 1--2 BLEU points worse compared to the baseline system's performance, often reaching significant levels. Certain scenarios perform slightly better than the unadapted system, the improvement, however, is usually not significant compared to the baseline. 
+The quality of the data seems to be not high enough to significantly improve the in-domain performance. It has to be noted that in addition to the lower quality, the actual domain coverage of the data does not necessarily align completely with that of the test sets. This is backed up by the fact that adapting with the Wikipedia data leads to significant improvements on the out-of-domain \textit{news-test2013} dataset (except for $en\rightarrow es$ and $en\rightarrow de$), while on the close-domain EMEA test sets we observe a behavior similar to the strictly in-domain \textit{pubPsych} sets. As we aimed for covering a large number of articles when extracting from the health and psychology domains, the automatic adaptation set contains many parallel sentences that are only slightly related to these topics and they have proven not to be useful.
+Since in this setting we have available data for language pairs that are under- or zero-resourced in either the PubPsych data set, or even the general NMT system, the Wikipedia extractions have a clear positive effect for these language pairs and the adapted systems often outperform the ones that have been adapted on PubPsych data. 
 
-Since in this setting we have available data for language pairs that are under- or zero-resourced in either the PP data set, or even the general NMT system, the \textit{Wikipedia} extractions have a clear positive effect for these language pairs and the adapted systems often overperform the ones that have been adapted on \textit{pubPsych} data. The conclusions obtained with the NMTwp systems are also valid for NMTmrg systems.
+Finally, we combine (merge) the parallel sentences extracted from Wikipedia with those available in PubPsych in the NMTmrg system and and use them also to adapt the NMT baseline.  The conclusions obtained with the NMTwp systems are also valid here as we can see in the third block of rows of Tables \ref{tab:nmtEnDe}--\ref{tab:xfr}.
 
 % The general trend in case of worsening performances is proportionate to the adaptation datasets' size: as it increases, the results get worse, reaching significant levels of difference for the WP30 in the case of $en\rightarrow es$ and $de\rightarrow en$ on certain test sets (for $de\rightarrow en$ it already happens at WP10 for the \textit{pubPsych titles} test set).  The noteworthy exception is the $en\rightarrow fr$ direction on the \textit{pubPsych titles} test set, where the top-5,000 set already drastically worsens the translation quality (more than 3.5 points of drop), and one can observe a decreasing trend in terms of BLEU score as the size of the dataset increases. Conversely, the reverse direction $fr\rightarrow en$ showcases significant improvement on the same test set for WP5. 
 
 % There is one case, however, when the adaptation with the automatic extractions yields results that are significant improvements with regard to the baseline performance. Interestingly enough, this also happens with the $en\rightarrow fr$ direction, on the abstract test set. In this case, we can observe a steady improvement as the size of the dataset increases. All results overperform the adaptation results with the PP adaptation set at the same number of epochs (that has no data for abstracts for this language pair). On the other hand, the reverse direction $fr\rightarrow en$ does not demonstrate the same behavior on the same test set, as results get worse using this adaptation data, and in this case adaptation with the parallel PP data yields a somewhat better performance (even though it is still worse than the baseline's). These differences, however, are not significant in any of these cases.
 
 
-
 \section{Additional Experiments}
 \label{s:moreExperiments}
 
+The previous section presents a summary of the main work done to develop the CLuBS neural machine translation system. All the experiments related to the methodology for extracting parallel sentences and a deep study of different configurations for domain adaptation can be read in the following references:
+\begin{itemize}
+ \item[\cite{EspanaBarron:2017}] \bibentry{EspanaBarron:2017}
+ \item[\cite{espanaEtAl:2017}] \bibentry{espanaEtAl:2017}
+ \item[\cite{tesisAdam}] \bibentry{tesisAdam}
+\end{itemize}
 
+
+Notice, that the fact that the project itself is the responsible for generating the evaluation data implies that we cannot evaluate our systems in the real scenario till the end of the project. Because of this, several experiments have been conducted in other settings always focusing on multilinguality and domain adaptation, that is the case of references \cite{EspanaBarron:2017} and \cite{espanaEtAl:2017}.  
+
+The same happens with experiments conducted to exploit multilinguality by including factors that increase the number of common elements among languages. In these experiments, we use the TED corpus provided for the IWSLT 2017 multilingual task~\cite{iwslt-overview:2017}. The corpus includes 9161 talks in five languages, 4,380,258 parallel sentences when all the language pairs are considered. The intersection of talks among languages is high, 7945 documents are common to all of them, and therefore the same sentence is available in multiple languages.  Notice that the size of the corpus is small as compared to the collections of bilingual corpora that we have used for training our general domain system. However, its multilingual nature makes it adequate for our study.
+
+In a first work~\cite{espanaVanGenabith:IWSLT:2017}, we focus on including several additional sources of information in a NMT system. All this information is added as factors to every word, implying that the final vector representation of a word is the concatenation of the vectors of all its features. We use high level factors such as phonetic coarse encodings and synsets, besides more common information such as shallow part-of-speech tags, stems and lemmas. Document level information is also considered by including the topic of every document. 
+
+The most promising feature turned to be BabelNet synsets, especially when combined with other factors, and in a subsequent work we study how semantic networks can help improve NMT. We show that they improve a state-of-the-art baseline and that they facilitate the translation from languages that have not been seen at all in training (beyond zero-shot translation). A small enhancement for regular language pairs comes about because cross-language synsets help to cluster words by semantics irrespective of their language and to map the unknown words of a new language into the multilingual clusters. However, improvements are at the current state moderate, and cannot be tested on the PubPsych setting because of the lack of a test set. Since the new architecture involves changing the current decoder Marian to Nematus, and that implies a significant reduction in the translation (and training) speed, we do not use this architecture in our final prototype. The detailed experiments can be read in:
+
+\begin{itemize}
+ \item[\cite{espanaVanGenabith:IWSLT:2017}] \bibentry{espanaVanGenabith:IWSLT:2017}
+ \item[\cite{espanaVanGenabith:LREC:2018}] \bibentry{espanaVanGenabith:LREC:2018}
+\end{itemize}
 
 \section{Conclusions}
 \label{s:conclusions}
 
-Regarding this set of experiments, we can draw several conclusions. Firstly, as in most cases we cannot achieve significant improvement on the in-domain test sets, it can be concluded that using automatically extracted adaptation sets from \textit{Wikipedia} without any additional clean data is generally not useful for NMT systems, as its quality is not high enough to significantly improve the in-domain performance. It has to noted that in addition to the lower quality, the actual domain coverage of the data does not necessarily align completely with that of the test sets. This is backed up by the fact that adapting with the WP data leads to significant improvements on the out-of-domain \textit{news-test2013} dataset (except for $en\rightarrow es$ and $en\rightarrow de$), while on the close-domain EMEA test sets we observe a behavior similar to the strictly in-domain \textit{pubPsych} sets. As we aimed for covering a large number of articles when extracting from the health and psychology domains, the automatic adaptation set contains many parallel sentences that are only slightly related to these topics. Narrowing the search criteria could be a future possibility, however, this could lead to losing a great number of high-quality parallel sentences, and therefore would not necessarily lead to an improvement.
+This document presents an exploration of the translation engines developed during the course of the project. We have created statistical and neural translation systems for the most representative languages in PubPsych, \en--\de--\fr--\es, with the aim to translate into the four languages the titles and the abstracts available as metadata in our database and improve the cross-lingual article retrieval.
+
+After a first comparison between statistical and neural systems, we decided to focus on the latter and adapt them to better translate our domain and specific characteristics. For this, we developed methods to obtain more corpora and strategies to improve the translation of the in-domain vocabulary. The experiments reported here led to chose the system named NMTpp as the engine to translate the database of our first prototype at month 20 of the project. This system has been trained with general corpora in the  \en--\de, \en--\es, \en--\fr\ and \fr--\es\ language pairs and domain-adapted with the parallel sentences extracted from the current PubPsych titles and abstracts. We use four additional iterations with our data to adapt the system to psychology via transfer learning. 
+
+In their current status, systems that include parallel sentences extracted from Wikipedia or use factors to better translate common vocabulary among languages, do not provide consistent enhancements among language pairs and imply more complex architectures to be maintained, so they are not implemented in the prototype.
+
+\medskip
+For the final CLuBS translation engine to be submitted at month 36 and after analysing current translations, we are including some improvements in the NMTpp architecture such as:
+\begin{itemize}
+ \setlength\itemsep{0.2em}
+ \item A better pre-processing of the data as reported in M1.2
+ \item Compilation of general domain data in the missing language pairs, \de--\fr, \de--\es\ and \es--\fr, and in the less resourced ones adding new corpora, also reported in M1.2
+ \item A better selection of the vocabulary
+ \item A better data balance among the different language pairs, specially for domain adaptation where we observed a decrement in quality for under-represented pairs
+\end{itemize}
+
+\medskip
+\noindent
+Regarding research aspects, we will focus on:
+\begin{itemize}
+ \setlength\itemsep{0.2em}
+ \item Experiment with new methods to obtain additional parallel sentences in the psychological domain 
+ \item Include in a more efficient way information available in BabelNet to resolve sense ambiguities and better adapt the system to our domain and multilingual setting
+ \item Compare the current sequence to sequence architecture with the, also neural, transformer architecture
+\end{itemize}
+
 
 %
 % ---- Bibliography ----
