@@ -1,0 +1,160 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, array, pdflscape}
+\usepackage{geometry}
+\usepackage{graphics,subfigure,graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{enumerate}
+\usepackage{enumitem}
+
+\setlength{\textheight}{24cm}  
+\setlength{\textwidth}{15cm}
+\setlength\oddsidemargin{0cm}
+\setlength\evensidemargin{0cm}
+\setlength\voffset{-1cm}
+
+\renewcommand{\textfraction}{0.01}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\topfraction}{0.8}
+\renewcommand{\bottomfraction}{0.8}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}	
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+
+\newcommand{\Ni}{({\em i\,})~}
+\newcommand{\Nii}{({\em ii\,})~}
+\newcommand{\Niii}{({\em iii\,})~}
+
+%opening
+\title{
+\includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
+\Huge M1.4 -- MT Approaches towards Cross-lingual IR in Pubpsych}
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
+\date{\vspace*{2cm} -- v1.0 --\\March 2017}
+
+
+
+\begin{document}
+
+\clearpage\maketitle
+\thispagestyle{empty}\thispagestyle{empty}
+
+\vspace*{5cm}
+\begin{abstract}
+This document describes . 
+\end{abstract}
+
+\newpage
+\tableofcontents
+\clearpage
+
+% guarrada, no va el \cleardoublepage
+% \clearpage\mbox{}\clearpage
+
+%\newpage
+\section{Introduction}
+\label{s:intro}
+
+The main purpose of the project is to provide PubPsych with a Cross Language Information Retrieval (CLIR) functionality, that is, to allow users to specify their information needs in their preferred language while retrieving relevant documents matching their needs in languages different from the query language.
+
+One of the possible approaches to CLIR is Machine Translation (MT). The translation can take place at different points of the retrieval process:
+\begin{itemize}
+\itemsep0em 
+ \item[\Ni] Translating the query: When a search expression is entered, the portal extends the query by injecting translations of the terms or phrases found in it, and runs the modified version against the search index
+ \item[\Nii] Translating the metadata: Before indexing, some or all of the content (e.g. keywords, titles \& abstracts) of the portal is translated, so that all query languages are represented in the index
+\end{itemize}
+
+PubPsych offers multilingual content in English, French, German and Spanish. All its metadata is in one or more of the four languages. The original works might be in many different languages (more than 50 in PubPsych), but that the metadata are always available at least in either English, French, German or Spanish. So, both in Scenario \Ni and \Nii the translation needs to be done among the four languages. Again, there are two possibilities:
+\begin{itemize}
+\itemsep0em 
+ \item[\Ni] Translating the 12 translation directions
+ \item[\Nii] Using English as a pivot language
+\end{itemize}
+
+The best option in any case might depend on the nature of the translation system. To give an example, an MT system for translating the abstracts of our documents can be built either with statistical or neural architectures. Statistical systems would offer a higher quality when using English as pivot, as we do not have parallel corpora for the six language pairs and the translation from German-to-Spanish would be done via English anyway. Besides, the number of systems to maintain diminishes from 12 to 3.
+On the other hand, neural systems are able to learn to translate among all the languages even when there is no direct parallel data for a language pair (with a lower quality though). In this case, a single multilingual neural system is enough to translate among the 4 languages. More details are given in Section~\ref{ss:comparison}.
+
+
+
+\section{The CLuBS Translation Proposal}
+\label{s:proposal}
+
+When the proposal was written, the state of the art for machine translation was Statistical Machine Translation systems (SMT). SMT was envisaged then as the main architecture for translating some of the metadata (titles and abstracts). For translating the queries and keywords, multilingual thesauri and controlled vocabularies were chosen as the main option as the source input is not made by full sentences.
+
+During the course of the project, we have entered the boom of deep learning, especially for MT. Other fields benefited from deep learning before, but for MT, Neural Machine Translation (NMT) became state-of-the-art in 2016. Taking place the project in the middle of this transition, we have decided to follow the two approaches and chose which architecture to integrate after its evaluation on the retrieval performace. Notice that the translation quality does not need to be related to the final retrieval quality, and a translation system with a high adequacy could be better for retrieval than a system with a very high fluency, which is usually preferred by humans.
+
+Section~\ref{ss:comparison} summarises the main differences between translation architectures for titles and abstracts. For queries and keywords, we sketch the translation proposal  via mapping approaches in deliverable M1.5.
+
+%  \definecolor{greenp}{rgb}{0.01, 0.75, 0.24}
+%  \definecolor{crimson}{rgb}{1.0, 0.0, 0.25}
+ \definecolor{greenp}{rgb}{0, 0, 0.24}
+ \definecolor{crimson}{rgb}{0, 0, 0.25}
+\begin{table}[t]
+\begin{center}
+ \begin{tabular}{lccc}
+  \toprule
+                  & {\bf RBMT} & {\bf SMT} & {\bf NMT}\\
+   \midrule
+  Data Amount     & small & large & large\\
+  Training Time   &   --  & {\color{greenp}days} & {\color{crimson}weeks}\\
+  CPU/GPU         & CPU   & CPU  & {\color{crimson}GPU}\\
+  Cost            & {\color{crimson}expensive}  & {\color{greenp}cheap} & expensive  \\ 
+                  & {\color{crimson}(in people)} &  &  (in hardware) \\ 
+  Maintainability &  weak & strong  & {\color{greenp}superstrong} \\
+ \midrule
+  Grammaticality  & {\color{greenp}strong} & medium & {\color{greenp}strong}\\
+  Reordering      & strong & {\color{crimson}weak} & strong\\
+  Consistency     & {\color{greenp}strong} & medium & {\color{crimson}weak}\\
+  Coverage        & {\color{crimson}weak}   & {\color{greenp}strong} & weak\\
+  Multilinguality  & medium & none  & {\color{greenp}strong} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+ \caption{Comparison of the characteristics of the main kinds of translation engines: rule-based (RMBT), statistical (SMT) and neural (NMT). The top rows show  the characteristics to be taken into account for deployment and the bottom rows the quality achieved for different linguistic issues.}
+ \label{tab:comparison} 
+\end{table}
+
+
+
+
+\subsection{Neural Machine Translation vs. other Systems}
+\label{ss:comparison}
+
+The quality of neural systems is currently superior to other translation systems for language pairs with large amounts of parallel data.
+NMT is specially better than SMT in fluency and that makes the outputs more appealing to humans. The decoder side of an NMT system is basically a language model, so, by construction, good fluency is expected. However, NMT shows very annoying characteristics regarding adequacy. Since embeddings take care of the alignments and similarities, synonyms are more likely to appear, but not only synonyms, any kind of related word. So, it is not strange that the sentence "I have 72 books in my library." is translated as "Ich habe 79 Bücher in meiner Bibliothek." as the embedding for 72 and 79 will be very similar. NMT systems also create and delete words at will, there is not real control of the number of words needed as it was done by word and phrase penalties in SMT. One could say that an SMT system performs literal translation, while NMT performs free ---kind of artistic--- translation.
+
+SMT systems allow more control because they follow a pipeline of processes, whereas NMT systems are end-to-end architectures. This feature has pros and cons at the same time. One can improve the output of a module before feeding the next one (e.g. discarding low frequent alignments before phrase extraction or pruning a phrase table before decoding) but also errors in one module are propagated into the others. In standard NMT, error propagation cannot occur but neither can the improvement of specific processes. Even with these problems, NMT systems are nowadays state-of-the-art at least for resourced-rich language pairs and trigger new functionalities such as multilinguality and zero-shot translation which are relevant for the CLuBS projects. It is worth then trying to adapt the basic architecture to tackle its specific drawbacks.
+
+Regarding the best system for deployment, SMT systems are easier and faster to train and all the process can be done in commodity hardware. On the other hand, NMT systems need at least a week of training time using a GPU. In both cases decoding can be done using CPUs with competitive speeds. As said before, an additional advantage of NMT systems for CLuBS is maintainability, since a single system can be used to translate among the 12 translation directions. Adding new data via transfer learning is another advantage of NMT that would allow the improvement of the translator in our domain as PubPsych adds new documents with parallel content.
+
+Table~\ref{tab:comparison} summarises the pros and cons of each kind of architecture. The top rows show  the characteristics to be taken into account for deployment and the bottom rows the quality achieved for different linguistic issues. We have included Rule-based Machine Translation systems (RBMT) for completeness, even if these systems are not adequate for CLuBS due to the languages involved and the amount of time required to develop an in-domain engine.
+
+% The NMT community should also try to help MT consumers in moving from SMT to NMT. There are several functionalities that SMT allowed* not still available in NMT, most of them needing more research in order to be implemented. A non-exhaustive list with its implications follows:
+% 
+% - Include external knowledge and force translation of a given phrase. This allows to hibridise systems, to include TMs, to systematically translate number and dates, to include parallel controlled vocabularies, etc. 
+%    -- need to transfer information from source to target
+% - Auto data cleaning. This allows to successfully use crawled (low quality) parallel for training
+%    -- need to discard low quality sentence pairs during training (the equivalent is IBM models not considering non-frequent alignments)
+% - Reordering constraints. This allows monotonous translations at punctuation for instance
+%    -- need to force positions in target?
+% - What else??
+
+% (*) "allow" can be translated here as "could be done by Moses used as a black box" 
+
+
+
+\section{Conclusions}
+\label{s:conclusions}
+
+
+%
+% ---- Bibliography ----
+%
+% \addcontentsline{toc}{section}{References}
+% \bibliographystyle{plain}
+% \bibliography{genericMT}
+
+
+\end{document}
