@@ -32,7 +32,7 @@
 \includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
 \Huge M1.4 -- MT Approaches towards Cross-lingual IR in Pubpsych}
 \author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
-\date{\vspace*{2cm} -- v1.0 --\\March 2017}
+\date{\vspace*{2cm} -- v1.0 --\\August 2018}
 
 
 
@@ -43,17 +43,13 @@
 
 \vspace*{5cm}
 \begin{abstract}
-This document describes . 
+This document describes the architecture options and final choices for implementing the machine translation (MT) system aimed to translate articles' titles and abstracts. The alternatives are presented and a comparison among the two most promising architectures, Statistical MT and Neural MT, is given. 
 \end{abstract}
 
 \newpage
 \tableofcontents
 \clearpage
 
-% guarrada, no va el \cleardoublepage
-% \clearpage\mbox{}\clearpage
-
-%\newpage
 \section{Introduction}
 \label{s:intro}
 
@@ -81,7 +77,7 @@ On the other hand, neural systems are able to learn to translate among all the l
 \section{The CLuBS Translation Proposal}
 \label{s:proposal}
 
-When the proposal was written, the state of the art for machine translation was Statistical Machine Translation systems (SMT). SMT was envisaged then as the main architecture for translating some of the metadata (titles and abstracts). For translating the queries and keywords, multilingual thesauri and controlled vocabularies were chosen as the main option as the source input is not made by full sentences.
+When the proposal was written, the state of the art for machine translation was Statistical Machine Translation systems (SMT). SMT was envisaged then as the main architecture for translating some of the metadata (titles and abstracts). For translating the queries and keywords, multilingual thesauri and controlled vocabularies were chosen as the main option as the source input is not made by complete sentences.
 
 During the course of the project, we have entered the boom of deep learning, especially for MT. Other fields benefited from deep learning before, but for MT, Neural Machine Translation (NMT) became state-of-the-art in 2016. Taking place the project in the middle of this transition, we have decided to follow the two approaches and chose which architecture to integrate after its evaluation on the retrieval performace. Notice that the translation quality does not need to be related to the final retrieval quality, and a translation system with a high adequacy could be better for retrieval than a system with a very high fluency, which is usually preferred by humans.
 
@@ -144,10 +140,27 @@ Table~\ref{tab:comparison} summarises the pros and cons of each kind of architec
 % (*) "allow" can be translated here as "could be done by Moses used as a black box" 
 
 
+\subsection{Neural Machine Translation for CLuBS}
+\label{ss:system}
+
+There are several aspects of NMT systems that should be studied during the course of the project in order to approach specific necessities of our setting. As NMT is a rapidly evolving field, this implies research that can be divided into two main categories: 
+
+\begin{description}
+ \item[Architecture.] We have at our disposal multilingual thesauri such as MeSH for the domain of psychology. But in NMT, adding external knowledge and forcing translation of a given phrase is not possible in standard systems. We will explore how to implement these features. 
+%  This allows to hibridise systems for example by including parallel controlled vocabularies to force the translation of in-domain words. 
+ Two non-trivial topics are approached here: the addition of external resources during training and the transfer of information from source to target.
+% - Auto data cleaning. This allows to successfully use crawled (low quality) parallel for training
+%    -- need to discard low quality sentence pairs during training (the equivalent is IBM models not considering non-frequent alignments)
+ \item[Data.] High quality in-domain parallel data is indispensable for successfully training a system but we do not have data on psychology for all the needed language pairs. We therefore aim to explore the gathering of this data beforehand, and also how to perform an internal auto-data cleaning during training as this would allow to successfully use crawled (low quality) parallel sentences as appropriate.
+\end{description}
+
+
+
 
 \section{Conclusions}
 \label{s:conclusions}
 
+Several approaches can be followed to develop a machine translation engine. CLuBS will focus on variants of SMT and NMT engines, those which characteristics best suit our settings. The final prototype will implement the best performing system in our IR evaluation but, during the project, we will implement at least a variant of the two main architectures. Due to the novelty, higher performance and room for improvement, research will be carried out for NMT and this will provide CLuBS with several system variants.
 
 %
 % ---- Bibliography ----
