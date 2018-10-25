@@ -30,9 +30,10 @@
 %opening
 \title{
 \includegraphics[width=3cm]{./img/200px-SuitClubs.png} \\
-\Huge D1.5 -- Mapping Approaches for \\ Vocabularies and Queries in PubPsych }
-\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
-\date{\vspace*{2cm} -- v1.1 --\\March 2017}
+\Huge M1.5 -- Mapping Approaches for \\ Vocabularies and Queries in PubPsych }
+\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet$^{1}$, Roland Ramthun$^{2}$ \medskip \\ 
+	\Large $^{1}$Universit\"at des Saarlandes\\ \Large $^{2}$Leibniz-Zentrum für Psychologische Information und Dokumentation}
+\date{\vspace*{2cm} -- v1.1 --\\March 2018}
 
 
 
@@ -115,7 +116,7 @@ headache ||| Mischungen ||| 0.00462226 0.0714286 0.000202066 0.0028329
 
 These tables are bilingual and pivot techniques will be needed to build the multilingual phrase table. The quality of such approaches for obtaining the quad-lingual mappings remains to be checked.
 
-The vocabulary of a phrase table depends on the corpus used to train the SMT system. For the query translation task, we will use the parallel corpus extracted from the PubPsych database as described in D1.2. This way, the table will contain entries related to psychology but also common vocabulary present in text of any origin.
+The vocabulary of a phrase table depends on the corpus used to train the SMT system. For the query translation task, we will use the parallel corpus extracted from the PubPsych database as described in M1.2. This way, the table will contain entries related to psychology but also common vocabulary present in text of any origin.
 
 Finally, we will need to take into account the difficulty to detect the language of a query. In order to partially solve this issue, we will build the quad-lexicon in a (\emph{key}, \emph{value}) format. The \emph{key} stores all the vocabulary of the four languages without specifying the language, whereas the \emph{value} stores the translation into the other three languages, this time with the language information as seen in the following example:
 {\small
