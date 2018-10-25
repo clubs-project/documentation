@@ -53,23 +53,23 @@ This document describes the architecture options and final choices for implement
 \section{Introduction}
 \label{s:intro}
 
-The main purpose of the project is to provide PubPsych with a Cross Language Information Retrieval (CLIR) functionality, that is, to allow users to specify their information needs in their preferred language while retrieving relevant documents matching their needs in languages different from the query language.
+The main purpose of the project is to provide PubPsych with a Cross Language Information Retrieval (CLIR) functionality to allow users to specify their information needs in their preferred language while retrieving relevant documents matching their needs in languages different from the query language.
 
-One of the possible approaches to CLIR is Machine Translation (MT). The translation can take place at different points of the retrieval process:
+One of the possible approaches to CLIR is Machine Translation (MT). The translation can take place at different points of the retrieval process (??):
 \begin{itemize}
 \itemsep0em 
  \item[\Ni] Translating the query: When a search expression is entered, the portal extends the query by injecting translations of the terms or phrases found in it, and runs the modified version against the search index
  \item[\Nii] Translating the metadata: Before indexing, some or all of the content (e.g. keywords, titles \& abstracts) of the portal is translated, so that all query languages are represented in the index
 \end{itemize}
 
-PubPsych offers multilingual content in English, French, German and Spanish. All its metadata is in one or more of the four languages. The original works might be in many different languages (more than 50 in PubPsych), but that the metadata are always available at least in either English, French, German or Spanish. So, both in Scenario \Ni and \Nii the translation needs to be done among the four languages. Again, there are two possibilities:
+PubPsych offers multilingual content in English, French, German and Spanish. All its metadata is in one or more of the four languages. The original works, such as articles, book chapters, data sets, might be in many different languages (more than 50 in PubPsych), but the metadata are always available in at least either English, French, German or Spanish. So, both in Scenario \Ni and \Nii the translation needs to be done among the four languages. Again, there are two possibilities:
 \begin{itemize}
 \itemsep0em 
- \item[\Ni] Translating the 12 translation directions
+ \item[\Ni] Training in the 12 translation directions to be able to perform any combination,
  \item[\Nii] Using English as a pivot language
 \end{itemize}
 
-The best option in any case might depend on the nature of the translation system. To give an example, an MT system for translating the abstracts of our documents can be built either with statistical or neural architectures. Statistical systems would offer a higher quality when using English as pivot, as we do not have parallel corpora for the six language pairs and the translation from German-to-Spanish would be done via English anyway. Besides, the number of systems to maintain diminishes from 12 to 3.
+Choosing the best option depends on the nature of the translation system. To give an example, an MT system for translating the abstracts of our documents can be built either with statistical or neural architectures. Statistical systems would offer a higher quality when using English as pivot, as we do not have parallel corpora for the six language pairs and the translation from German-to-Spanish would be done via English anyway. Besides, the number of systems to maintain diminishes from 12 to 3.
 On the other hand, neural systems are able to learn to translate among all the languages even when there is no direct parallel data for a language pair (with a lower quality though). In this case, a single multilingual neural system is enough to translate among the 4 languages. More details are given in Section~\ref{ss:comparison}.
 
 
@@ -77,7 +77,7 @@ On the other hand, neural systems are able to learn to translate among all the l
 \section{The CLuBS Translation Proposal}
 \label{s:proposal}
 
-When the proposal was written, the state of the art for machine translation was Statistical Machine Translation systems (SMT). SMT was envisaged then as the main architecture for translating some of the metadata (titles and abstracts). For translating the queries and keywords, multilingual thesauri and controlled vocabularies were chosen as the main option as the source input is not made by complete sentences.
+When the proposal for the project was written, the state of the art for machine translation was Statistical Machine Translation systems (SMT). SMT was envisaged as the main architecture for translating parts of the metadata (titles and abstracts). For translating queries and keywords, multilingual thesauri and controlled vocabularies were chosen as the source input is not made by complete sentences.
 
 During the course of the project, we have entered the boom of deep learning, especially for MT. Other fields benefited from deep learning before, but for MT, Neural Machine Translation (NMT) became state-of-the-art in 2016. Taking place the project in the middle of this transition, we have decided to follow the two approaches and chose which architecture to integrate after its evaluation on the retrieval performace. Notice that the translation quality does not need to be related to the final retrieval quality, and a translation system with a high adequacy could be better for retrieval than a system with a very high fluency, which is usually preferred by humans.
 
@@ -119,9 +119,9 @@ Section~\ref{ss:comparison} summarises the main differences between translation 
 \label{ss:comparison}
 
 The quality of neural systems is currently superior to other translation systems for language pairs with large amounts of parallel data.
-NMT is specially better than SMT in fluency and that makes the outputs more appealing to humans. The decoder side of an NMT system is basically a language model, so, by construction, good fluency is expected. However, NMT shows very annoying characteristics regarding adequacy. Since embeddings take care of the alignments and similarities, synonyms are more likely to appear, but not only synonyms, any kind of related word. So, it is not strange that the sentence "I have 72 books in my library." is translated as "Ich habe 79 Bücher in meiner Bibliothek." as the embedding for 72 and 79 will be very similar. NMT systems also create and delete words at will, there is not real control of the number of words needed as it was done by word and phrase penalties in SMT. One could say that an SMT system performs literal translation, while NMT performs free ---kind of artistic--- translation.
+NMT is specially better than SMT in fluency which makes its output more appealing to humans. The decoder side of an NMT system is basically a language model, so, by construction, good fluency is expected. However, NMT shows very annoying TOCHANGE characteristics regarding adequacy. Since word embeddings take care of the alignments and similarities, synonyms are more likely to appear, but not only synonyms, any kind of related word. So, it is not strange that the sentence "I have 72 books in my library." is translated as "Ich habe 79 Bücher in meiner Bibliothek." as the embedding for 72 and 79 will be very similar. NMT systems also create and delete words at will, there is not real control of the number of words needed as it was done by word and phrase penalties in SMT. One could say that an SMT system performs literal translation, while NMT performs free ---kind of artistic--- translation.
 
-SMT systems allow more control because they follow a pipeline of processes, whereas NMT systems are end-to-end architectures. This feature has pros and cons at the same time. One can improve the output of a module before feeding the next one (e.g. discarding low frequent alignments before phrase extraction or pruning a phrase table before decoding) but also errors in one module are propagated into the others. In standard NMT, error propagation cannot occur but neither can the improvement of specific processes. Even with these problems, NMT systems are nowadays state-of-the-art at least for resourced-rich language pairs and trigger new functionalities such as multilinguality and zero-shot translation which are relevant for the CLuBS projects. It is worth then trying to adapt the basic architecture to tackle its specific drawbacks.
+SMT systems allow more control because they follow a pipeline of processes, whereas NMT systems are end-to-end architectures. This feature has pros and cons at the same time. One can improve the output of a module before feeding the next one (e.g. discarding low frequent alignments before phrase extraction or pruning a phrase table before decoding) but also errors in one module are propagated into the others. In standard NMT, error propagation cannot occur but neither can the improvement of specific processes. Even with these problems, NMT systems are nowadays state-of-the-art at least for resource-rich language pairs and trigger new functionalities such as multilinguality and zero-shot translation, that is, translation for language pairs not directly seen in training but included in other pairs. In the CLuBS project, we have in-doimain parallel data for French--English and German--English but not for French--German for instance, and we could approach that language pair as a zero-shot one. It is worth then trying to adapt the basic architecture to tackle its specific drawbacks.
 
 Regarding the best system for deployment, SMT systems are easier and faster to train and all the process can be done in commodity hardware. On the other hand, NMT systems need at least a week of training time using a GPU. In both cases decoding can be done using CPUs with competitive speeds. As said before, an additional advantage of NMT systems for CLuBS is maintainability, since a single system can be used to translate among the 12 translation directions. Adding new data via transfer learning is another advantage of NMT that would allow the improvement of the translator in our domain as PubPsych adds new documents with parallel content.
 
@@ -160,7 +160,7 @@ There are several aspects of NMT systems that should be studied during the cours
 \section{Conclusions}
 \label{s:conclusions}
 
-Several approaches can be followed to develop a machine translation engine. CLuBS will focus on variants of SMT and NMT engines, those which characteristics best suit our settings. The final prototype will implement the best performing system in our IR evaluation but, during the project, we will implement at least a variant of the two main architectures. Due to the novelty, higher performance and room for improvement, research will be carried out for NMT and this will provide CLuBS with several system variants.
+Several approaches can be followed to develop a machine translation engine. CLuBS will focus on variants of SMT and NMT engines, whose characteristics best suit our settings. The final prototype will implement the best performing system in our IR evaluation but, during the project, we will implement at least a variant of the two main architectures. Due to the novelty, higher performance and room for improvement, research will be carried out for NMT and this will provide CLuBS with several system variants.
 
 %
 % ---- Bibliography ----
