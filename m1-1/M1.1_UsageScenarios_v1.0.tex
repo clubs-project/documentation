@@ -35,10 +35,6 @@
 	\Large $^{1}$Leibniz Institute for Psychology Information}
 \date{\vspace*{2cm} -- v1.0 --\\January 2019}
 
-%\author{\vspace*{1cm}\\ \LARGE Cristina Espa\~na-Bonet \medskip \\ \Large Universit\"at des Saarlandes}
-%\date{\vspace*{2cm} -- v1.0 --\\December 2016}
-
-
 \begin{document}
 
 \clearpage\maketitle
@@ -53,16 +49,13 @@ This document describes our motivation and the initital situation at the beginni
 \tableofcontents
 \clearpage
 
-% guarrada, no va el \cleardoublepage
-% \clearpage\mbox{}\clearpage
-
 %\newpage
 \section{Introduction}
 \label{s:intro}
 
 The aim of the CLUBS project is an empirical evaluation of four different approaches in the field of "Cross-lingual information retrieval" based on the psychological search engine PubPsych.
 
-If written information only exists in a language incomprehensible to the reader, it is often not retrievable or usable for him. This problem poses a particular challenge for technical and scientific publications, with yearly thousands of potentially relevant publications in various languages. %Due to language differences, researchers and other experts are only able to retrieve and incorporate a fraction of the literature pertaining to their fields into their own work. This can lead to multiplied amounts of research work on the same research topics or to the negligence of available information, which in turn have the consequence of increased costs and other unwanted effects.
+If written information only exists in a language incomprehensible to the reader, it is often not retrievable or usable for him. This problem poses a particular challenge for technical and scientific publications, with yearly thousands of potentially relevant publications in various languages.
 
 For the field of psychology, the ZPID and various partners have thus developed \textit{PubPsych}\footnote{\url{https://www.pubpsych.eu}} in 2013, a vertical search engine for psychology literature, tests, treatment schemes and research data. All information in PubPsych is provided in at least one of the four languages English, Spanish, French and German. However, none of the data sets is available in all of these languages.
 
@@ -86,17 +79,6 @@ These considerations were affirmed by a survey in 2008, in which psychology rese
 
 To make matters worse, since different databases usually index different information and additionally often use different syntax for querying, users that try to accomplish an exhaustive research need to know how to handle these varying resources. The quite expensive licensing costs add to this problem and as a result, many institutions can not afford granting access to important resources. Thus, users prefer easily available one-stop solutions with well-known and intuitively usable interfaces~\cite{hearst:2009}. Providing such a service is not only crucial for the users' satisfaction but eventually for the success of scientific research.
 
-% national journals have an important role in providing structure for national research systems and disseminating the results in more locally oriented (sub-)disciplines (Quelle 2)
-%Academic search is an inherent multilungual challenge. (QTAS Paper)
-%English is considered the lingua franca of science (Quelle 1)
-%signifcant portion is published in other lanuages (Quelle 2)
-%2008: a survey of psychology researchers found that native language information was considered helpful for access (Quelle 29)
-%Users wished more multilingual access (Quelle 32)
-%combination of dictionary-based methods and using information extracted from parallel corpora
-%Established commercial indexes like WoS or PsycINFO focus on English language material and U.S. bias (Quelle 3, 4). Quite expensive for many institutions, even in developed countries, cannot afford to subscribe (Quelle 9).
-%Users need to know, whcih data bases provides best information for their specific information need. Barriers: Language, usage, costs
-%Users appreciate one-stop retrieval solutions, do not want to learn new syntax or get used to new interface designs. Use for untrained users is much easier (Quelle 5).
-
 \section{Usage Scenarios}
 \label{s:usage_scenarios}
 In this project, we need to define certain expectations concerning typical PubPsych users and their input. These assumptions are partially based on experience and on an analysis of previous PubPsych log files.
@@ -109,7 +91,6 @@ We can distinguish three types of queries that are used to find information in a
 	\item{\textit{Navigational} queries: finding publications based on identifiers (e.g., ISSN or DOI).}
 	\item{\textit{Transactional} queries: interacting with the website, e.g., downloading PDF files or buying a product in a web shop.}
 \end{itemize}
-%(Broder's definition, Quelle 6)
 
 A clear majority of queries will be informational since we offer no transactional services for the documents. Of course, people can export and download result sets, but this is not something that they are searching for in our database. 
 
