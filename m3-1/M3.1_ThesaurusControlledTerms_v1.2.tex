@@ -620,7 +620,15 @@
 	\subsection{Off-line Software}
 
 	\subsection{Online Integration into PubPsych}
+	The approach has been implemented with respect to Solr 6.6.5. We have added four classes to the existing PubPsych backend:
+	\begin{itemize}
+		\item \textbf{QueryFieldRewriter}: This is the main class of the translation module where the actual translation takes place. In a \textit{QueryFieldRewriter} object, the two dictionaries (high-quality and low-quality) and a mapping of field names to language-specific field names are stored. We map field names to language-specific field names, because if a language-specific version of a field exists, we can directly query the correct field with the translation. Since the database schema does not follow a strict pattern in the mapping of these language-specific field names, we need to store the mapping.
+		\item \textbf{QueryNode}: The purpose of the \textit{QueryNode} class is to provide an interface to manipulate the queries more easily than with Solr’s \textit{Query} class. The main advantage is that one only has to deal with one class for all query objects (and not with the many subclasses of \textit{Query} that all provide different methods/fields). This way, one does not have to build new \textit{Query} objects for each change, but change the respective \textit{QueryNode} object instead and then map it back to a \textit{Query} object once all changes due to translation have been performed.
+		\item \textbf{Translation}: The \textit{Translation} class is used to store information about the translation of a specific field and string. More precisely, we store the original field name and a mapping of language-specific field names to translation strings in the respective target language. For some fields (e.g. \textit{text}), there are no language-specific field names. In this case, we have to use dummy field names that do not exist in the database schema to have different keys for the different languages. We store in an additional map whether a field name actually exists in the schema in order to search only existing fields in the final query.
+		\item \textbf{PreTranslationInfo}: This classed is used to store information on the query before the actual translation happens. We concatenate the strings of all subqueries that fulfill certain conditions and store to which subqueries the concatenation belongs. 
+	\end{itemize}
 
+	For more details on fields and methods of the classes, see %TODO: add link to long documentation
 	
 	
 	\section{Conclusions}
