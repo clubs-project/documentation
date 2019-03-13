@@ -620,6 +620,7 @@
 	\subsection{Off-line Software}
 
 	\subsection{Online Integration into PubPsych}
+	\label{ss:integration}
 	The approach has been implemented with respect to Solr 6.6.5. We have added four classes to the existing PubPsych backend:
 	\begin{itemize}
 		\item \textbf{QueryFieldRewriter}: This is the main class of the translation module where the actual translation takes place. In a \textit{QueryFieldRewriter} object, the two dictionaries (high-quality and low-quality) and a mapping of field names to language-specific field names are stored. We map field names to language-specific field names, because if a language-specific version of a field exists, we can directly query the correct field with the translation. Since the database schema does not follow a strict pattern in the mapping of these language-specific field names, we need to store the mapping.
@@ -630,6 +631,64 @@
 
 	For more details on fields and methods of the classes, see %TODO: add link to long documentation
 	
+	\subsection{Evaluation of the Queries}
+	\label{ss:evaluation}
+	We have gathered approximately 100 real-life queries in each of the languages of the PubPsych database (English, German, French and Spanish) and another 100 real-life queries whose language could not be classified. These queries are the same as in \url{https://link.springer.com/chapter/10.1007/978-3-030-14401-2_4}.
+	
+	The experiments were run on a machine with 96 cores at 2.4 gigahertz and 1 terabyte memory, but processes were not parallelized and the Java VM was only given 10 gigabyte memory each time a new Solr instance was initialized (which had to be done for every collection of 100 queries to reset the statistics, see below). We had six different settings. For each setting, the JAR files had to built anew, and we let the software translate all 500 queries in each setting. Running a script that performed all these actions took a bit more than half an hour. 
+	
+	In each of the six settings, we have used a different combination of dictionaries. If not mentioned otherwise, the dictionaries were used in their ``non-diff'' version, which means that entries that are the same in all languages were kept (e.g. ``Ich bin ein Berliner'' is translated in all languages as ``Ich bin ein Berliner'' since it is the title of a Wikipedia article), whereas they were deleted in the ``diff'' version. In addition to the MeSh dictionary and the quad-lexicon described in section \ref{ss:cleaning} we have built another dictionary by extracting entities in all the Wikidata dump that exist simultaneously in the four languages.
+	
+	\begin{enumerate}
+		\item High-quality dictionary: MeSh, low-quality dictionary: the concatenation of the quad-lexicon from section 2.5 and the Wikidata dictionary
+		\item High-quality dictionary: none, low-quality dictionary: Wikidata dictionary
+		\item High-quality dictionary: none, low-quality dictionary: Wikidata dictionary ("diff" version)
+		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from section 2.5 ("diff" version)
+		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from section 2.5
+		\item High-quality dictionary: MeSh, low-quality dictionary: none
+	\end{enumerate}
+	
+	We do not only evaluate the actual translations of the queries, but have also acquired some statistics for each combination of query collection and setting. The numbers collected are the following:
+	\begin{itemize}
+		\item \textbf{MeSh usage word level}: Number of words that could be translated with the MeSh dictionary (inside \textit{translate}). This number is incremented when a string that either is the result of a concatenation of subqueries or a multi-token phrase is split into tokens (because it could not be translated as a whole) and a token or a possible singular form of it could be translated using the MeSh dictionary. If the MeSh dictionary is not used in a setting, this number is 0. 
+		\item \textbf{MeSh usage string level}: Number of whole strings that could be translated with the MeSh dictionary (inside the methode \textit{translateWholeString}, see detailed implementation explanation). The \textit{whole strings} include concatenations of several subqueries (according to the criteria mentioned in the detailed implementation explanation) and multi-word phrases, but also single-token queries and single-token subqueries which did not satisfy the conditions for concatenation with other subqueries. If the MeSh dictionary is not used in a setting, this number is 0. 
+		\item \textbf{MeSh usage query level}: Number of queries that could entirely (including all subqueries) be translated using only the MeSh dictionary. If a token could not be translated, but a possible singular form of it and this singular form was found in MeSh, then the whole query would still count as ``translated only with MeSh'' (assuming that everything else or a singular form of each token was found in MeSh). If the MeSh dictionary is not used in a setting, this number is 0. 
+		\item \textbf{Backoff usage word level}: Number of words that could be translated with the low-quality dictionary. The conditions are the same as for MeSh usage word level. If no low-quality dictionary is used in a setting, this number is 0.
+		\item \textbf{Backoff usage string level}: Number of whole strings that could be translated with the low-quality dictionary. The conditions are the same as for MeSh usage string level. If no low-quality dictionary is used in a setting, this number is 0.
+		\item \textbf{Backoff usage query level}: Number of queries that could entirely (including all subqueries) be translated only using the low-quality dictionary. This implies that none of the strings or tokens could be found in the MeSh dictionary, since we always try that one first. The conditions are the same as for MeSh usage query level. If no low-quality dictionary is used in a setting, this number is 0.
+		\item \textbf{Number of entire copies at query level}: Number of queries where nothing could be translated, not even a possible singular form.
+		\item \textbf{Number of entire copies at string level}: Number of whole strings where nothing could be translated, not even a possible singular form (cf. MeSh usage string level for what "whole string" refers to).
+		\item \textbf{Number of partial copies at string level}: Number of whole strings where at least one token could not be translated, not even a possible singular form of it.
+		\item \textbf{Number of copies at word level}: Number of words that could not be translated, not even a possible singular form.
+		\item \textbf{Singular usage word level}: Number of words that could not be translated in their original form, but a possible singular form could be translated.
+		\item \textbf{Singular usage string level}: Number of whole strings where at least one token could not be translated, but a possible singular form of it.
+		\item \textbf{Singular usage query level}: Number of queries that were entirely translated only using possible singular forms. This also means that no token was copied at all.
+	\end{itemize}
+
+	\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c}
+		& muw & mus & muq & buw & bus & buq & neq & nes & nps & ncw & suw & sus & suq \\
+		\hline
+		1e & 0 & 101 & 15 & 2 & 149 & 17 & 7 & 46 & 0 & 44 & 2 & 2 & 0 \\
+		1d & 0 & 49 & 9 & 7 & 91 & 21 & 17 & 86 & 0 & 79 & 7 & 7 & 0 \\ 
+		1s & 5 & 98 & 12 & 15 & 113 & 13 & 10 & 127 & 0 & 107 & 20 & 20 & 0\\
+		1f & 1 & 84 & 5 & 13 & 124 & 10 & 12 & 126 & 0 & 112 & 14 & 14 & 0 \\
+		1n & 0 & 13 & 8 & 0 & 106 & 47 & 23 & 43& 0 & 43 & 0 & 0 & 0 \\
+		2e & 0 & 0 & 0 & 7 & 213 & 46 & 8 & 84 & 0 & 77 & 7 & 7 & 0\\
+		2d & 0 & 0 & 0 & 4 & 104 & 24 & 31 & 123 & 0 & 119 & 4 & 4 & 0 \\
+		2s & 0 & 0 & 0 & 43 & 159 & 26 & 14 & 185 & 0 & 142 & 43 & 43 & 0\\
+		2f & 0 & 0 & 0 & 18 & 181 & 24 & 13 & 159 & 0 & 141 & 18 & 18 & 0\\
+		2n & 0 & 0 & 0 & 0 & 115 & 55 & 25 & 46 & 0 & 46 & 0 & 0 & 0 \\
+		3e & 0 & 0 & 0 & 11 & 167 & 28 & 14 & 131 & 0 & 120 & 11 & 11 & 0\\
+		3d & 0 & 0 & 0 & 10 & 83 & 22 & 39 & 143 & 0 & 133 & 10 & 10 & 0 \\
+		3s & 0 & 0 & 0 & 38 & 141 & 20 & 17 & 202 & 0 & 164 & 38 & 38 & 0 \\
+		3f & 0 & 0 & 0 & 21 & 150 & 15 & 22 & 192 & 0 & 171 & 21 & 21 & 0 \\
+		3n & 0 & 0 & 0 & 1 & 49 & 10 & 61 & 115 & 0 & 114 & 1 & 1 & 0 \\
+		4e & 0 & 0 & 0 & 6 & 224 & 50 & 5 & 83 & 0 & 77 & 6 & 6 & 0 \\
+		4d & 0 & 0 & 0 & 10 & 107 & 31 & 31 & 120 & 0 & 110 & 10 & 10 & 0 \\
+		4s & 0 & 0 & 0 & 24 & 181 & 28 & 9 & 168 & 0 & 144 & 24 & 24 & 0\\
+		4f & 0 & 0 & 0 & 20 & 173 & 25 & 11 & 176 & 0 & 156 & 20 & 20 & 0 \\
+		4n & 0 & 0 & 0 & 2 & 21 & 5 & 85 & 149 & 0 & 147 & 2 & 2 & 0 \\
+	\end{tabular}
 	
 	\section{Conclusions}
 	\label{s:conclusions}
