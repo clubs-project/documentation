@@ -510,15 +510,19 @@ We conducted a full analysis of the multilingual system to chose the best config
 
 The analysis in \cite{espanaEtAl:2017} determined that the most appropriate configuration for the neural system uses the following parameters:
 
-\bigskip
+\paragraph{Prototype 1} ~\\
+% \bigskip
 % \noindent
+
 \begin{tabular}{ll}
+Architecture & Bidirectional GRU \\
+Software & Nematus \\
 Word embedding dimension: & 512\\
 Hidden layer dimension: & 2,048\\
 Vocabulary size: & 80,000 + 2,000 BPE units\\
 Optimizer: & AdaDelta\\
 Learning rate: & 0.0001\\
-Batch size: & 80\\
+Batch size: & 80 x 1 (sentences)\\
 \end{tabular}
 
 
@@ -826,10 +830,78 @@ Finally, we combine (merge) the parallel sentences extracted from Wikipedia with
 % There is one case, however, when the adaptation with the automatic extractions yields results that are significant improvements with regard to the baseline performance. Interestingly enough, this also happens with the $en\rightarrow fr$ direction, on the abstract test set. In this case, we can observe a steady improvement as the size of the dataset increases. All results overperform the adaptation results with the PP adaptation set at the same number of epochs (that has no data for abstracts for this language pair). On the other hand, the reverse direction $fr\rightarrow en$ does not demonstrate the same behavior on the same test set, as results get worse using this adaptation data, and in this case adaptation with the parallel PP data yields a somewhat better performance (even though it is still worse than the baseline's). These differences, however, are not significant in any of these cases.
 
 
-\section{CLuBS Translation Engine}
+\section{Neural CLuBS Prototypes 2 and 3}
 \label{s:finalNMT}
 
 After the previous experiments we decide to 
+
+\subsection{Basic Architectures}
+
+\paragraph{Prototype 2} ~\\
+
+% \noindent
+\begin{tabular}{ll}
+Architecture & Bidirectional GRU \\
+Software & OpenNMT-py \\
+Word embedding dimension: & 512\\
+Hidden layer dimension: & 1,024\\
+Vocabulary size: & 150,000 + 2,000 BPE units\\
+Optimizer: & Adam\\
+Learning rate: & 0.0001\\
+Dropout: & 0.2\\
+Batch size: & 30*8 sentences\\
+\end{tabular}
+% 
+% #       -train_src $data/$train$src -train_tgt $data/$train$tgt -valid_src  $data/$val$src\
+% #       -valid_tgt $data/$val$tgt -save_data $data -src_vocab_size 150000  -tgt_vocab_size 150000  -dynamic_dict\
+% #       -save_model $seq2seq -gpuid  0 1 2 3 4 5 6 7  \
+% #       -rnn_size 1024 -word_vec_size 512  -dropout 0.2 -optim adam -learning_rate 0.0001\
+% #       -batch_size 30 -rnn_type GRU -report_every 100 -share_embeddings -train_steps 20000000 \
+% #       -share_vocab  
+
+
+
+\paragraph{Prototype 3} ~\\
+
+% \noindent
+\begin{tabular}{ll}
+Architecture & Transformer \\
+Software & Marian \\
+Heads & 8 \\
+Layers & 6 (enc) + 6 (dec) \\
+Word embedding dimension: & 1,024\\
+FF dimension: & 4,096\\
+Vocabulary size: & 150,000 + 2,000 BPE units\\
+Optimizer: & Adam ($\beta_1$=0.9, $\beta_2$=0.998, $\epsilon$=1e-09)\\
+Learning rate: &  0.0002, warmup 16,000, decay-inv-sqrt 16,000\\
+Dropout: & 0.1\\
+Batch size: & 5000 tokens\\
+\end{tabular}
+
+%     --dim-emb 1024 \
+%     --transformer-dim-ffn 4096 \
+%     --mini-batch-fit -w 7500 --mini-batch 5000 --maxi-batch 5000 --maxi-batch-sort src \
+%     --early-stopping 10 \
+%     --valid-freq 5000 --save-freq 5000 --disp-freq 512 \
+%     --valid-metrics cross-entropy perplexity translation \
+%     --valid-sets $tests/$valid.$L1 $tests/$valid.$L2 \
+%     --valid-script-path $root/validate.sh \
+%     --valid-translation-output $data/valid.$modelName.bpe.de.output --quiet-translation \
+%     --valid-mini-batch 32 \
+%     --beam-size 6 --normalize 0.6 \
+%     --log model/train.$modelName.log --valid-log model/valid.$modelName.log \
+%     --enc-depth 6 --dec-depth 6 \
+%     --transformer-heads 8 \
+%     --transformer-postprocess-emb d \
+%     --transformer-postprocess dan \
+%     --transformer-preprocess n \
+%     --transformer-dropout 0.1 --label-smoothing 0.1 \
+%     --learn-rate 0.0002 --lr-warmup 16000 --lr-decay-inv-sqrt 16000 --lr-report \
+%     --optimizer-params 0.9 0.998 1e-09 --clip-norm 5 \
+%     --tied-embeddings-all \
+%     --devices $GPUS --sync-sgd --seed 1111 \
+%     --exponential-smoothing
+% 
 
 
 \subsection{Domain Adaptation Complemented by Back-Translation}
@@ -882,7 +954,147 @@ One of the flaws of the previous domain adaptation process was the fact that dat
 \end{tabular}
 \end{table}
 
+
+\subsection{Automatic Evaluation}
+\label{ss:evalP2P3}
  
+ 
+
+\begin{table}
+\centering
+ \caption{Automatic evaluation of Prototypes 2 \& 3 for the English--German language pair on the on the PubPsych test set.}
+ \label{tab:evalDeEn}
+\medskip
+\small
+\begin{tabular}{l rrrr rrrr}
+\toprule
+    & \mc{4}{c}{\de2\en} & \mc{4}{c}{\en2\de} \\
+    \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+ \mc{4}{l}{\emph{Titles}}\\
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR} 
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR}\\
+%     \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+\cmidrule(lr){1-9}
+Google & 40.91 & 8.07 & 43.04 & 70.55 &  31.02 &  6.46 & 56.32 & 53.05  \\  
+DeepL  & 40.86 & 8.04 & 43.57 & 70.43 &  30.38 &  6.34 & 57.17 & 52.52  \\  
+\cmidrule(lr){1-9}
+P2     & 41.62 & 8.24 & 42.85 & 70.74 &  32.59 &  6.80 & 52.77 & 54.65  \\  
+P2+DA  & 37.61 & 7.77 & 47.24 & 66.45 &  28.16 &  6.31 & 57.87 & 50.58  \\  
+P3     & 44.61 & 8.47 & 40.26 & 72.39 &  36.11 &  7.19 & 49.94 & 57.44  \\  
+P3+DA  & 45.03 & 8.51 & 39.95 & 72.57 &  34.65 &  7.11 & 50.27 & 56.64  \\  
+P3 ens & {\bf 45.84} & {\bf 8.55} & {\bf 40.02} & {\bf 72.80} &  {\bf 36.44} &  {\bf 7.28} & {\bf 49.10} & {\bf 58.20}  \\  
+
+\midrule
+~\\
+ \mc{4}{l}{\emph{Abstracts}}\\
+
+ & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR} 
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR}\\
+%     \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+\cmidrule(lr){1-9}
+Google & 18.74 & 5.20 & 79.25 & 45.44 &  13.32 &  4.19 & 86.07 & 32.46  \\ 
+DeepL  & {\bf 19.04} & 5.24 & 79.51 & 46.04 &  {\bf 14.23} &  4.29 & 85.63 & 33.27  \\ 
+\cmidrule(lr){1-9}
+P2     & 16.31 & 4.89 & 76.05 & 44.52 &  11.82 &  4.02 & 81.78 & 31.88  \\ 
+P2+DA  & 14.00 & 4.26 & 77.91 & 41.63 &   9.80 &  3.47 & 83.52 & 29.33  \\ 
+P3     & 18.62 & 5.32 & 75.46 & 46.01 &  13.55 &  4.37 & 81.20 & 33.55  \\ 
+P3+DA  & 18.52 & 5.31 & 74.94 & 46.07 &  13.75 &  4.39 & 80.52 & 33.78  \\ 
+P3 ens & 18.95 & {\bf 5.37} & {\bf 74.15} & {\bf 46.45} &  14.10 &  {\bf 4.43} & {\bf 80.12} & {\bf 34.30}  \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\begin{table}
+\centering
+ \caption{Automatic evaluation of Prototypes 2 \& 3 for the English--Spanish language pair on the on the PubPsych test set.}
+ \label{tab:evalEsEn}
+\medskip
+\small
+\begin{tabular}{l rrrr rrrr}
+\toprule
+    & \mc{4}{c}{\es2\en} & \mc{4}{c}{\en2\es} \\
+    \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+ \mc{4}{l}{\emph{Titles}}\\
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR} 
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR}\\
+%     \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+\cmidrule(lr){1-9}
+Google & 42.96 & 8.02 & 41.73 & 73.23 &  49.92 &  8.45 & 39.20 & 69.97  \\  
+DeepL  & 45.08 & 8.19 & 39.98 & 74.61 &  50.65 &  8.56 & 37.19 & 70.48  \\  
+\cmidrule(lr){1-9}
+P2     & 44.98 & 8.35 & 39.37 & 73.75 &  48.80 &  8.60 & 37.13 & 69.64  \\  
+P2+DA  & 43.65 & 8.24 & 40.74 & 72.58 &  49.44 &  8.58 & 37.25 & 69.16  \\  
+P3     & 46.89 & 8.40 & 38.60 & 74.86 &  53.44 &  9.02 & 33.85 & 72.62  \\  
+P3+DA  & 47.36 & 8.48 & 37.92 & 75.24 &  53.98 &  9.03 & 33.28 & 72.73  \\  
+P3 ens & {\bf 48.56} & {\bf 8.58} & {\bf 36.75} & {\bf 76.13} &  {\bf 56.26} &  {\bf 9.27} & {\bf 31.98} & {\bf 74.22}  \\  
+\midrule
+~\\
+ \mc{4}{l}{\emph{Abstracts}}\\
+
+ & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR} 
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR}\\
+%     \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+\cmidrule(lr){1-9}
+Google & 34.43 & 8.05 & 53.06 & 65.16 &  37.89 &  8.43 & 50.85 & 60.20  \\ 
+DeepL  & {\bf 34.82} & 8.10 & 52.82 & {\bf 65.19} &  {\bf 39.74} &  8.63 & 49.56 & 61.34  \\ 
+\cmidrule(lr){1-9}
+P2     & 30.48 & 7.75 & 55.20 & 62.92 &  33.25 &  7.91 & 52.52 & 58.64  \\ 
+P2+DA  & 27.35 & 7.26 & 58.28 & 60.05 &  31.84 &  7.70 & 54.92 & 56.65  \\ 
+P3     & 33.93 & 8.17 & 52.85 & 64.71 &  36.56 &  8.49 & 50.17 & 60.52  \\
+P3+DA  & 33.54 & 8.12 & 53.15 & 64.44 &  37.84 &  8.70 & 49.16 & 61.22  \\
+P3 ens & 34.33 & {\bf 8.22} & {\bf 52.65} & 64.85 &  38.21 &  {\bf 8.74} & {\bf 48.79} & {\bf 61.75}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}
+\centering
+ \caption{Automatic evaluation of Prototypes 2 \& 3 for the English--French language pair on the on the PubPsych test set.}
+ \label{tab:evalFrEn}
+\medskip
+\small
+\begin{tabular}{l rrrr rrrr}
+\toprule
+    & \mc{4}{c}{\fr2\en} & \mc{4}{c}{\en2\fr} \\
+    \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+ \mc{4}{l}{\emph{Titles}}\\
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR} 
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR}\\
+%     \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+\cmidrule(lr){1-9}
+Google & {\bf 47.33} &  7.19 & 39.70 & {\bf 75.50}  & 42.64  & 7.08 & 42.95 & 65.98  \\
+DeepL  & 45.61 &  7.09 & 41.32 & 73.75  & {\bf 45.88}  & 7.21 & 42.15 & 67.14  \\
+\cmidrule(lr){1-9}
+P2     & 40.55 &  6.79 & 45.81 & 71.53  & 40.92  & 6.96 & 43.61 & 65.13  \\
+P2+DA  & 40.03 &  6.74 & 48.40 & 68.05  & 37.75  & 6.50 & 47.65 & 61.18  \\
+P3     & 45.72 &  7.11 & 40.90 & 74.96  & 43.43  & 7.06 & 43.11 & 66.11  \\
+P3+DA  & 46.37 &  7.22 & 40.43 & 74.41  & 44.74  & 7.16 & 41.55 & 66.93  \\
+P3 ens & 47.17 &  {\bf 7.34} & {\bf 39.20} & 74.97  & 45.35  & {\bf 7.24} & {\bf 41.21} & {\bf 67.32}  \\
+\midrule
+~\\
+ \mc{4}{l}{\emph{Abstracts}}\\
+
+ & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR} 
+    & \mc{1}{c}{BLEU} & \mc{1}{c}{NIST} & \mc{1}{c}{TER} & \mc{1}{c}{MTR}\\
+%     \cmidrule(lr){2-5}   \cmidrule(lr){6-9} 
+\cmidrule(lr){1-9}
+Google & 29.26 &  6.70 & 60.96 & 59.29  & 26.42  & 6.44 & 62.92 & 50.77  \\
+DeepL  & {\bf 29.69} &  {\bf 6.79} & {\bf 59.99} & {\bf 59.31}  & {\bf 27.90}  & {\bf 6.60} & {\bf 61.70} & {\bf 51.53}  \\
+\cmidrule(lr){1-9}
+P2     & 24.47 &  6.22 & 62.68 & 56.56  & 21.49  & 5.26 & 64.99 & 47.92  \\
+P2+DA  & 21.37 &  5.85 & 65.18 & 54.12  & 20.78  & 5.41 & 66.61 & 46.46  \\
+P3     & 27.22 &  6.62 & 61.38 & 58.29  & 23.66  & 5.79 & 63.67 & 49.19  \\
+P3+DA  & 25.53 &  6.46 & 61.67 & 57.42  & 23.89  & 6.00 & 64.05 & 49.14  \\
+P3 ens & 27.06 &  6.63 & 61.11 & 58.12  & 24.55  & 6.03 & 63.46 & 49.82  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
 \section{Additional Experiments}
 \label{s:moreExperiments}
 
