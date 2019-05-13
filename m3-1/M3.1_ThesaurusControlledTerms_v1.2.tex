@@ -353,10 +353,11 @@
 			WPcategories             & 38,038 & 38,038  & 38,038 & 38,038\\
 			Apertium                 &  7,792 &  5,935  &  6,020 &  5,846\\
 			Manual                   &  4,262 &  4,142  &  4,047 &  4,081\\
-			Wikidata (Propotype2 only)    &   &    &   &  \\
+			Wikidata (Propotype2 only)  & 5,576,686  & 5,576,686 &  5,576,686 & 5,576,686 \\
 			\midrule
 			\emph{Total Propotype1}  & 202,128&304,277 & 225,607 & 195,937\\
-			\emph{Total Propotype2}   &   &    &   &\\
+			\emph{Total Propotype2}  & 5,778,814 & 5,880,963 & 5,802,293 & 5,772,623
+\\
 			\bottomrule
 		\end{tabular}
 		\caption{Number of aligned terms per language in our multilingual resources. The row with the total excludes duplicate entries between the sources.}
@@ -472,7 +473,7 @@
 \end{figure}
 
 	\bigskip
-	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). We cannot evaluate the quality of the translation because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries they are able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. The MeSH thesaurus alone covers between 25\%-87\% of the all the controlled terms depending on the database and language. These numbers improve as we consider the coverage we can obtain by using also word-level mappings. The word-level mappings together with the usage of the extended lexicon allows us to reach almost a 100\% in all the cases. Results for CT$lan$H, IT$lan$H and IT$lan$L are shown in Appendix~\ref{ap:cts}.
+	We apply the previous methodology to translate the CTs using two different lexicons: the multilingual MeSH (named {\tt MeSH} or {\tt M} in tables), and the union of the MeSH, Wikipedia, Apertium and manual multilingual lexicons ({\tt QuadLex} or {\tt Q}). For the final system (\emph{S2}) we also add the 5 million Wikidata entries. We cannot evaluate the quality of the translation because we do not have a subset of multilingual controlled terms other than MeSH itself, so we quantify the effect of our resources by the number of entries they are able to translate. Table~\ref{tab:tradsCT} shows the coverage for the CT$lan$L field in the languages of the project. In Table ~\ref{tab:tradsCTS2}, we show the improvements achieved by $S2$ with the new processing (Section~\ref{ss:cleaning}) and with the new resource (Section~\ref{ss:wikidata}). The MeSH thesaurus alone covers between 25\%-87\% of the all the controlled terms depending on the database and language. These numbers improve as we consider the coverage we can obtain by using also word-level mappings. Our second system ($S2$) improves the coverage for all languages except for German, mainly because the cleaning we apply is thought for query translation. Therefore, for the final CLuBS controlled term translation we use $S1$ for German and $S2$ for English, French and Spanish.  The word-level mappings together with the usage of the extended lexicon allows us to reach almost a 100\% in all the cases. Results for CT$lan$H, IT$lan$H and IT$lan$L are shown in Appendix~\ref{ap:cts}.
 	
 	Even if at this point we cannot evaluate the quality of the translations, note that copying the source word into the output does not necessarily correspond to a wrong translation because in most cases the unknown words are named entities. Equivalently, using the quadrilingual lexicon to translate an entry does not assure a correct translation because, besides of the existing noise, the concatenation of word translations does not need to correspond to the term translation. However, we followed the proposed approach to maximize retrieval quality and not translation quality. 
 	
@@ -543,6 +544,68 @@
 		\label{tab:tradsCT}
 	\end{table}
 
+	
+	
+	
+	\begin{table}[t]
+		\centering
+		\flushleft{English}
+		
+		\small
+		\begin{tabular}{lrrrr}
+			\toprule
+			       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
+			\cmidrule(lr){2-3}   \cmidrule(lr){4-5}
+			Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
+			\midrule
+
+% 			\multirow{5}{*}{\begin{sideways}QuadLex\end{sideways}} 
+			\emph{S1} ACCNO  &    586,440 (51.8\%)  & 545,355 (48.2\%)  & 1,861,278 (99.5\%)  & 9,483 (0.5\%) \\
+			\emph{S2} ACCNO  &    598,348 (52.9\%)  & 533,447 (47.1\%)  & 1,867,350 (99.8\%)  & 3,411 (0.2\%) \\ \cmidrule(lr){2-5}
+			\emph{S1} DFK    &    900,396 (55.0\%)  & 735,916 (45.0\%)  & 2,640,589 (99.7\%)  & 6,918 (0.3\%) \\
+			\emph{S2} DFK    &    917,681 (56.1\%)  & 718,631 (43.9\%)  & 2,645,782 (99.9\%)  & 1,725 (0.1\%) \\  \cmidrule(lr){2-5}
+			\emph{S1} NORART &      5,779 (25.3\%)  &  17,074 (74.7\%)  &    38,941 (99.4\%)  &   235 (0.6\%) \\
+			\emph{S2} NORART &      7,263 (31.8\%)  &  15,590 (68.2\%)  &    39,167 (100.0\%) & 9 (0.0\%)    \\   \cmidrule(lr){2-5}
+			\emph{S1} PDID   &        287 (63.9\%)  &     162 (36.1\%)  &       771 (99.6\%)  &     3 (0.4\%) \\
+			\emph{S2} PDID   &        287 (63.9\%)  &     162 (36.1\%)  &       774 (100.0\%) & 0 (0.0\%)     \\  \cmidrule(lr){2-5}
+			\emph{S1} PMID   &  3,094,379 (90.0\%)  & 342,445 (10.0\%)  & 5,155,774 (99.9\%)  & 2,828 (0.1\%) \\
+			\emph{S2} PMID   &  3,096,000 (90.0\%)  & 342,100 (10.0\%)  & 5,160,435 (100.0\%) &    153 (0.0\%)\\
+			\bottomrule
+		\end{tabular}
+		
+		\flushleft{\normalsize German}
+		\begin{tabular}{lrrrr}
+			\toprule
+			       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
+			\cmidrule(lr){2-3}   \cmidrule(lr){4-5}
+			Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} \\
+			\midrule
+% 			\multirow{1}{*}{\begin{sideways}~QuadLex\end{sideways}} 
+			\emph{S1} DFK     & 1,002,373 (60.7\%)  & 649,700 (39.3\%)  & 2,150,866 (100.0\%)  & 1,075 (0.0\%) \\
+			\emph{S2} DFK     &   964,918 (58.4\%)  & 687,155 (41.6\%)  & 2,090,381 (97.1\%)  & 61,560 (2.9\%)  \\ \cmidrule(lr){2-5}
+			\emph{S1} PDID~~~~&       319 (66.6\%)  &     160 (33.4\%)  &       660 (100.0\%)  &     0 (0.0\%) \\
+			\emph{S2} PDID~~~~&       310 (64.7\%)  &     169 (35.3\%)  &       645 (97.7\%)  & 15 (2.3\%) \\ \cmidrule(lr){2-5}
+			\emph{S1} PMID    & 3,067,454 (88.9\%)  & 383,415 (11.1\%)  & 4,561,948 (100.0\%)  &   131 (0.0\%) \\
+			\emph{S2} PMID    & 2,963,635 (85.8\%)  & 488,513 (14.2\%)  & 4,462,490 (97.8\%)  & 101,324 (2.2\%) \\
+			\bottomrule
+		\end{tabular}
+		
+		
+		\flushleft{\normalsize French}
+		\begin{tabular}{lrrrr}
+			\toprule
+			       & \mc{2}{c}{Full descriptors, classes} & \mc{2}{c}{Tokens}\\
+			\cmidrule(lr){2-3}   \cmidrule(lr){4-5}
+			Source & \mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)} &\mc{1}{c}{trad (\%)} & \mc{1}{c}{untrad (\%)}\\
+			\midrule
+% 			\multirow{-1}{*}{\begin{sideways}Q\end{sideways}} 
+			\emph{S1} PMID     & 2,648,537 (79.2\%)  & 696,462 (20.8\%)  & 5,737,329 (96.8\%)  & 190,497 (3.2\%)  \\
+			\emph{S2} PMID     & 3,096,000 (90.0\%)  & 342,100 (10.0\%)  & 5,160,435 (100.0\%)  & 153 (0.0\%)   \\
+			\bottomrule
+		\end{tabular}
+		\caption{Number of CT\emph{lan}L translated with the multilingual MeSH and the full QuadLexicon of System 2 for English, German and French. There are no entries for Spanish. }
+		\label{tab:tradsCTS2}
+	\end{table}
 	\subsection{Software}
 	
 	A python script takes care of the CT translation. It can be found in the {\tt DBtranslator} package%
