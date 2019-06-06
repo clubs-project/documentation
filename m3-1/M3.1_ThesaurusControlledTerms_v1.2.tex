@@ -705,15 +705,15 @@
 		\item \textbf{PreTranslationInfo}: This classed is used to store information on the query before the actual translation happens. We concatenate the strings of all subqueries that fulfill certain conditions and store to which subqueries the concatenation belongs. 
 	\end{itemize}
 
-	For more details on fields and methods of the classes, see %TODO: add link to long documentation
+	For more details on fields and methods of the classes, see \url{https://github.com/clubs-project/documentation/blob/master/sofware/onlineQueryTranslation.html}.
 	
 	\subsection{Evaluation of the Queries}
 	\label{ss:evaluation}
 	We have gathered approximately 100 real-life queries in each of the languages of the PubPsych database (English, German, French and Spanish) and another 100 real-life queries whose language could not be classified. These queries are the same as in \url{https://link.springer.com/chapter/10.1007/978-3-030-14401-2_4}.
 	
-	The experiments were run on a machine with 96 cores at 2.4 gigahertz and 1 terabyte memory, but processes were not parallelized and the Java VM was only given 10 gigabyte memory each time a new Solr instance was initialized (which had to be done for every collection of 100 queries to reset the statistics, see below). We had six different settings. For each setting, the JAR files had to built anew, and we let the software translate all 500 queries in each setting. Running a script that performed all these actions took a bit more than half an hour. 
+	The experiments were run on a machine with 96 cores at 2.4 gigahertz and 1 terabyte memory, but processes were not parallelized and the Java VM was only given 10 gigabyte memory each time a new Solr instance was initialized (which had to be done for every collection of 100 queries to reset the statistics, see below). We had seven different settings. For each setting, the JAR files had to built anew, and we let the software translate all 500 queries in each setting. Running a script that performed all these actions took a bit more than half an hour. 
 	
-	In each of the six settings, we have used a different combination of dictionaries. If not mentioned otherwise, the dictionaries were used in their ``non-diff'' version, which means that entries that are the same in all languages were kept (e.g. ``Ich bin ein Berliner'' is translated in all languages as ``Ich bin ein Berliner'' since it is the title of a Wikipedia article), whereas they were deleted in the ``diff'' version. In addition to the MeSh dictionary and the quad-lexicon described in section \ref{ss:cleaning} we have built another dictionary by extracting entities in all the Wikidata dump that exist simultaneously in the four languages.
+	In each of the seven settings, we have used a different combination of dictionaries. If not mentioned otherwise, the dictionaries were used in their ``non-diff'' version, which means that entries that are the same in all languages were kept (e.g. ``Ich bin ein Berliner'' is translated in all languages as ``Ich bin ein Berliner'' since it is the title of a Wikipedia article), whereas they were deleted in the ``diff'' version. In addition to the MeSh dictionary and the quad-lexicon described in section \ref{ss:cleaning} we have built another dictionary by extracting entities in all the Wikidata dump that exist simultaneously in the four languages.
 	
 	\begin{enumerate}
 		\item High-quality dictionary: MeSh, low-quality dictionary: the concatenation of the quad-lexicon from section 2.5 and the Wikidata dictionary
@@ -722,6 +722,7 @@
 		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from section 2.5
 		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from section 2.5 ("diff" version)
 		\item High-quality dictionary: MeSh, low-quality dictionary: none
+		\item High-quality dictionary: MeSh, low-quality dictionary: quad-lexicon from section 2.5
 	\end{enumerate}
 	
 	We do not only evaluate the actual translations of the queries, but have also acquired some statistics for each combination of query collection and setting. The numbers collected are the following:
@@ -747,36 +748,41 @@
 		\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c}
 			& muw & mum & muq & buw & bum & buq & cw & cm & cq & suw & sum & suq \\
 			\hline
-			1e & 101 & 1 & 16 & 151 & 6 & 23 & 44 & 0 & 0 & 2 & 0 & 0\\
-			1d & 49 & 1 & 10 & 98 & 0 & 21 & 79 & 0 & 16 & 7 & 0 & 0\\
-			1s & 103 & 5 & 17 & 128 & 2 & 15 & 107 & 0 & 1 & 20 & 0 & 0\\
-			1f & 85 & 8 & 13 & 137 & 2 & 12 & 112 & 0 & 2 & 14 & 0 & 0\\
-			1n & 13 & 0 & 8 & 106 & 4 & 51 & 43 & 0 & 19 & 0 & 0 & 0\\
-			2e & 0 & 0 & 0 & 220 & 6 & 52 & 77 & 0 & 2 & 7 & 0 & 0\\
-			2d & 0 & 0 & 0 & 108 & 0 & 24 & 119 & 0 & 29 & 4 & 0 & 0\\
-			2s & 0 & 0 & 0 & 202 & 4 & 33 & 142 & 0 & 3 & 43 & 0 & 3\\
-			2f & 0 & 0 & 0 & 199 & 7 & 32 & 141 & 0 & 4 & 18 & 0 & 1\\
-			2n & 0 & 0 & 0 & 115 & 4 & 59 & 46 & 0 & 21 & 0 & 0 & 0\\
-			3e & 0 & 0 & 0 & 178 & 5 & 33 & 120 & 0 & 8 & 11 & 0 & 0\\
-			3d & 0 & 0 & 0 & 93 & 0 & 22 & 133 & 0 & 33 & 10 & 0 & 0\\
-			3s & 0 & 0 & 0 & 179 & 4 & 27 & 164 & 0 & 5 & 38 & 0 & 3\\
-			3f & 0 & 0 & 0 & 171 & 6 & 22 & 171 & 0 & 10 & 21 & 0 & 1\\
-			3n & 0 & 0 & 0 & 50 & 2 & 12 & 114 & 0 & 58 & 1 & 0 & 0\\
-			4e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
-			4d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
-			4s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
-			4f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
-			4n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
-			5e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
-			5d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
-			5s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
-			5f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
-			5n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
-			6e & 105 & 1 & 16 & 0 & 0 & 0 & 202 & 0 & 27 & 0 & 0 & 0\\
-			6d & 52 & 1 & 10 & 0 & 0 & 0 & 171 & 0 & 55 & 3 & 0 & 0\\
-			6s & 106 & 5 & 17 & 0 & 0 & 0 & 233 & 0 & 25 & 7 & 0 & 0\\
-			6f & 89 & 8 & 14 & 0 & 0 & 0 & 247 & 0 & 28 & 3 & 0 & 1\\
-			6n & 14 & 0 & 8 & 0 & 0 & 0 & 154 & 0 & 87 & 1 & 0 & 0\\
+1e & 102 & 1 & 16 & 161 & 6 & 24 & 34 & 0 & 0 & 2 & 0 & 0\\
+1d & 49 & 1 & 10 & 106 & 0 & 21 & 72 & 0 & 16 & 8 & 0 & 0\\
+1s & 103 & 5 & 17 & 183 & 2 & 19 & 53 & 0 & 1 & 22 & 0 & 0\\
+1f & 85 & 8 & 13 & 185 & 2 & 14 & 65 & 0 & 2 & 18 & 0 & 0\\
+1n & 13 & 0 & 8 & 119 & 4 & 58 & 31 & 0 & 17 & 0 & 0 & 0\\
+2e & 0 & 0 & 0 & 231 & 6 & 54 & 67 & 0 & 2 & 7 & 0 & 0\\
+2d & 0 & 0 & 0 & 116 & 0 & 24 & 112 & 0 & 29 & 5 & 0 & 0\\
+2s & 0 & 0 & 0 & 258 & 4 & 52 & 87 & 0 & 2 & 45 & 0 & 3\\
+2f & 0 & 0 & 0 & 247 & 7 & 40 & 94 & 0 & 4 & 22 & 0 & 1\\
+2n & 0 & 0 & 0 & 128 & 4 & 68 & 34 & 0 & 19 & 0 & 0 & 0\\
+3e & 0 & 0 & 0 & 178 & 5 & 33 & 120 & 0 & 8 & 11 & 0 & 0\\
+3d & 0 & 0 & 0 & 92 & 0 & 22 & 134 & 0 & 34 & 9 & 0 & 0\\
+3s & 0 & 0 & 0 & 184 & 4 & 27 & 159 & 0 & 5 & 37 & 0 & 3\\
+3f & 0 & 0 & 0 & 173 & 6 & 20 & 169 & 0 & 10 & 21 & 0 & 1\\
+3n & 0 & 0 & 0 & 52 & 2 & 13 & 112 & 0 & 58 & 1 & 0 & 0\\
+4e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
+4d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
+4s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
+4f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
+4n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
+5e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
+5d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
+5s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
+5f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
+5n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
+6e & 106 & 1 & 16 & 0 & 0 & 0 & 201 & 0 & 27 & 0 & 0 & 0\\
+6d & 52 & 1 & 10 & 0 & 0 & 0 & 171 & 0 & 55 & 3 & 0 & 0\\
+6s & 106 & 5 & 17 & 0 & 0 & 0 & 233 & 0 & 25 & 7 & 0 & 0\\
+6f & 89 & 8 & 14 & 0 & 0 & 0 & 247 & 0 & 28 & 3 & 0 & 1\\
+6n & 14 & 0 & 8 & 0 & 0 & 0 & 154 & 0 & 87 & 1 & 0 & 0\\
+7e & 105 & 1 & 16 & 135 & 2 & 12 & 65 & 0 & 1 & 4 & 0 & 0\\
+7d & 50 & 1 & 10 & 80 & 0 & 16 & 95 & 0 & 19 & 9 & 0 & 0\\
+7s & 103 & 5 & 17 & 108 & 2 & 15 & 126 & 0 & 1 & 17 & 0 & 1\\
+7f & 86 & 8 & 13 & 110 & 1 & 7 & 140 & 0 & 4 & 10 & 0 & 0\\
+7n & 13 & 0 & 8 & 37 & 2 & 8 & 116 & 0 & 62 & 3 & 0 & 2\\
 		\end{tabular}
 		\caption{The number refers to the setting (see beginning of section \ref{ss:evaluation}), the letter indicates the set of queries that has been translated (\textit{e}: English, \textit{d}: German, \textit{s}: Spanish, \textit{f}: French and \textit{n}: language could not be classified).}
 		\label{fig:eval}
