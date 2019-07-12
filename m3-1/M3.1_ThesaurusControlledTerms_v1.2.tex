@@ -713,19 +713,69 @@
 	
 	The experiments were run on a machine with 96 cores at 2.4 gigahertz and 1 terabyte memory, but processes were not parallelized and the Java VM was only given 10 gigabyte memory each time a new Solr instance was initialized (which had to be done for every collection of 100 queries to reset the statistics, see below). We had seven different settings. For each setting, the JAR files had to built anew, and we let the software translate all 500 queries in each setting. Running a script that performed all these actions took a bit more than half an hour. 
 	
-	In each of the seven settings, we used a different combination of dictionaries. If not mentioned otherwise, the dictionaries were used in their ``non-diff'' version, which means that entries that are the same in all languages were kept (e.g. ``Ich bin ein Berliner'' is translated in all languages as ``Ich bin ein Berliner'' since it is the title of a Wikipedia article), whereas they were deleted in the ``diff'' version. In addition to the MeSh dictionary and the quad-lexicon described in section \ref{ss:cleaning}, we built another dictionary by extracting entities in the Wikidata dump that exist simultaneously in the four languages.
+	In each of the seven settings, we used a different combination of dictionaries. If not mentioned otherwise, the dictionaries were used in their ``non-diff'' version, which means that entries that are the same in all languages were kept (e.g. ``Ich bin ein Berliner'' is translated in all languages as ``Ich bin ein Berliner'' since it is the title of a Wikipedia article), whereas they were deleted in the ``diff'' version. In addition to the MeSh dictionary and the quad-lexicon described in sections \ref{ss:wpLex}, \ref{ss:apertium}
+	and \ref{ss:manual}, we built another dictionary by extracting entities in the Wikidata dump that exist simultaneously in the four languages (see section \ref{ss:wikidata}).
 	
 	\begin{enumerate}
-		\item High-quality dictionary: MeSh, low-quality dictionary: the concatenation of the quad-lexicon from section 2.5 and the Wikidata dictionary
+		\item High-quality dictionary: MeSh, low-quality dictionary: the concatenation of the quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium}
+		and \ref{ss:manual} and the Wikidata dictionary
 		\item High-quality dictionary: none, low-quality dictionary: Wikidata dictionary
 		\item High-quality dictionary: none, low-quality dictionary: Wikidata dictionary ("diff" version)
-		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from section 2.5
-		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from section 2.5 ("diff" version)
+		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium}
+		and \ref{ss:manual}
+		\item High-quality dictionary: none, low-quality dictionary: quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium}
+		and \ref{ss:manual} ("diff" version)
 		\item High-quality dictionary: MeSh, low-quality dictionary: none
-		\item High-quality dictionary: MeSh, low-quality dictionary: quad-lexicon from section 2.5
+		\item High-quality dictionary: MeSh, low-quality dictionary: quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium}
+		and \ref{ss:manual}
 	\end{enumerate}
+
+
+\begin{table}[t]
+	\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c}
+		& muw & mum & muq & buw & bum & buq & cw & cm & cq & suw & sum & suq \\
+		\hline
+		1e & 102 & 1 & 16 & 161 & 6 & 24 & 34 & 0 & 0 & 2 & 0 & 0\\
+		1d & 49 & 1 & 10 & 106 & 0 & 21 & 72 & 0 & 16 & 8 & 0 & 0\\
+		1s & 103 & 5 & 17 & 183 & 2 & 19 & 53 & 0 & 1 & 22 & 0 & 0\\
+		1f & 85 & 8 & 13 & 185 & 2 & 14 & 65 & 0 & 2 & 18 & 0 & 0\\
+		1n & 13 & 0 & 8 & 119 & 4 & 58 & 31 & 0 & 17 & 0 & 0 & 0\\
+		2e & 0 & 0 & 0 & 231 & 6 & 54 & 67 & 0 & 2 & 7 & 0 & 0\\
+		2d & 0 & 0 & 0 & 116 & 0 & 24 & 112 & 0 & 29 & 5 & 0 & 0\\
+		2s & 0 & 0 & 0 & 258 & 4 & 52 & 87 & 0 & 2 & 45 & 0 & 3\\
+		2f & 0 & 0 & 0 & 247 & 7 & 40 & 94 & 0 & 4 & 22 & 0 & 1\\
+		2n & 0 & 0 & 0 & 128 & 4 & 68 & 34 & 0 & 19 & 0 & 0 & 0\\
+		3e & 0 & 0 & 0 & 178 & 5 & 33 & 120 & 0 & 8 & 11 & 0 & 0\\
+		3d & 0 & 0 & 0 & 92 & 0 & 22 & 134 & 0 & 34 & 9 & 0 & 0\\
+		3s & 0 & 0 & 0 & 184 & 4 & 27 & 159 & 0 & 5 & 37 & 0 & 3\\
+		3f & 0 & 0 & 0 & 173 & 6 & 20 & 169 & 0 & 10 & 21 & 0 & 1\\
+		3n & 0 & 0 & 0 & 52 & 2 & 13 & 112 & 0 & 58 & 1 & 0 & 0\\
+		4e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
+		4d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
+		4s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
+		4f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
+		4n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
+		5e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
+		5d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
+		5s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
+		5f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
+		5n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
+		6e & 106 & 1 & 16 & 0 & 0 & 0 & 201 & 0 & 27 & 0 & 0 & 0\\
+		6d & 52 & 1 & 10 & 0 & 0 & 0 & 171 & 0 & 55 & 3 & 0 & 0\\
+		6s & 106 & 5 & 17 & 0 & 0 & 0 & 233 & 0 & 25 & 7 & 0 & 0\\
+		6f & 89 & 8 & 14 & 0 & 0 & 0 & 247 & 0 & 28 & 3 & 0 & 1\\
+		6n & 14 & 0 & 8 & 0 & 0 & 0 & 154 & 0 & 87 & 1 & 0 & 0\\
+		7e & 105 & 1 & 16 & 135 & 2 & 12 & 65 & 0 & 1 & 4 & 0 & 0\\
+		7d & 50 & 1 & 10 & 80 & 0 & 16 & 95 & 0 & 19 & 9 & 0 & 0\\
+		7s & 103 & 5 & 17 & 108 & 2 & 15 & 126 & 0 & 1 & 17 & 0 & 1\\
+		7f & 86 & 8 & 13 & 110 & 1 & 7 & 140 & 0 & 4 & 10 & 0 & 0\\
+		7n & 13 & 0 & 8 & 37 & 2 & 8 & 116 & 0 & 62 & 3 & 0 & 2\\
+	\end{tabular}
+	\caption{The number refers to the setting (see beginning of section \ref{ss:evaluation}), the letter indicates the set of queries that has been translated (\textit{e}: English, \textit{d}: German, \textit{s}: Spanish, \textit{f}: French and \textit{n}: language could not be classified).}
+	\label{tab:stats}
+\end{table}
 	
-	We did not only evaluate the actual translations of the queries, but also acquired some statistics for each combination of query collection and setting. The numbers collected are the following:
+	We did not only evaluate the actual translations of the queries, but also acquired some statistics for each combination of query collection and setting (see Table \ref{tab:stats}). The numbers collected are the following:
 	\begin{itemize}
 		\item \textbf{MeSh usage word level} (muw): Number of words that are translated with the MeSh dictionary (inside \textit{translate}). This number is incremented when a string that either is the result of a concatenation of subqueries or a multi-token phrase is split into tokens (because it cannot be translated as a whole) and a token or a possible singular form of it can be translated using the MeSh dictionary. Whenever the MeSh dictionary is not used in a setting, this number is 0. 
 		\item \textbf{MeSh usage multi-token level} (mum): Number of whole multi-token strings that are translated with the MeSh dictionary. The \textit{multi-token strings} include concatenations of several subqueries (according to the criteria mentioned in the detailed implementation explanation) and multi-word phrases which were explicitly marked as a phrase by the user. If a concatenation cannot be translated as a whole (meaning a single lookup of the whole string in the dictionary), but all its tokens can be translated using only the MeSh dictionary, this number \textbf{is not} incremented. If a phrase cannot be translated as whole, but all its tokens can be translated using only the MeSh dictionary, this number \textbf{is} incremented. The reasoning behind this difference in counting is that if a user explicitly marks several tokens as a phrase, it is likely that these tokens actually form a phrase, whereas the simple automatic concatenation of all tokens in a query does not take into account any semantic information.
@@ -743,51 +793,43 @@
 		\item \textbf{Singular usage query level} (suq): Number of queries that are entirely translated only using possible singular forms. This also means that no token is copied at all.
 	\end{itemize}
 
+\begin{table}[t]
+	\begin{tabular}{c|c|c|c|c|c}
+		&BLEU & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4\\
+		\hline
+	 1 & 16.92 & 53.88 & 30.24 & 15.49 & 9.16\\
+	 2 & 6.99 &	40.86 &	23.56 &	11.03 &	3.96\\
+	 3 & 5.83 &	39.4 & 18.27 & 6.4 & 2.49\\
+	 4 & 13.62 & 50.49 & 27.57 & 13.16 & 6.74\\
+	 5 & 13.62 & 50.49 & 27.57 & 13.16 & 6.74\\
+	 6 & 12.83 & 41.99 & 24.39 & 13.32 & 10.04\\
+	 7 & 16.63 & 53.24 & 29.69 & 14.95 & 9.19\\
+	\end{tabular}
+	\caption{BLEU-scores of the different settings (see beginning of section \ref{ss:evaluation}) computed on translations and gold standard containing stopwords.}
+\label{tab:bleu_sw}
+\end{table}
 
-	\begin{figure}[h]
-		\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-			& muw & mum & muq & buw & bum & buq & cw & cm & cq & suw & sum & suq \\
-			\hline
-1e & 102 & 1 & 16 & 161 & 6 & 24 & 34 & 0 & 0 & 2 & 0 & 0\\
-1d & 49 & 1 & 10 & 106 & 0 & 21 & 72 & 0 & 16 & 8 & 0 & 0\\
-1s & 103 & 5 & 17 & 183 & 2 & 19 & 53 & 0 & 1 & 22 & 0 & 0\\
-1f & 85 & 8 & 13 & 185 & 2 & 14 & 65 & 0 & 2 & 18 & 0 & 0\\
-1n & 13 & 0 & 8 & 119 & 4 & 58 & 31 & 0 & 17 & 0 & 0 & 0\\
-2e & 0 & 0 & 0 & 231 & 6 & 54 & 67 & 0 & 2 & 7 & 0 & 0\\
-2d & 0 & 0 & 0 & 116 & 0 & 24 & 112 & 0 & 29 & 5 & 0 & 0\\
-2s & 0 & 0 & 0 & 258 & 4 & 52 & 87 & 0 & 2 & 45 & 0 & 3\\
-2f & 0 & 0 & 0 & 247 & 7 & 40 & 94 & 0 & 4 & 22 & 0 & 1\\
-2n & 0 & 0 & 0 & 128 & 4 & 68 & 34 & 0 & 19 & 0 & 0 & 0\\
-3e & 0 & 0 & 0 & 178 & 5 & 33 & 120 & 0 & 8 & 11 & 0 & 0\\
-3d & 0 & 0 & 0 & 92 & 0 & 22 & 134 & 0 & 34 & 9 & 0 & 0\\
-3s & 0 & 0 & 0 & 184 & 4 & 27 & 159 & 0 & 5 & 37 & 0 & 3\\
-3f & 0 & 0 & 0 & 173 & 6 & 20 & 169 & 0 & 10 & 21 & 0 & 1\\
-3n & 0 & 0 & 0 & 52 & 2 & 13 & 112 & 0 & 58 & 1 & 0 & 0\\
-4e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
-4d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
-4s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
-4f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
-4n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
-5e & 0 & 0 & 0 & 230 & 2 & 52 & 77 & 0 & 1 & 6 & 0 & 0\\
-5d & 0 & 0 & 0 & 117 & 0 & 32 & 110 & 0 & 29 & 10 & 0 & 1\\
-5s & 0 & 0 & 0 & 205 & 2 & 32 & 144 & 0 & 3 & 24 & 0 & 2\\
-5f & 0 & 0 & 0 & 193 & 4 & 29 & 156 & 0 & 4 & 20 & 0 & 0\\
-5n & 0 & 0 & 0 & 23 & 0 & 5 & 147 & 0 & 84 & 2 & 0 & 0\\
-6e & 106 & 1 & 16 & 0 & 0 & 0 & 201 & 0 & 27 & 0 & 0 & 0\\
-6d & 52 & 1 & 10 & 0 & 0 & 0 & 171 & 0 & 55 & 3 & 0 & 0\\
-6s & 106 & 5 & 17 & 0 & 0 & 0 & 233 & 0 & 25 & 7 & 0 & 0\\
-6f & 89 & 8 & 14 & 0 & 0 & 0 & 247 & 0 & 28 & 3 & 0 & 1\\
-6n & 14 & 0 & 8 & 0 & 0 & 0 & 154 & 0 & 87 & 1 & 0 & 0\\
-7e & 105 & 1 & 16 & 135 & 2 & 12 & 65 & 0 & 1 & 4 & 0 & 0\\
-7d & 50 & 1 & 10 & 80 & 0 & 16 & 95 & 0 & 19 & 9 & 0 & 0\\
-7s & 103 & 5 & 17 & 108 & 2 & 15 & 126 & 0 & 1 & 17 & 0 & 1\\
-7f & 86 & 8 & 13 & 110 & 1 & 7 & 140 & 0 & 4 & 10 & 0 & 0\\
-7n & 13 & 0 & 8 & 37 & 2 & 8 & 116 & 0 & 62 & 3 & 0 & 2\\
-		\end{tabular}
-		\caption{The number refers to the setting (see beginning of section \ref{ss:evaluation}), the letter indicates the set of queries that has been translated (\textit{e}: English, \textit{d}: German, \textit{s}: Spanish, \textit{f}: French and \textit{n}: language could not be classified).}
-		\label{fig:eval}
-	\end{figure}
-	
+\begin{table}[t]
+	\begin{tabular}{c|c|c|c|c|c}
+		&BLEU & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4\\
+		\hline
+		1 & 18.38 & 59.27 & 36.18 & 18.56 & 8.28\\
+		2 & 7.7	& 43.77 & 24.94 & 12.06 & 4.02\\
+		3 & 4.7	& 42.47 & 19.63 & 7.02 & 1.56\\
+		4 & 12.13 &	54.47 & 30.81 & 14.78 & 5.1\\
+		5 & 12.13 &	54.47 & 30.81 & 14.78 & 5.1\\
+		6 & 6.22 & 42.4 & 22.07 & 9.26 & 4.16\\
+		7 & 17.76 & 57.94 & 34.63 & 16.86 & 7.96\\
+	\end{tabular}
+	\caption{BLEU-scores of the different settings (see beginning of section \ref{ss:evaluation}) computed on translations and gold standard without stopwords.}
+	\label{tab:bleu_without_sw}
+\end{table}
+
+
+The quality of the automatic translations was measured using BLEU scores. As Table \ref{tab:bleu_sw} and \ref{tab:bleu_without_sw} show, the best translations could be obtained with MeSh and the concatenation of the quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium} and \ref{ss:manual} and the Wikidata dictionary. Therefore, we used this dictionary in the subsequent experiments.
+
+
+
 	\section{Conclusions}
 	\label{s:conclusions}
 	
