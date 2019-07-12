@@ -850,6 +850,20 @@ In order to assess how good our system performs compared with other systems, we 
 Table \ref{tab:Google_DeepL} displays that our best system performs better on these queries with respect to overall BLEU score, BLEU-1 and BLEU-2. DeepL performs better regarding trigrams (with stopwords) and 4-grams (both cases). It is not surprising that our system generally obtains better scores when the evaluation is performed after the removal of stopwords and that Google and DeepL in this case perform worse than in the other, because our simple dictionary-based approach cannot handle stopwords, whereas the much more sophisticated algorithms of Google and DeepL can.
 
 
+\begin{table}[t]
+	\begin{tabular}{c|c|c|c|c|c}
+		&BLEU & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4\\
+		\hline
+		With stopwords & 8.57 & 40.8 & 11.97 & 5.57 & 2.6\\
+		Without stopwords & 10.95 & 45.33 & 14.53 & 6.5 & 3.4\\
+	\end{tabular}
+	\caption{BLEU-scores on the XLIFF queries}
+	\label{tab:XLIFF}
+\end{table}
+
+% TODO: Link to these queries
+Another test set we evaluated consists of 261 English queries (XLIFF queries). We let our best system translate them into German, French and Spanish and compared the automatic translations to the translations of two human translators for German and Spanish and one human translator for French. The results can be seen in Table \ref{tab:XLIFF}.
+
 	\section{Conclusions}
 	\label{s:conclusions}
 	
