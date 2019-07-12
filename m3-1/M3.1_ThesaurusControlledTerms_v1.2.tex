@@ -797,12 +797,12 @@
 	\begin{tabular}{c|c|c|c|c|c}
 		&BLEU & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4\\
 		\hline
-	 1 & 16.92 & 53.88 & 30.24 & 15.49 & 9.16\\
+	 1 & \textbf{16.92} & \textbf{53.88} & \textbf{30.24} & \textbf{15.49} & 9.16\\
 	 2 & 6.99 &	40.86 &	23.56 &	11.03 &	3.96\\
 	 3 & 5.83 &	39.4 & 18.27 & 6.4 & 2.49\\
 	 4 & 13.62 & 50.49 & 27.57 & 13.16 & 6.74\\
 	 5 & 13.62 & 50.49 & 27.57 & 13.16 & 6.74\\
-	 6 & 12.83 & 41.99 & 24.39 & 13.32 & 10.04\\
+	 6 & 12.83 & 41.99 & 24.39 & 13.32 & \textbf{10.04}\\
 	 7 & 16.63 & 53.24 & 29.69 & 14.95 & 9.19\\
 	\end{tabular}
 	\caption{BLEU-scores of the different settings (see beginning of section \ref{ss:evaluation}) computed on translations and gold standard containing stopwords.}
@@ -813,7 +813,7 @@
 	\begin{tabular}{c|c|c|c|c|c}
 		&BLEU & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4\\
 		\hline
-		1 & 18.38 & 59.27 & 36.18 & 18.56 & 8.28\\
+		1 & \textbf{18.38} & \textbf{59.27} & \textbf{36.18} & \textbf{18.56} & \textbf{8.28}\\
 		2 & 7.7	& 43.77 & 24.94 & 12.06 & 4.02\\
 		3 & 4.7	& 42.47 & 19.63 & 7.02 & 1.56\\
 		4 & 12.13 &	54.47 & 30.81 & 14.78 & 5.1\\
@@ -827,18 +827,19 @@
 
 
 The quality of the automatic translations was measured using BLEU scores. The scores were calculated with a Moses script which can be found at \url{https://github.com/moses-smt/mosesdecoder/blob/master/scripts/generic/multi-bleu.perl}.
-As Table \ref{tab:bleu_sw} and Table \ref{tab:bleu_without_sw} show, the best translations could be obtained with MeSh and the concatenation of the quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium} and \ref{ss:manual} and the Wikidata dictionary. Therefore, we used this dictionary in the subsequent experiments.
+As Table \ref{tab:bleu_sw} and Table \ref{tab:bleu_without_sw} show, the best translations could be obtained with MeSh and the concatenation of the quad-lexicon from sections \ref{ss:wpLex}, \ref{ss:apertium} and \ref{ss:manual} and the Wikidata dictionary, although the low-quality dictionaries introduce some noise for 4-grams. Therefore, we used this dictionary in the subsequent experiments.
 
 \begin{table}[t]
 	\begin{tabular}{c|c|c|c|c|c}
 		&BLEU & BLEU-1 & BLEU-2 & BLEU-3 & BLEU-4\\
 		\hline
 		Google with stopwords & 14.14 &	53.18 & 28.56 & 16.09 & 9.35\\
+		DeepL with stopwords & 14.31 & 51.59 & 28.45 & \textbf{16.21} & \textbf{11.95}\\
+		Our best system with stopwords & \textbf{16.92} & \textbf{53.88} & \textbf{30.24} & 15.49 & 9.16\\
+		\hline
 		Google without stopwords & 11.2	& 54.72 & 26.08 & 12.58 & 7.32\\
-		DeepL with stopwords & 14.31 & 51.59 & 28.45 & 16.21 & 11.95\\
-		DeepL without stopwords & 12.06	& 52.88 & 25.93 & 14.79 & 10.15\\
-		Our best system with stopwords & 16.92 & 53.88 & 30.24 & 15.49 & 9.16\\
-		Our best system without stopwords & 18.38 & 59.27 & 36.18 & 18.56 & 8.28\\
+		DeepL without stopwords & 12.06	& 52.88 & 25.93 & 14.79 & \textbf{10.15}\\
+		Our best system without stopwords & \textbf{18.38} & \textbf{59.27} & \textbf{36.18} & \textbf{18.56} & 8.28\\
 	\end{tabular}
 	\caption{BLEU-scores of the different settings (see beginning of section \ref{ss:evaluation}) computed on translations and gold standard containing stopwords.}
 	\label{tab:Google_DeepL}
@@ -846,13 +847,13 @@ As Table \ref{tab:bleu_sw} and Table \ref{tab:bleu_without_sw} show, the best tr
 
 
 In order to assess how good our system performs compared with other systems, we also translated the same 500 queries with Google and DeepL.\footnote{The translations were obtained on 06.06.2019. In the meantime, Google and DeepL might have improved their algorithms.} 
-Table \ref{tab:Google_DeepL} displays that our best system performs better on these queries.
+Table \ref{tab:Google_DeepL} displays that our best system performs better on these queries with respect to overall BLEU score, BLEU-1 and BLEU-2. DeepL performs better regarding trigrams (with stopwords) and 4-grams (both cases). It is not surprising that our system generally obtains better scores when the evaluation is performed after the removal of stopwords and that Google and DeepL in this case perform worse than in the other, because our simple dictionary-based approach cannot handle stopwords, whereas the much more sophisticated algorithms of Google and DeepL can.
 
 
 	\section{Conclusions}
 	\label{s:conclusions}
 	
-	Usage of indexing terms, either controlled or uncontrolled, differs vastly between different database segments contained in PubPsych. By just using the simplest mapping approach of the quadrilingual MeSH thesaurus, we were able to map between 30\%--75\% of all controlled terms and 9\%--40\% of free indexing terms between the four languages. A more refined mapping approach and an out-of-domain extension of the quadrilingual lexicon resulted in increased mapping of 67\%--100\% (controlled terms) and 62\%--94\% (free terms) respectively. We did not check actual translation quality, but just coverage. The worst mapping performance in all scenarios was exhibited with the PSYNDEX database segment, which uses controlled terminology from the thesaurus of the American Psychological Association. We did not include data from that thesaurus into this evaluation, because it is not available in all for languages.
+	Usage of indexing terms, either controlled or uncontrolled, differs vastly between different database segments contained in PubPsych. By just using the simplest mapping approach of the quadrilingual MeSH thesaurus, we were able to map between 30\%--75\% of all controlled terms and 9\%--40\% of free indexing terms between the four languages. A more refined mapping approach and an out-of-domain extension of the quadrilingual lexicon resulted in increased mapping of 67\%--100\% (controlled terms) and 62\%--94\% (free terms) respectively. We did not check actual translation quality, but just coverage. The worst mapping performance in all scenarios was exhibited with the PSYNDEX database segment, which uses controlled terminology from the thesaurus of the American Psychological Association. We did not include data from that thesaurus into this evaluation, because it is not available in all four languages.
 	
 	%
 	% ---- Appendeces ----
