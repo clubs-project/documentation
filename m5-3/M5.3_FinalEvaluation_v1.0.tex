@@ -41,7 +41,7 @@
   \\ 
 }
 \author{\vspace*{1cm}\\ \LARGE Juliane Stiller$^1$, Vivien Petras$^1$ \& Andreas Lüschow$^2$ \medskip \\ \Large $^1$Humboldt-Universit\"at zu Berlin\\\Large $^2$Leibniz Institute for Psychology Information}
-\date{\vspace*{2cm} -- v1.0 --\\August 2019}
+\date{\vspace*{2cm} -- v1.0 --\\September 2019}
 
 
 \begin{document}
@@ -51,7 +51,7 @@
 
 \vspace*{5cm}
 \begin{abstract}
-This document demonstrates the evaluation results from the CLUBS project. We describe the design of the evaluation experiment that allows us to compare the different systems that were developed. After presenting the outcomes (e.g., inter-annotator agreement) from a pilot experiment that was conducted before the final user evaluation, we give a detailed report about the different systems and their single evaluation results. The system that makes use of translated metadata performs best.
+This document presents the evaluation results from the CLUBS project. We describe the design of the evaluation experiment that allows us to compare the different systems that were developed. After presenting the outcomes (e.g., inter-annotator agreement) from a pilot experiment that was conducted before the final user evaluation, we give a detailed report about the different systems and their single evaluation results. The system that makes use of translated metadata performs best.
 \end{abstract}
 
 \newpage
@@ -204,7 +204,7 @@ The intra-annotator agreement shows the agreement between a single assessor rati
 \addlinespace
 \toprule
 &&
-\multicolumn{4}{c}{Ratings ES} \\ \addlinespace
+\multicolumn{4}{c}{ES} \\ \addlinespace
 \cmidrule{3-6}
 \addlinespace
 & & Highly & Partially & Non & total\\ \addlinespace
@@ -290,7 +290,7 @@ The data is coming from the real-world database PubPsych which in its pure form 
 
 Therefore, we decide to show judges in the final retrieval performance experiment as much information as possible: we extract the language-specific information for abstracts, titles and keywords as well as possible English translations that come from the source databases. We will use six judges, i.e., two for each language (German, French, Spanish), that are domain experts in the psychological domain. Every assessor should be able to rate English documents.
 
-Furthermore, both raters were not domain experts and do not have a background in Psychology. We find that this aspect is crucial for the final experiment as the assessments are very dependent on the domain expertise of the judges. Additionally, the task of relevance assessment is extremely hard and strenuous due to topics such as abuse, violence, sicknesses covered, the domain vocabulary used, and the nature of the abstracts with their very compressed information. 
+Furthermore, both raters in the pilot experiment were not domain experts and do not have a background in Psychology. We find that this aspect is crucial for the final experiment as the assessments are very dependent on the domain expertise of the judges. Additionally, the task of relevance assessment is extremely hard and strenuous due to topics such as abuse, violence, sicknesses covered, the domain vocabulary used, and the nature of the abstracts with their very compressed information. 
 
 In  the pilot experiment, we were able to assess 50 documents per hour and expect this amount to be also feasible in the final experiment.\footnote{For comparison, the assessment of pictures/short documents retrieved with queries in the cultural heritage domain is much faster. Raters can achieve numbers of up to 400 document assessments per hour.}
 
@@ -427,6 +427,8 @@ Mean of retrieved document (n=50) & 330.80 & 113.48 & 551.98 \\
 \label{result_list_analysis_mt_en}
 \end{table}
 
+\newpage
+
 \paragraph{MT\_from\_DE\_base8001.}
 Overall, the 150 from German translated queries retrieved 79,273 documents. In the top ten results, 852 documents were retrieved.
 
@@ -516,6 +518,8 @@ Mean of retrieved document (n=50) & 5304.38 & 8554.16 & 1758.82 & 3682.14 \\
 \label{result_list_analysis_8004}
 \end{table}
 
+\newpage
+
 \subsubsection{Content translation}
 \paragraph{HT\_content\_trans.}
 Overall, the 200 original queries retrieved 386,465 documents. In the top ten results, 1,910 documents were retrieved.
@@ -585,113 +589,15 @@ Compare query vs. content translation\\
     \item MT\_combined\_base8001 vs.\ HT\_content\_trans: The comparison of these two systems can be deviated from the two previous paragraphs.
 \end{itemize}
 
-Table~\ref{tab:grouped_by_language} shows the number of retrieved top ten documents per system, grouped by different document and query languages. The data illustrates that, although retrieving more documents in total, System 2 with online query translation does not perform better than System 3 which retrieves the most documents for most of the languages. 
+Table~\ref{tab:grouped_by_language} (Appendix) shows the number of retrieved top ten documents per system, grouped by different document and query languages. The data illustrates that, although retrieving more documents in total, System 2 with online query translation does not perform better than System 3 which retrieves the most documents for most of the languages. 
 
 It is worth noticing that System 2 with query translation seems to perform best when it comes to Spanish metadata, retrieving considerably more documents in this language than the other approaches (except in those cases where Spanish is already the language of the query). Documents in the same language as the query are the most retrieved with the two baseline systems. This fact indicates that all other systems include more documents in their result lists that do not have the same language as the query, i.e., that the cross-lingual retrieval works.
 
-\begin{table}[ht]
-    \centering
-    \begin{tabularx}{0.81\textwidth}{llllll}
-\addlinespace
-\toprule
-\addlinespace
-Query & Document & System 1 & System 2 & System 2 & System 3 \\
-language & language & & & with QT & \\
-\addlinespace
-\cmidrule{1-6}
-\addlinespace
-DE & English & 75 & 65 & 96 & \textbf{172}  \\
-\addlinespace
-& French & 4 & 4 & \textbf{18} & 11 \\
-\addlinespace
-& German & \textbf{284} & 280 & 215 & 254 \\
-\addlinespace
-& Spanish & 2 & 4 & \textbf{63} & 5 \\
-\addlinespace
-& Missing / & 1 & 0 & 0 & 2 \\
-& other & & & & \\
-\addlinespace
-EN & English & 393 & \textbf{414} & 283 & 351 \\
-\addlinespace
-& French & 9 & 9 & \textbf{35} & 16 \\
-\addlinespace
-& German & 94 & 68 & 81 & \textbf{117} \\
-\addlinespace
-& Spanish & 2 & 4 & \textbf{94} & 10 \\
-\addlinespace
-& Missing / & 2 & 5 & 7 & 6 \\
-& other & & & & \\
-\addlinespace
-FR & English & 147 & 153 & 178 & \textbf{300} \\
-\addlinespace
-& French & \textbf{157} & 155 & 103 & 110 \\
-\addlinespace
-& German & 39 & 34 & 43 & \textbf{73} \\
-\addlinespace
-& Spanish & 1 & 3 & \textbf{67} & 11 \\
-\addlinespace
-& Missing / & 3 & 2 & 2 & 5 \\
-&  other &&&& \\
-\addlinespace
-ES & English & 80 & 81 & 134 & \textbf{225} \\
-\addlinespace
-& French & 4 & 3 & 19 & \textbf{22} \\
-\addlinespace
-& German & 27 & 19 & 39 & \textbf{55} \\
-\addlinespace
-& Spanish & 161 & \textbf{169} & 152 & 158 \\
-\addlinespace
-& Missing / & 5 & 5 & 6 & 7 \\
-& other &&&& \\
-\addlinespace
-\bottomrule
-\end{tabularx}
-\caption{Retrieved document languages in the four systems, grouped by query language.}
-\label{tab:grouped_by_language}
-\end{table}
 
-Table~\ref{comparison_all_systems} summarizes the main insights from the system-focused evaluation and allows for a direct comparison of the outocmes from the different approaches.
 
-\begin{table}[ht]
-\centering
-\begin{tabularx}{\textwidth}{lllll}
-\toprule
-\addlinespace
-& \textbf{System 1} & \textbf{System 2} & \textbf{System 2 + QT} & \textbf{System 3} \\
-& \textbf{(initial} & \textbf{(improved} &  &  \\
-& \textbf{system)}  & \textbf{system)} & & \\
-\addlinespace
-\cmidrule{1-5}
-\addlinespace
-\# of queries & 24 & 28 & 15 & 5
- \\
-with 0 results & & & & \\
-out of 200 & & & & \\
-\addlinespace
-Sum of found & 121,765 & 118,978 & 964,975 & 386,465
- \\
-documents for & & & & \\
-queries & & & & \\
-\addlinespace
-Per language & De = 24,185 & De = 23,714 & De = 265,219 & De = 63,862\\
-DE / EN & En = 71,990 & En = 69,971 & En = 427,708 & En = 142,070 \\
-/ ES / FR & Es = 3,828 & Es = 3,817 & Es = 87,941 & Es = 80,415 \\
-& Fr = 21,762 & Fr = 21,476 & Fr = 184,107 & Fr = 100,118 \\
-\addlinespace
-\# of documents & 1,490 & 1,477 & 1,635 & 1,910 \\
-in top ten & & & & \\
-\addlinespace
-Mean of retrieved & De = 483.70 & De = 474.28 & De = 5304.38 & De = 1277.24 \\
-documents across & En = 1439.80 & En = 1399.42 & En = 8554.16 & En = 2841.40 \\
-queries (n=50)  & ES = 76.56 & ES = 76.34 & Es = 1758.82 & Es = 1608.30 \\
-per language & Fr = 435.24 & Fr = 429.52 & Fr = 3682.14 & Fr = 2002.36 \\ 
-\addlinespace
-\addlinespace
-\bottomrule
-\end{tabularx}
-\caption{Comparison of all systems -- describing statistics.}
-\label{comparison_all_systems}
-\end{table}
+Table~\ref{comparison_all_systems} (Appendix) summarizes the main insights from the system-focused evaluation and allows for a direct comparison of the outocmes from the different approaches.
+
+
 
 
 
@@ -959,10 +865,10 @@ As Table~\ref{tab:grouped_by_language} shows, documents in the same language as 
 \subsection{System 2 with query translation}
 This system performs better than the baselines but not as good as the winning approach, System 3, albeit it retrieves a lot of documents that do not seem to be relevant. In fact, some of the queries generate very large result lists whereas other queries do not find anything at all. This is probably due to the online query translation that looks up words from the search query in a multilingual lexicon. 
 
-If a query can not be found in this lexicon, its single words (tokens) are looked up in the dictionary. (For more information on how the online query translation approach works, see also the project documentation in \cite{m1.5_2018} and the relevant CLUBS article from MTSR 2018 conference \cite{espana_mtsr}. Obviously, this leads to translations that are quite general and thus retrieve many documents. Additionally, the combination of search terms using the Boolean OR operator enlarges the number of potentially relevant documents. If one of the search terms is a preposition such as "of", "in" or "at", a translation of this term into three other languages also dilates the search result list. This may explain the high number of documents found with this approach.
+If a query can not be found in this lexicon, its single words (tokens) are looked up in the dictionary.\footnote{For more information on how the online query translation approach works, see also the project documentation in \cite{m1.5_2018} and the relevant CLUBS article from MTSR 2018 conference \cite{espana_mtsr}.} Obviously, this leads to translations that are quite general and thus retrieve many documents. Additionally, the combination of search terms using the Boolean OR operator enlarges the number of potentially relevant documents. If one of the search terms is a preposition such as "of", "in" or "at", a translation of this term into three other languages also dilates the search result list. This may explain the high number of documents found with this approach.
 
 \subsection{System 3}
-This is the winner system. Both the system-focused evaluation of the result lists and the user-focused evaluation (relevance ratings) show a clear preference for this approach. This system will be integrated into PubPsych's live system and allows future users to make use of the cross-lingual features that were devloped and evaluated during this project. 
+This is the winner system. Both the system-focused evaluation of the result lists and the user-focused evaluation (i.e., relevance ratings) show a clear preference for this approach. This system will be integrated into PubPsych's live system and allows future users to make use of the cross-lingual features that were developed and evaluated during this project. 
 
 As a next step, it will be necessary to implement the machine translation pipeline into PubPsych's indexing workflow to be able to translate document metadata as soon as it enters the index. The required scripts and translation models were developed during the project and can be reused. 
 
@@ -979,7 +885,110 @@ As a next step, it will be necessary to implement the machine translation pipeli
 \bibliographystyle{plain}
 \bibliography{references}
 
-
+\newpage
 \appendix
+\section{Additional Tables}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabularx}{0.81\textwidth}{llllll}
+\addlinespace
+\toprule
+\addlinespace
+Query & Document & System 1 & System 2 & System 2 & System 3 \\
+language & language & & & with QT & \\
+\addlinespace
+\cmidrule{1-6}
+\addlinespace
+DE & English & 75 & 65 & 96 & \textbf{172}  \\
+\addlinespace
+& French & 4 & 4 & \textbf{18} & 11 \\
+\addlinespace
+& German & \textbf{284} & 280 & 215 & 254 \\
+\addlinespace
+& Spanish & 2 & 4 & \textbf{63} & 5 \\
+\addlinespace
+& Missing / & 1 & 0 & 0 & 2 \\
+& other & & & & \\
+\addlinespace
+EN & English & 393 & \textbf{414} & 283 & 351 \\
+\addlinespace
+& French & 9 & 9 & \textbf{35} & 16 \\
+\addlinespace
+& German & 94 & 68 & 81 & \textbf{117} \\
+\addlinespace
+& Spanish & 2 & 4 & \textbf{94} & 10 \\
+\addlinespace
+& Missing / & 2 & 5 & 7 & 6 \\
+& other & & & & \\
+\addlinespace
+FR & English & 147 & 153 & 178 & \textbf{300} \\
+\addlinespace
+& French & \textbf{157} & 155 & 103 & 110 \\
+\addlinespace
+& German & 39 & 34 & 43 & \textbf{73} \\
+\addlinespace
+& Spanish & 1 & 3 & \textbf{67} & 11 \\
+\addlinespace
+& Missing / & 3 & 2 & 2 & 5 \\
+&  other &&&& \\
+\addlinespace
+ES & English & 80 & 81 & 134 & \textbf{225} \\
+\addlinespace
+& French & 4 & 3 & 19 & \textbf{22} \\
+\addlinespace
+& German & 27 & 19 & 39 & \textbf{55} \\
+\addlinespace
+& Spanish & 161 & \textbf{169} & 152 & 158 \\
+\addlinespace
+& Missing / & 5 & 5 & 6 & 7 \\
+& other &&&& \\
+\addlinespace
+\bottomrule
+\end{tabularx}
+\caption{Retrieved document languages in the four systems, grouped by query language.}
+\label{tab:grouped_by_language}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{tabularx}{\textwidth}{lllll}
+\toprule
+\addlinespace
+& \textbf{System 1} & \textbf{System 2} & \textbf{System 2 + QT} & \textbf{System 3} \\
+& \textbf{(initial} & \textbf{(improved} &  &  \\
+& \textbf{system)}  & \textbf{system)} & & \\
+\addlinespace
+\cmidrule{1-5}
+\addlinespace
+\# of queries & 24 & 28 & 15 & 5
+ \\
+with 0 results & & & & \\
+out of 200 & & & & \\
+\addlinespace
+Sum of found & 121,765 & 118,978 & 964,975 & 386,465
+ \\
+documents for & & & & \\
+queries & & & & \\
+\addlinespace
+Per language & De = 24,185 & De = 23,714 & De = 265,219 & De = 63,862\\
+DE / EN & En = 71,990 & En = 69,971 & En = 427,708 & En = 142,070 \\
+/ ES / FR & Es = 3,828 & Es = 3,817 & Es = 87,941 & Es = 80,415 \\
+& Fr = 21,762 & Fr = 21,476 & Fr = 184,107 & Fr = 100,118 \\
+\addlinespace
+\# of documents & 1,490 & 1,477 & 1,635 & 1,910 \\
+in top ten & & & & \\
+\addlinespace
+Mean of retrieved & De = 483.70 & De = 474.28 & De = 5304.38 & De = 1277.24 \\
+documents across & En = 1439.80 & En = 1399.42 & En = 8554.16 & En = 2841.40 \\
+queries (n=50)  & ES = 76.56 & ES = 76.34 & Es = 1758.82 & Es = 1608.30 \\
+per language & Fr = 435.24 & Fr = 429.52 & Fr = 3682.14 & Fr = 2002.36 \\ 
+\addlinespace
+\addlinespace
+\bottomrule
+\end{tabularx}
+\caption{Comparison of all systems -- describing statistics.}
+\label{comparison_all_systems}
+\end{table}
 
 \end{document}
